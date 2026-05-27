@@ -1,39 +1,3 @@
-# Search GUI
-
-Search is controlled by:
-
-```yaml
-search:
-  enabled: true
-  fuzzy: true
-  max-results: 45
-  search-on-unknown-shop-command: false
-```
-
-Command:
-
-```text
-/shop search <query>
-```
-
-Permission:
-
-```text
-zaminshop.player.search
-```
-
-Default search menu supports sorting:
-
-```yaml
-modes:
-  - RELEVANCE
-  - CHEAPEST
-  - MOST_EXPENSIVE
-  - ALPHABETICAL
-```
-
-Default `search.yml`:
-
 ```yaml
 menu_title: "&8ZaminShop ➔ Search: %query%"
 size: 54

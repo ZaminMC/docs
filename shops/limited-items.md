@@ -1,21 +1,41 @@
 # Limited Items
 
-Limited items can be used for:
+The source supports sell-side item limits through item fields and global sell limit services.
 
-- Seasonal events
-- Rotating stock
-- Scarcity systems
-- Economy balancing
+## Per-item sell caps
 
----
+Recognized item keys:
 
-# Common Ideas
+```yaml
+maximum:
+  items:
+    player:
+      can:
+        sell: 100
+  money:
+    by:
+      selling:
+        player:
+          can:
+            make: 5000
+```
 
-## Daily Shop Rotation
-Rotate expensive items daily.
+The loader recognizes these paths as:
 
-## Rare Item Windows
-Sell special items only during events.
+```text
+maximum.items.player.can.sell
+maximum.money.by.selling.player.can.make
+```
 
-## Player Progression
-Unlock items over time.
+## Global sell limits
+
+Use `sell-limits` in `config.yml` for daily/weekly money and item caps.
+
+## Practical use
+
+Limited items are useful for:
+
+- preventing farm abuse
+- limiting rare-event economy damage
+- controlling high-value sell items
+- creating rotating market caps

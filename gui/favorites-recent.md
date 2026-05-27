@@ -1,20 +1,61 @@
 # Favorites & Recent
 
-ZaminShop tracks:
+## Favorites
 
-- Favorite items
-- Recent purchases
+Command:
 
-This creates a faster shopping workflow.
+```text
+/shop favorites
+```
 
----
+Permission:
 
-# Favorites
+```text
+zaminshop.player.favorite
+```
 
-Players can bookmark frequently purchased items.
+Aliases:
 
----
+```text
+/shop fav
+/shop favorite
+```
 
-# Recent Purchases
+Default messages:
 
-Recently bought items appear automatically in recent menus.
+```yaml
+MSG.FAVORITES.EMPTY: "You do not have any favorite items yet."
+MSG.FAVORITE.ADDED: "Added &c%item%&f to favorites."
+MSG.FAVORITE.REMOVED: "Removed &c%item%&f from favorites."
+```
+
+## Recent
+
+Command:
+
+```text
+/shop recent
+```
+
+Permission:
+
+```text
+zaminshop.player.recent
+```
+
+Aliases:
+
+```text
+/shop history
+/shop transactions
+```
+
+Config:
+
+```yaml
+recent-menu:
+  enabled: true
+  max-records-per-player: 20
+  show-bought: true
+  show-sold: true
+```

@@ -1,49 +1,91 @@
 # Troubleshooting
 
-# Shop Does Not Open
+## Shops are not opening
 
-## Causes
+Run:
 
-- Missing economy provider
-- Invalid GUI YAML
-- Broken material names
+```text
+/zaminshop validate
+```
 
-## Fix
+Check:
 
-Check console logs carefully.
+- YAML syntax
+- invalid material names
+- missing economy plugin
+- denied world/gamemode
+- missing player permission
+- `disableMainMenu`
 
----
+## Console says startup failed
 
-# Items Not Appearing
+The command handler sends `MSG.STARTUPFAILED` when startup did not complete.
 
-## Causes
+Fix the reported config/shop error in console, then restart or reload.
 
-- Invalid materials
-- Version mismatch
-- Hidden permissions
+## Search returns nothing
 
----
+Check:
 
-# Search Returns Nothing
+```yaml
+search:
+  enabled: true
+```
 
-## Causes
+Also verify shops actually loaded with:
 
-- Search indexing disabled
-- Shops failed to load
-- Invalid item entries
+```text
+/zaminshop validate
+```
 
----
+## Sell GUI does not open
 
-# YAML Errors
+Check:
 
-Use a YAML validator.
+```yaml
+sellGui:
+  enabled: true
+  permission: "zaminshop.sellgui"
+```
 
-Never use tabs.
+Then give the player:
 
----
+```text
+zaminshop.sellgui
+```
 
-# Performance Issues
+## Risk guard blocks an item
 
-- Reduce oversized menus
-- Limit unnecessary animations
-- Avoid excessive PlaceholderAPI calls
+Run:
+
+```text
+/zaminshop risk list
+```
+
+Fix the buy/sell prices, or confirm the risk intentionally.
+
+## GUI items leaked into player inventory
+
+Use:
+
+```text
+/zaminshop sanitize <player>
+```
+
+Permission:
+
+```text
+zaminshop.admin.sanitize
+```
+
+## Reload denied
+
+Reload is denied while active transactions are locked. Wait until transactions finish, then run:
+
+```text
+/zaminshop reload
+```
+
+## `/sell` still exists after disabling it
+
+`disableCommands.sell` requires a full server restart.

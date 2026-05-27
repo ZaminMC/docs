@@ -1,13 +1,3 @@
-# GUI Settings
-
-Default file:
-
-```text
-guis/gui-settings.yml
-```
-
-This file contains shared behavior for shop lore formatting, click sounds, shared buttons, and sell GUI behavior.
-
 ```yaml
 ﻿# Shared GUI behavior and formatting settings
 

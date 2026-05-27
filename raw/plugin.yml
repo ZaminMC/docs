@@ -1,0 +1,59 @@
+```yaml
+name: ZaminShop
+version: ${project.version}
+main: com.zamin.zaminshop.bootstrap.ZaminShopPlugin
+description: Modern multi-version shop plugin for configurable server economies.
+website: https://github.com/Abasing/ZaminShop
+softdepend:
+  - PlaceholderAPI
+commands:
+  zaminshop:
+    description: Main ZaminShop command
+    usage: /<command> [shop|subcommand]
+    aliases:
+      - shop
+      - zshop
+      - zhop
+  sell:
+    description: Sell items through ZaminShop
+    usage: /<command> <hand|all>
+permissions:
+  zaminshop.player.*:
+    description: Grants all player ZaminShop permissions
+    default: false
+    children:
+      zaminshop.player.shop: true
+      zaminshop.player.search: true
+      zaminshop.player.favorite: true
+      zaminshop.player.recent: true
+      zaminshop.sellgui: true
+      zaminshop.player.worth: true
+      zaminshop.player.buy-more: true
+      zaminshop.player.sell-more: true
+  zaminshop.admin.*:
+    description: Grants all admin ZaminShop permissions
+    default: op
+    children:
+      zaminshop.player.*: true
+      zaminshop.admin.help: true
+      zaminshop.admin.reload: true
+      zaminshop.admin.validate: true
+      zaminshop.admin.risk: true
+      zaminshop.admin.language: true
+      zaminshop.admin.sanitize: true
+      zaminshop.admin.check: true
+      zaminshop.admin.modifier: true
+      zaminshop.admin.open-others: true
+  zaminshop.shop:
+    description: Legacy alias for zaminshop.player.shop
+    default: false
+  zaminshop.sellgui:
+    description: Allows opening the configurable sell GUI
+    default: false
+  zaminshop.admin:
+    description: Legacy alias for zaminshop.admin.*
+    default: op
+  zaminshop.admin.sanitize:
+    description: Allows removing leaked ZaminShop GUI items from a player inventory
+    default: op
+```

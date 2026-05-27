@@ -1,26 +1,19 @@
-# Shops
+# Shops Overview
 
-Shops are stored in:
+Shops live in:
 
 ```text
-shops/
+plugins/ZaminShop/shops/
 ```
 
-Each file defines a category.
+The source ships with default shop files for blocks, armor, drops, dyes, farming, food, miscellaneous, ores, and tools.
 
-Examples:
+Each shop file is loaded through the shop validation pipeline. Invalid entries are skipped when safe and reported through validation diagnostics.
 
-- blocks.yml
-- food.yml
-- tools.yml
-- ores.yml
+Use:
 
----
+```text
+/zaminshop validate
+```
 
-# Shop Features
-
-- Buy/sell support
-- Custom quantities
-- Permissions
-- Custom icons
-- GUI integration
+after editing shops.

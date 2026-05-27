@@ -1,243 +1,344 @@
-# config.yml
+# config.yml Reference
 
-Core plugin configuration.
-
-## `config-version`
-```yaml
-config-version: 2
-```
-Controls this part of the plugin.
+This page follows the actual default `config.yml` from the source.
 
 ## `language`
-```yaml
-language: en_US
-```
-Controls this part of the plugin.
+
+Default: `en_US`
 
 ## `database`
+
 ```yaml
-database: {'type': 'sqlite', 'mySQLHost': 'localhost', 'mySQLPort': 3306, 'mySQLDatabase': 'db', 'mySQLUser': 'root', 'mySQLPassword': '', 'tableNames': {'players': 'players'}}
+database:
+  type: sqlite
+  mySQLHost: localhost
+  mySQLPort: 3306
+  mySQLDatabase: db
+  mySQLUser: root
+  mySQLPassword: ''
+  tableNames:
+    players: players
 ```
-Controls this part of the plugin.
 
 ## `economyTypes`
+
 ```yaml
-economyTypes: ['VAULT']
+economyTypes:
+- VAULT
 ```
-Controls this part of the plugin.
 
 ## `startup-log`
+
 ```yaml
-startup-log: {'banner': True, 'debug': False, 'show-shop-breakdown': False}
+startup-log:
+  banner: true
+  debug: false
+  show-shop-breakdown: false
 ```
-Controls this part of the plugin.
 
 ## `inventoryClickShortcuts`
+
 ```yaml
-inventoryClickShortcuts: {'enabled': True, 'mainMenu': False, 'shopMenu': True, 'amountSelector': False, 'bulkBuy': False, 'bulkSell': False}
+inventoryClickShortcuts:
+  enabled: true
+  mainMenu: false
+  shopMenu: true
+  amountSelector: false
+  bulkBuy: false
+  bulkSell: false
 ```
-Controls this part of the plugin.
 
 ## `transaction-safety`
+
 ```yaml
-transaction-safety: {'enabled': True, 'per-player-lock': True, 'lock-timeout-ms': 5000, 'click-cooldown-ms': 150, 'block-while-inventory-open': False, 'debug-failures': False}
+transaction-safety:
+  enabled: true
+  per-player-lock: true
+  lock-timeout-ms: 5000
+  click-cooldown-ms: 150
+  block-while-inventory-open: false
+  debug-failures: false
 ```
-Controls this part of the plugin.
 
 ## `transaction-audit`
+
 ```yaml
-transaction-audit: {'enabled': False, 'log-success': False, 'log-failures': True, 'include-inventory-summary': False}
+transaction-audit:
+  enabled: false
+  log-success: false
+  log-failures: true
+  include-inventory-summary: false
 ```
-Controls this part of the plugin.
 
 ## `currency-safety`
+
 ```yaml
-currency-safety: {'enabled': True, 'decimal-places': 2, 'reject-prices-with-too-many-decimals': True, 'minimum-transaction-value': 0.01, 'normalize-player-balances-for-checks': True, 'block-nan-infinity': True, 'max-transaction-value': 1000000000000}
+currency-safety:
+  enabled: true
+  decimal-places: 2
+  reject-prices-with-too-many-decimals: true
+  minimum-transaction-value: 0.01
+  normalize-player-balances-for-checks: true
+  block-nan-infinity: true
+  max-transaction-value: 1000000000000
 ```
-Controls this part of the plugin.
 
 ## `risk-guard`
+
 ```yaml
-risk-guard: {'enabled': True, 'block-critical-shops': True, 'notify-admins': True, 'require-confirmation': True, 'max-sell-buy-ratio': 0.8, 'allow-sell-higher-than-buy': False}
+risk-guard:
+  enabled: true
+  block-critical-shops: true
+  notify-admins: true
+  require-confirmation: true
+  max-sell-buy-ratio: 0.8
+  allow-sell-higher-than-buy: false
 ```
-Controls this part of the plugin.
 
 ## `sell-limits`
+
 ```yaml
-sell-limits: {'enabled': False, 'reset-timezone': 'server', 'daily': {'enabled': False, 'max-money': 50000, 'max-items': 50000}, 'weekly': {'enabled': False, 'max-money': 500000, 'max-items': 500000}}
+sell-limits:
+  enabled: false
+  reset-timezone: server
+  daily:
+    enabled: false
+    max-money: 50000
+    max-items: 50000
+  weekly:
+    enabled: false
+    max-money: 500000
+    max-items: 500000
 ```
-Controls this part of the plugin.
 
 ## `suspicious-transactions`
+
 ```yaml
-suspicious-transactions: {'enabled': False, 'notify-admins': True, 'log-console': True, 'cooldown-between-alerts-seconds': 60, 'thresholds': {'transactions-per-10-seconds': 20, 'money-earned-per-minute': 1000000, 'items-sold-per-minute': 50000, 'same-item-sales-per-10-seconds': 15}, 'actions': {'warn-admins': True, 'temporarily-block-selling': False, 'block-duration-seconds': 30}}
+suspicious-transactions:
+  enabled: false
+  notify-admins: true
+  log-console: true
+  cooldown-between-alerts-seconds: 60
+  thresholds:
+    transactions-per-10-seconds: 20
+    money-earned-per-minute: 1000000
+    items-sold-per-minute: 50000
+    same-item-sales-per-10-seconds: 15
+  actions:
+    warn-admins: true
+    temporarily-block-selling: false
+    block-duration-seconds: 30
 ```
-Controls this part of the plugin.
 
 ## `search`
+
 ```yaml
-search: {'enabled': True, 'fuzzy': True, 'max-results': 45, 'search-on-unknown-shop-command': False}
+search:
+  enabled: true
+  fuzzy: true
+  max-results: 45
+  search-on-unknown-shop-command: false
 ```
-Controls this part of the plugin.
 
 ## `recent-menu`
+
 ```yaml
-recent-menu: {'enabled': True, 'max-records-per-player': 20, 'show-bought': True, 'show-sold': True}
+recent-menu:
+  enabled: true
+  max-records-per-player: 20
+  show-bought: true
+  show-sold: true
 ```
-Controls this part of the plugin.
 
 ## `gui_menus`
+
 ```yaml
-gui_menus: {'gui-settings': {'file': 'guis/gui-settings.yml'}, 'shop-directory': {'file': 'guis/shop-directory.yml'}, 'amount-selector': {'file': 'guis/amount-selector.yml'}, 'bulk-buy': {'file': 'guis/bulk-buy.yml'}, 'bulk-sell': {'file': 'guis/bulk-sell.yml'}, 'recent': {'file': 'guis/recent.yml'}, 'favorites': {'file': 'guis/favorites.yml'}, 'search': {'file': 'guis/search.yml'}, 'sell': {'file': 'guis/sell.yml'}}
+gui_menus:
+  gui-settings:
+    file: guis/gui-settings.yml
+  shop-directory:
+    file: guis/shop-directory.yml
+  amount-selector:
+    file: guis/amount-selector.yml
+  bulk-buy:
+    file: guis/bulk-buy.yml
+  bulk-sell:
+    file: guis/bulk-sell.yml
+  recent:
+    file: guis/recent.yml
+  favorites:
+    file: guis/favorites.yml
+  search:
+    file: guis/search.yml
+  sell:
+    file: guis/sell.yml
 ```
-Controls this part of the plugin.
 
 ## `maxEnchantments`
-```yaml
-maxEnchantments: 3
-```
-Controls this part of the plugin.
+
+Default: `3`
 
 ## `limitEnchantmentLevelDiff`
-```yaml
-limitEnchantmentLevelDiff: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `enableAmountSelectionFix`
-```yaml
-enableAmountSelectionFix: True
-```
-Controls this part of the plugin.
+
+Default: `True`
 
 ## `allowAllSellAllStackSizes`
-```yaml
-allowAllSellAllStackSizes: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `roundPrices`
-```yaml
-roundPrices: none
-```
-Controls this part of the plugin.
+
+Default: `none`
 
 ## `disableMainMenu`
-```yaml
-disableMainMenu: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `useDifferentMessagesForFreeItems`
-```yaml
-useDifferentMessagesForFreeItems: True
-```
-Controls this part of the plugin.
+
+Default: `True`
 
 ## `capitalizeItemNames`
-```yaml
-capitalizeItemNames: True
-```
-Controls this part of the plugin.
+
+Default: `True`
 
 ## `priceModifiersType`
-```yaml
-priceModifiersType: BOTH
-```
-Controls this part of the plugin.
+
+Default: `BOTH`
 
 ## `closeGuiAfterSellAll`
-```yaml
-closeGuiAfterSellAll: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `openBulkGuiImmediately`
-```yaml
-openBulkGuiImmediately: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `sudoAllowAllShopsAccess`
-```yaml
-sudoAllowAllShopsAccess: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `disableShopsInGamemodes`
+
 ```yaml
-disableShopsInGamemodes: ['ADVENTURE', 'CREATIVE', 'SPECTATOR']
+disableShopsInGamemodes:
+- ADVENTURE
+- CREATIVE
+- SPECTATOR
 ```
-Controls this part of the plugin.
 
 ## `disableShopsInWorlds`
+
 ```yaml
 disableShopsInWorlds: []
 ```
-Controls this part of the plugin.
 
 ## `displayPriceModifiersInPercents`
-```yaml
-displayPriceModifiersInPercents: True
-```
-Controls this part of the plugin.
+
+Default: `True`
 
 ## `disableSudoWorldPermissionCheck`
-```yaml
-disableSudoWorldPermissionCheck: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `disableSudoShopPermissionCheck`
-```yaml
-disableSudoShopPermissionCheck: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `disableUnsafeEnchantmentCheck`
-```yaml
-disableUnsafeEnchantmentCheck: False
-```
-Controls this part of the plugin.
+
+Default: `False`
 
 ## `allowEnchantmentLevelIncrease`
-```yaml
-allowEnchantmentLevelIncrease: True
-```
-Controls this part of the plugin.
+
+Default: `True`
 
 ## `defaultItemSettings`
+
 ```yaml
-defaultItemSettings: {'compareMeta': False, 'stripItemMeta': False, 'compareModel': True, 'compareDamage': False, 'compareNbt': False, 'compareRepairCost': False}
+defaultItemSettings:
+  compareMeta: false
+  stripItemMeta: false
+  compareModel: true
+  compareDamage: false
+  compareNbt: false
+  compareRepairCost: false
 ```
-Controls this part of the plugin.
 
 ## `log`
+
 ```yaml
-log: {'toConsole': True, 'toFile': False, 'formatDate': 'yyyy/MM/dd HH:mm:ss', 'formatBuyCommand': '%player% bought %amount% x %command% command for %price% from %shop% shop', 'formatBuyEnchantment': '%player% bought %enchantment% enchantment for %price% from %shop% shop', 'formatBuyPermission': '%player% bought %permission% permission for %price% from %shop% shop', 'formatBuy': '%player% bought %amount% x %item% for %price% from %shop% shop', 'formatSell': '%player% sold %amount% x %item% for %price% to %shop% shop', 'formatSellAll': '%player% sold all %amount% x %item% for %price% to %shop% shop'}
+log:
+  toConsole: true
+  toFile: false
+  formatDate: yyyy/MM/dd HH:mm:ss
+  formatBuyCommand: '%player% bought %amount% x %command% command for %price% from
+    %shop% shop'
+  formatBuyEnchantment: '%player% bought %enchantment% enchantment for %price% from
+    %shop% shop'
+  formatBuyPermission: '%player% bought %permission% permission for %price% from %shop%
+    shop'
+  formatBuy: '%player% bought %amount% x %item% for %price% from %shop% shop'
+  formatSell: '%player% sold %amount% x %item% for %price% to %shop% shop'
+  formatSellAll: '%player% sold all %amount% x %item% for %price% to %shop% shop'
 ```
-Controls this part of the plugin.
 
 ## `sellHand`
+
 ```yaml
-sellHand: {'allowAllQuantities': True, 'sellsAllItems': False, 'excludeFreeItems': True, 'excludeArmorSlots': True, 'excludeOffHand': False}
+sellHand:
+  allowAllQuantities: true
+  sellsAllItems: false
+  excludeFreeItems: true
+  excludeArmorSlots: true
+  excludeOffHand: false
 ```
-Controls this part of the plugin.
 
 ## `sellAll`
+
 ```yaml
-sellAll: {'detailedSummary': False, 'findMaxSellPrice': True, 'excludeFreeItems': True, 'excludeArmorSlots': True, 'excludeOffHand': False}
+sellAll:
+  detailedSummary: false
+  findMaxSellPrice: true
+  excludeFreeItems: true
+  excludeArmorSlots: true
+  excludeOffHand: false
 ```
-Controls this part of the plugin.
 
 ## `disableCommands`
+
 ```yaml
-disableCommands: {'sell': False}
+disableCommands:
+  sell: false
 ```
-Controls this part of the plugin.
 
 ## `numberFormat`
+
 ```yaml
-numberFormat: {'decimalSeparator': '.', 'groupingSeparator': ',', 'minimumIntegerDigits': 1, 'maximumIntegerDigits': 32, 'minimumFractionDigits': 0, 'maximumFractionDigits': 8, 'hideFraction': True, 'shortScale': {'enableShortScaleNumbering': False, 'shortScaleLimit': 1000000, 'shortHandDecimalLimit': 2, 'shortHandNumberLimit': 32}}
+numberFormat:
+  decimalSeparator: .
+  groupingSeparator: ','
+  minimumIntegerDigits: 1
+  maximumIntegerDigits: 32
+  minimumFractionDigits: 0
+  maximumFractionDigits: 8
+  hideFraction: true
+  shortScale:
+    enableShortScaleNumbering: false
+    shortScaleLimit: 1000000
+    shortHandDecimalLimit: 2
+    shortHandNumberLimit: 32
 ```
-Controls this part of the plugin.
+
+
+## Notes
+
+- `economyTypes` is ordered. The first entry becomes the default economy for shops unless a shop overrides it.
+- `gui_menus` points built-in menu IDs to files. Move menu files only if you also update this section.
+- `transaction-safety` should usually stay enabled.
+- `risk-guard` should stay enabled on public servers.
+- `disableCommands.sell` needs a full server restart.
