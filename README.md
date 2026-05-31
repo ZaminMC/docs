@@ -1,51 +1,34 @@
-# ZaminShop Wiki
+# ZaminShop
 
-Welcome to the **source-accurate ZaminShop documentation**.
+ZaminShop is a configurable shop plugin for Bukkit, Spigot, and Paper servers.
 
-This wiki was written against the provided source ZIP, not guessed from a generic shop plugin template.
+This wiki tracks the current codebase, not an old public release. The pages here are written from:
 
-## Source facts
+- source code
+- bundled config files
+- bundled menu files
+- bundled shop pack files
 
-| Item | Value |
-|---|---|
-| Plugin | `ZaminShop` |
-| Version | `1.6.0` |
-| Main class | `com.zamin.zaminshop.bootstrap.ZaminShopPlugin` |
-| Runtime | Bukkit / Spigot / Paper, with Folia-compatible scheduling bridge |
-| Java target | Java 17 |
-| Default config version | `2` |
-| Public API package | `com.zamin.zaminshop.api` |
-| Main player command | `/shop` |
-| Main admin command | `/zaminshop` |
-| Sell command | `/sell` |
+## What ZaminShop includes
 
-## What ZaminShop actually contains
+- manual shop pack registration in `config.yml`
+- pack-specific main menus and category menus
+- configurable GUI system
+- search, favorites, recent history, amount selector, bulk buy, bulk sell, and sell GUI flows
+- multiple economy providers
+- transaction locking and rollback-focused safety
+- risk guard, suspicious transaction checks, and sell limits
+- PlaceholderAPI support
+- Java API and Bukkit events
 
-ZaminShop is a configurable economy shop plugin with:
+## Start here
 
-- YAML shop files in `shops/`
-- YAML menu files in `guis/`
-- configurable shop directory, search, favorites, recent, amount selector, bulk buy/sell, and sell GUI menus
-- configurable economy providers
-- transaction safety locking
-- transaction audit logging
-- currency safety validation
-- risk guard for dangerous buy/sell price setups
-- sell limits
-- suspicious transaction alerts
-- PlaceholderAPI expansion
-- public Java API
-- SQLite/MySQL player data storage
-- migration-friendly legacy command/permission support
+1. Read [Installation & Setup](setup.md)
+2. Review [Configuration](configuration/README.md)
+3. Set up your first [Shop Pack](shops/README.md)
+4. Check [Commands](commands.md) and [Permissions](permissions.md)
+5. Run `/zaminshop validate` before opening the shop to players
 
-## Read this first
+## Version
 
-1. Install the plugin.
-2. Start the server once.
-3. Edit `config.yml`, `shops/*.yml`, and `guis/*.yml`.
-4. Use `/zaminshop validate`.
-5. Use `/zaminshop risk list`.
-6. Confirm or fix any reported issues.
-7. Reload with `/zaminshop reload`.
-
-Do not publish a shop setup without running `validate` and checking risk guard.
+These docs currently reflect ZaminShop `1.7.2`.

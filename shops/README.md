@@ -1,14 +1,48 @@
-# Shops Overview
+# Shop Packs
 
-Shops live in:
+ZaminShop now uses a pack-based shop layout.
 
-```text
-plugins/ZaminShop/shops/
+## How packs are loaded
+
+Packs are registered manually in `config.yml`:
+
+```yaml
+shops:
+  survival:
+    folder: survival_shop
+    enabled: true
+    file: main.yml
 ```
 
-The source ships with default shop files for blocks, armor, drops, dyes, farming, food, miscellaneous, ores, and tools.
+Only packs listed in `config.yml -> shops` are loaded.
 
-Each shop file is loaded through the shop validation pipeline. Invalid entries are skipped when safe and reported through validation diagnostics.
+ZaminShop does **not** auto-discover every folder under `plugins/ZaminShop/shops/`.
+
+## Pack folder structure
+
+Each pack folder should look like this:
+
+```text
+plugins/ZaminShop/shops/survival_shop/
+  main.yml
+  categories/
+    blocks.yml
+    food.yml
+    ores.yml
+```
+
+## What each file does
+
+- `main.yml`: the pack entry menu
+- `categories/*.yml`: the actual category shop menus
+
+## Validation behavior
+
+If a registered pack is broken:
+
+- missing folder -> pack is skipped
+- missing `main.yml` -> pack is skipped
+- invalid category file -> that category is skipped
 
 Use:
 
@@ -16,4 +50,4 @@ Use:
 /zaminshop validate
 ```
 
-after editing shops.
+after editing a pack.

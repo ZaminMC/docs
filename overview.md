@@ -1,34 +1,28 @@
-# Total Overview
+# Overview
 
-ZaminShop has four big layers:
+ZaminShop is built around three core pieces:
 
-## 1. Commands
+- `config.yml` for global behavior
+- `guis/*.yml` for shared menus
+- `shops/<pack>/` for pack-specific shop menus
 
-Players mostly use `/shop` and `/sell`.
+## How the plugin is structured
 
-Admins use `/zaminshop` for reloads, validation, risk guard, language management, modifiers, item checks, and inventory sanitation.
+### Global configuration
 
-## 2. Shops
+`plugins/ZaminShop/config.yml` controls:
 
-Shop definitions live in `shops/*.yml`.
+- enabled economies
+- database backend
+- transaction safety
+- search behavior
+- menu file paths
+- registered shop packs
 
-Each shop file controls:
+### Shared menus
 
-- display name
-- rows/size
-- economy
-- buy/sell GUI toggles
-- per-shop messages
-- permission/world restrictions
-- item list
+Files under `plugins/ZaminShop/guis/` define menus used across the plugin, including:
 
-## 3. GUIs
-
-Built-in menu files live in `guis/*.yml`.
-
-The default menus include:
-
-- shop directory
 - amount selector
 - bulk buy
 - bulk sell
@@ -36,18 +30,30 @@ The default menus include:
 - recent
 - search
 - sell GUI
-- shared GUI settings
 
-## 4. Safety Systems
+### Shop packs
 
-ZaminShop is not only a menu renderer. It has backend safety layers:
+Each shop pack is registered manually in `config.yml` and points to a folder under:
 
-- transaction-safety
-- transaction-audit
-- currency-safety
-- risk-guard
-- sell-limits
-- suspicious-transactions
-- GUI-owned item sanitation
+```text
+plugins/ZaminShop/shops/<folder>/
+```
 
-These systems exist to reduce dupes, broken economies, bad YAML, and leaked GUI items.
+Each pack contains:
+
+- `main.yml` for the pack entry menu
+- `categories/*.yml` for the actual category shops
+
+## Safety systems
+
+ZaminShop does more than open inventories. It also includes:
+
+- per-player transaction locks
+- click cooldown protection
+- currency validation
+- risk guard
+- suspicious transaction detection
+- sell limits
+- GUI-owned item cleanup
+
+Those systems are documented in the configuration section because they affect runtime behavior as much as menu design.

@@ -1,10 +1,14 @@
 # config.yml Reference
 
-This page follows the actual default `config.yml` from the source.
+This page covers the most important runtime sections from the current bundled `config.yml`.
 
 ## `language`
 
-Default: `en_US`
+```yaml
+language: "en_US"
+```
+
+Controls the active language file under `plugins/ZaminShop/lang/`.
 
 ## `database`
 
@@ -15,120 +19,80 @@ database:
   mySQLPort: 3306
   mySQLDatabase: db
   mySQLUser: root
-  mySQLPassword: ''
-  tableNames:
-    players: players
+  mySQLPassword: ""
 ```
+
+Used for player data, favorites, recent transactions, and related storage.
 
 ## `economyTypes`
 
 ```yaml
 economyTypes:
-- VAULT
+  - VAULT
 ```
 
-## `startup-log`
-
-```yaml
-startup-log:
-  banner: true
-  debug: false
-  show-shop-breakdown: false
-```
-
-## `inventoryClickShortcuts`
-
-```yaml
-inventoryClickShortcuts:
-  enabled: true
-  mainMenu: false
-  shopMenu: true
-  amountSelector: false
-  bulkBuy: false
-  bulkSell: false
-```
+This list is ordered. The first valid provider becomes the default shop currency unless a shop overrides it.
 
 ## `transaction-safety`
 
-```yaml
-transaction-safety:
-  enabled: true
-  per-player-lock: true
-  lock-timeout-ms: 5000
-  click-cooldown-ms: 150
-  block-while-inventory-open: false
-  debug-failures: false
-```
+Controls the runtime protection layer around buy and sell actions.
+
+Important keys:
+
+- `enabled`
+- `per-player-lock`
+- `lock-timeout-ms`
+- `click-cooldown-ms`
+- `block-while-inventory-open`
+- `debug-failures`
 
 ## `transaction-audit`
 
-```yaml
-transaction-audit:
-  enabled: false
-  log-success: false
-  log-failures: true
-  include-inventory-summary: false
-```
+Optional transaction logging layer.
+
+Use this if you want a structured audit trail for suspicious actions or debugging.
 
 ## `currency-safety`
 
-```yaml
-currency-safety:
-  enabled: true
-  decimal-places: 2
-  reject-prices-with-too-many-decimals: true
-  minimum-transaction-value: 0.01
-  normalize-player-balances-for-checks: true
-  block-nan-infinity: true
-  max-transaction-value: 1000000000000
-```
+Prevents invalid money values from entering the economy pipeline.
+
+Important keys:
+
+- `decimal-places`
+- `reject-prices-with-too-many-decimals`
+- `minimum-transaction-value`
+- `block-nan-infinity`
+- `max-transaction-value`
 
 ## `risk-guard`
 
-```yaml
-risk-guard:
-  enabled: true
-  block-critical-shops: true
-  notify-admins: true
-  require-confirmation: true
-  max-sell-buy-ratio: 0.8
-  allow-sell-higher-than-buy: false
-```
+Checks dangerous pricing setups such as unsafe sell-to-buy ratios.
+
+Important keys:
+
+- `enabled`
+- `block-critical-shops`
+- `notify-admins`
+- `require-confirmation`
+- `max-sell-buy-ratio`
+- `allow-sell-higher-than-buy`
 
 ## `sell-limits`
 
-```yaml
-sell-limits:
-  enabled: false
-  reset-timezone: server
-  daily:
-    enabled: false
-    max-money: 50000
-    max-items: 50000
-  weekly:
-    enabled: false
-    max-money: 500000
-    max-items: 500000
-```
+Optional daily and weekly sell caps.
+
+Works together with the PlaceholderAPI counters documented on the PlaceholderAPI page.
 
 ## `suspicious-transactions`
 
-```yaml
-suspicious-transactions:
-  enabled: false
-  notify-admins: true
-  log-console: true
-  cooldown-between-alerts-seconds: 60
-  thresholds:
-    transactions-per-10-seconds: 20
-    money-earned-per-minute: 1000000
-    items-sold-per-minute: 50000
-    same-item-sales-per-10-seconds: 15
-  actions:
-    warn-admins: true
-    temporarily-block-selling: false
-    block-duration-seconds: 30
-```
+Optional alerting system for abnormal selling behavior.
+
+Includes thresholds such as:
+
+- transactions per 10 seconds
+- money earned per minute
+- items sold per minute
+- repeated sales of the same item
 
 ## `search`
 
@@ -140,205 +104,67 @@ search:
   search-on-unknown-shop-command: false
 ```
 
-## `recent-menu`
-
-```yaml
-recent-menu:
-  enabled: true
-  max-records-per-player: 20
-  show-bought: true
-  show-sold: true
-```
+Controls the `/shop search` system.
 
 ## `gui_menus`
 
+Maps built-in shared menu ids to file paths.
+
+Example:
+
 ```yaml
 gui_menus:
-  gui-settings:
-    file: guis/gui-settings.yml
-  shop-directory:
-    file: guis/shop-directory.yml
   amount-selector:
     file: guis/amount-selector.yml
-  bulk-buy:
-    file: guis/bulk-buy.yml
-  bulk-sell:
-    file: guis/bulk-sell.yml
-  recent:
-    file: guis/recent.yml
   favorites:
     file: guis/favorites.yml
-  search:
-    file: guis/search.yml
   sell:
     file: guis/sell.yml
 ```
 
-## `maxEnchantments`
+If you move a shared GUI file, update the path here.
 
-Default: `3`
+## `shops`
 
-## `limitEnchantmentLevelDiff`
+Manual shop pack registration lives here.
 
-Default: `False`
-
-## `enableAmountSelectionFix`
-
-Default: `True`
-
-## `allowAllSellAllStackSizes`
-
-Default: `False`
-
-## `roundPrices`
-
-Default: `none`
-
-## `disableMainMenu`
-
-Default: `False`
-
-## `useDifferentMessagesForFreeItems`
-
-Default: `True`
-
-## `capitalizeItemNames`
-
-Default: `True`
-
-## `priceModifiersType`
-
-Default: `BOTH`
-
-## `closeGuiAfterSellAll`
-
-Default: `False`
-
-## `openBulkGuiImmediately`
-
-Default: `False`
-
-## `sudoAllowAllShopsAccess`
-
-Default: `False`
-
-## `disableShopsInGamemodes`
+Example:
 
 ```yaml
-disableShopsInGamemodes:
-- ADVENTURE
-- CREATIVE
-- SPECTATOR
+shops:
+  survival:
+    folder: survival_shop
+    enabled: true
+    file: main.yml
 ```
 
-## `disableShopsInWorlds`
+Meaning:
 
-```yaml
-disableShopsInWorlds: []
-```
+- `survival` is the internal pack id
+- `folder` is the folder inside `plugins/ZaminShop/shops/`
+- `enabled` controls whether the pack loads
+- `file` is the main menu file name inside that folder
 
-## `displayPriceModifiersInPercents`
+ZaminShop only loads packs listed here.
 
-Default: `True`
+## Other important gameplay settings
 
-## `disableSudoWorldPermissionCheck`
+### `disableMainMenu`
 
-Default: `False`
+Blocks the default main menu path when enabled.
 
-## `disableSudoShopPermissionCheck`
+### `disableShopsInGamemodes`
 
-Default: `False`
+Prevents normal shop access from selected gamemodes.
 
-## `disableUnsafeEnchantmentCheck`
+### `disableShopsInWorlds`
 
-Default: `False`
+Prevents normal shop access from selected worlds.
 
-## `allowEnchantmentLevelIncrease`
+### `sudoAllowAllShopsAccess`
 
-Default: `True`
+Changes how admin-opened shop sessions bypass normal access checks.
 
-## `defaultItemSettings`
+### `disableCommands.sell`
 
-```yaml
-defaultItemSettings:
-  compareMeta: false
-  stripItemMeta: false
-  compareModel: true
-  compareDamage: false
-  compareNbt: false
-  compareRepairCost: false
-```
-
-## `log`
-
-```yaml
-log:
-  toConsole: true
-  toFile: false
-  formatDate: yyyy/MM/dd HH:mm:ss
-  formatBuyCommand: '%player% bought %amount% x %command% command for %price% from
-    %shop% shop'
-  formatBuyEnchantment: '%player% bought %enchantment% enchantment for %price% from
-    %shop% shop'
-  formatBuyPermission: '%player% bought %permission% permission for %price% from %shop%
-    shop'
-  formatBuy: '%player% bought %amount% x %item% for %price% from %shop% shop'
-  formatSell: '%player% sold %amount% x %item% for %price% to %shop% shop'
-  formatSellAll: '%player% sold all %amount% x %item% for %price% to %shop% shop'
-```
-
-## `sellHand`
-
-```yaml
-sellHand:
-  allowAllQuantities: true
-  sellsAllItems: false
-  excludeFreeItems: true
-  excludeArmorSlots: true
-  excludeOffHand: false
-```
-
-## `sellAll`
-
-```yaml
-sellAll:
-  detailedSummary: false
-  findMaxSellPrice: true
-  excludeFreeItems: true
-  excludeArmorSlots: true
-  excludeOffHand: false
-```
-
-## `disableCommands`
-
-```yaml
-disableCommands:
-  sell: false
-```
-
-## `numberFormat`
-
-```yaml
-numberFormat:
-  decimalSeparator: .
-  groupingSeparator: ','
-  minimumIntegerDigits: 1
-  maximumIntegerDigits: 32
-  minimumFractionDigits: 0
-  maximumFractionDigits: 8
-  hideFraction: true
-  shortScale:
-    enableShortScaleNumbering: false
-    shortScaleLimit: 1000000
-    shortHandDecimalLimit: 2
-    shortHandNumberLimit: 32
-```
-
-
-## Notes
-
-- `economyTypes` is ordered. The first entry becomes the default economy for shops unless a shop overrides it.
-- `gui_menus` points built-in menu IDs to files. Move menu files only if you also update this section.
-- `transaction-safety` should usually stay enabled.
-- `risk-guard` should stay enabled on public servers.
-- `disableCommands.sell` needs a full server restart.
+Prevents the `/sell` command from being registered. This requires a full restart, not just a reload.

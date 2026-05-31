@@ -1,56 +1,18 @@
 # Permissions
 
-Source-merged from `plugin.yml` and Java permission checks.
+This page combines:
 
-| Permission | Default | Meaning |
-|---|---:|---|
-| `zaminshop.admin` | `op` | Legacy alias for zaminshop.admin.* |
-| `zaminshop.admin.*` | `op` | Grants all admin ZaminShop permissions |
-| `zaminshop.admin.check` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.help` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.language` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.modifier` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.open-others` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.reload` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.risk` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.admin.sanitize` | `op` | Allows removing leaked ZaminShop GUI items from a player inventory |
-| `zaminshop.admin.validate` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.buymore` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.bypassgamemode` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.bypassworld` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.check` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.item.` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.language` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.others` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.*` | `False` | Grants all player ZaminShop permissions |
-| `zaminshop.player.buy-more` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.bypass.gamemode` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.bypass.world` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.favorite` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.recent` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.search` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.sell-more` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.shop` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.player.worth` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.pricemodifiers.` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.reload` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.sell.all` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.sell.all.others` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.sell.hand` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.sell.hand.all` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.sellgui` | `False` | Allows opening the configurable sell GUI |
-| `zaminshop.sellmore` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.shop` | `False` | Legacy alias for zaminshop.player.shop |
-| `zaminshop.shop.addmodifier` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.shop.checkmodifiers` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.shop.resetmodifier` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.shops.` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.validate` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
-| `zaminshop.worth` | `not declared` | Detected from source usage; not explicitly declared in plugin.yml. |
+- permissions declared in `plugin.yml`
+- permissions enforced directly in source
 
-## Permission groups declared in plugin.yml
+## Declared permission groups
 
-`zaminshop.player.*` grants the normal player feature set:
+### `zaminshop.player.*`
+
+- Default: `false`
+- Purpose: grants the normal player feature set
+
+Children:
 
 - `zaminshop.player.shop`
 - `zaminshop.player.search`
@@ -61,4 +23,131 @@ Source-merged from `plugin.yml` and Java permission checks.
 - `zaminshop.player.buy-more`
 - `zaminshop.player.sell-more`
 
-`zaminshop.admin.*` grants admin tools and also includes `zaminshop.player.*`.
+### `zaminshop.admin.*`
+
+- Default: `op`
+- Purpose: grants admin tools and includes `zaminshop.player.*`
+
+Children:
+
+- `zaminshop.admin.help`
+- `zaminshop.admin.reload`
+- `zaminshop.admin.validate`
+- `zaminshop.admin.risk`
+- `zaminshop.admin.language`
+- `zaminshop.admin.sanitize`
+- `zaminshop.admin.check`
+- `zaminshop.admin.modifier`
+- `zaminshop.admin.open-others`
+
+## Legacy aliases
+
+### `zaminshop.shop`
+
+- Default: `false`
+- Purpose: legacy alias for `zaminshop.player.shop`
+
+### `zaminshop.admin`
+
+- Default: `op`
+- Purpose: legacy alias for `zaminshop.admin.*`
+
+## Player permissions
+
+### `zaminshop.player.shop`
+
+Allows a player to open the normal shop entry command.
+
+### `zaminshop.player.search`
+
+Allows `/shop search <query>`.
+
+### `zaminshop.player.favorite`
+
+Allows opening the favorites menu.
+
+### `zaminshop.player.recent`
+
+Allows opening the recent transactions menu.
+
+### `zaminshop.sellgui`
+
+Allows opening the sell GUI.
+
+### `zaminshop.player.worth`
+
+Allows `/zaminshop worth`.
+
+### `zaminshop.player.buy-more`
+
+Used for bulk buy flows.
+
+### `zaminshop.player.sell-more`
+
+Used for bulk sell flows.
+
+### `zaminshop.player.bypass.gamemode`
+
+Bypasses blocked gamemode checks for shop access.
+
+### `zaminshop.player.bypass.world`
+
+Bypasses blocked world checks for shop access.
+
+## Admin permissions
+
+### `zaminshop.admin.help`
+
+Allows admin help output.
+
+### `zaminshop.admin.reload`
+
+Allows `/zaminshop reload`.
+
+### `zaminshop.admin.validate`
+
+Allows `/zaminshop validate`.
+
+### `zaminshop.admin.risk`
+
+Allows risk guard administration commands.
+
+### `zaminshop.admin.language`
+
+Allows language management commands.
+
+### `zaminshop.admin.sanitize`
+
+Allows `/zaminshop sanitize <player>`.
+
+### `zaminshop.admin.check`
+
+Allows `/zaminshop check`.
+
+### `zaminshop.admin.modifier`
+
+Allows price modifier commands.
+
+### `zaminshop.admin.open-others`
+
+Allows opening shop menus for another player.
+
+## Sell command permissions
+
+### `zaminshop.sell.hand`
+
+Allows `/sell hand`.
+
+### `zaminshop.sell.hand.all`
+
+Allows `/sell handall`.
+
+### `zaminshop.sell.all`
+
+Allows `/sell all`.
+
+## Notes
+
+- Some permissions are enforced in code but not declared individually in `plugin.yml`
+- If you want a strict permission plugin setup, grant the exact nodes you use instead of relying only on the wildcard groups
+- Dynamic shop pack commands still rely on the normal shop access checks

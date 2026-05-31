@@ -1,66 +1,93 @@
 # Shop Items
 
-Shop item loading supports multiple item types and source keys.
+Category shop files support both transactional items and menu-only items.
+
+## Transactional shop items
+
+The current shop loader maps these menu-style types into shop behavior:
+
+- `SHOP_ITEM`
+- `COMMAND`
+- `PERMISSION`
+- `ENCHANTMENT`
+
+## Menu-only items inside category shops
+
+These item types are handled by the menu layer, not the transaction loader:
+
+- `CUSTOM`
+- `SHOP_CATEGORY`
+- `PREVIOUS_PAGE`
+- `NEXT_PAGE`
+- `BACK`
 
 ## Common keys
 
-| Key | Meaning |
+| Key | Purpose |
 |---|---|
-| `type` | Item type. Examples include normal item, command, permission, enchantment, shop link. |
-| `page` / `pages` | Page placement. |
-| `slot` / `slots` | GUI slot placement. |
-| `material` | Bukkit material or supported item-provider format. |
-| `amount` | Display stack amount. |
-| `quantity` | Transaction quantity. |
-| `buy-price` | Buy price. |
-| `sell-price` | Sell price. |
-| `permission` / `permissions` | Permission requirement or permission item payload. |
-| `special` | Special item behavior. |
-| `force` | Force behavior where supported. |
-| `stacked`, `unstack` | Stack handling behavior. |
+| `type` | Item behavior |
+| `material` | Display or transaction item material |
+| `amount` | GUI display amount |
+| `quantity` | Transaction quantity |
+| `buy-price` | Buy price |
+| `sell-price` | Sell price |
+| `slot` / `slots` | Fixed menu placement for non-paginated items |
+| `display-name` | GUI name override |
+| `lore` | GUI lore override |
+| `display-page` | Optional page restriction for menu rendering |
 
-## Command items
+## Important pricing rule
 
-Source-supported keys:
+Negative pricing is not the current model.
 
-```yaml
-commands:
-  - "say %player% bought this"
-requireInventorySpace: false
-runSingleCommand: false
-runAsBuyer: false
-commandsLimit: 1
-```
+- omit `buy-price` to disable buying
+- omit `sell-price` to disable selling
+- do not use `-1` as an old-style magic value
 
-## Permission items
-
-Source-supported keys:
+## `SHOP_ITEM` example
 
 ```yaml
-permission: "some.permission"
-permissions:
-  - "some.permission"
+carrot:
+  type: SHOP_ITEM
+  material: CARROT
+  amount: 16
+  quantity: 16
+  buy-price: 40
+  sell-price: 4
 ```
 
-## Enchantment items
-
-Source-supported keys:
+## `COMMAND` example
 
 ```yaml
-enchantment: SHARPNESS
-enchantmentLevel: 1
-enchantmentStackSizeLimit: 1
+rank_token:
+  type: COMMAND
+  material: PAPER
+  buy-price: 5000
+  sell-price: 0
+  commands:
+    - "lp user %player% parent add vip"
 ```
 
-## Shop link items
-
-Source-supported keys:
+## `PERMISSION` example
 
 ```yaml
-shop: blocks
-link:
-  shop: blocks
-  page: 1
+fly_access:
+  type: PERMISSION
+  material: FEATHER
+  buy-price: 10000
+  sell-price: 0
+  permission: "essentials.fly"
 ```
 
-Use this when a shop item should open another shop/page instead of buying an item.
+## `ENCHANTMENT` example
+
+```yaml
+sharpness_1:
+  type: ENCHANTMENT
+  material: ENCHANTED_BOOK
+  buy-price: 1500
+  sell-price: 0
+  enchantment: SHARPNESS
+  enchantmentLevel: 1
+  enchantmentStackSizeLimit: 1
+```
