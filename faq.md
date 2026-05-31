@@ -1,80 +1,105 @@
-# FAQ
+# Common Questions
 
-## Why does `/zaminshop` sometimes not behave like `/shop`?
+## Which command should players use?
 
-The command handler checks the actual command label. If the label is literally `shop`, it uses the player shop command flow. Otherwise it uses the admin/main command flow.
-
-## What command should players use?
-
-Use:
+Normally:
 
 ```text
 /shop
 ```
 
-## What command should admins use?
+That is the main player entry point.
 
-Use:
+## Which command should staff use?
+
+For admin tasks:
 
 ```text
 /zaminshop
 ```
 
-## How do I verify my setup?
+That gives access to reload, validation, risk, language, and modifier tools.
 
-Run:
+## Where are the files I actually edit?
 
-```text
-/zaminshop validate
-/zaminshop risk list
-```
+Most servers will work with four areas:
 
-## Why is my shop blocked?
+- `config.yml`
+- `guis/*.yml`
+- `shops/<pack>/main.yml`
+- `shops/<pack>/categories/*.yml`
 
-Risk guard can block dangerous economy setups. Check:
+## Does ZaminShop auto-load every folder inside `plugins/ZaminShop/shops/`?
 
-```text
-/zaminshop risk list
-```
+No.
 
-Then fix the shop or confirm the risk with:
+Packs are manual only. A folder must be registered in `config.yml -> shops` or it will be ignored.
 
-```text
-/zaminshop risk confirm <riskId>
-```
+## What is the difference between `guis/` and `shops/`?
 
-## How do I open the sell GUI?
+`guis/` contains shared menus used across the plugin.
+
+`shops/` contains the actual pack main menus and category shop menus.
+
+## Why does the plugin have both validation and risk guard?
+
+Because they solve different problems.
+
+- validation checks whether the files are structurally usable
+- risk guard checks whether the prices are economically dangerous
+
+You want both.
+
+## How do players open the sell GUI?
+
+Usually with:
 
 ```text
 /shop sell
 ```
 
-The default permission is:
+The player also needs the `zaminshop.sellgui` permission and the sell GUI must be enabled in config.
+
+## Are favorites and recent menus per-shop or global?
+
+They are global player convenience features.
+
+Search is pack-scoped, but favorites and recent history are not tied to just one category file.
+
+## Can I move built-in menu files?
+
+Yes, but update the path in `config.yml -> gui_menus`.
+
+If the path is wrong, the plugin will not guess where you moved the file.
+
+## What should I run after editing configs?
+
+Run:
 
 ```text
-zaminshop.sellgui
+/zaminshop validate
 ```
 
-## Where do I edit menus?
+If you changed pricing or opened a new economy path, also check:
 
 ```text
-plugins/ZaminShop/guis/
+/zaminshop risk list
 ```
 
-## Where do I edit shops?
+## What if only operators can use the shop?
+
+That is usually a permissions issue.
+
+Start with:
+
+- `zaminshop.player.shop`
+- `zaminshop.player.search`
+- `zaminshop.player.favorite`
+- `zaminshop.player.recent`
+- `zaminshop.sellgui`
+
+Or grant the full player group:
 
 ```text
-plugins/ZaminShop/shops/
+zaminshop.player.*
 ```
-
-## Does ZaminShop support PlaceholderAPI?
-
-Yes. Identifier:
-
-```text
-zaminshop
-```
-
-## Does `/sell` need a restart to disable?
-
-Yes. `disableCommands.sell` requires a full server restart.

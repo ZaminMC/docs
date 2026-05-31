@@ -1,47 +1,60 @@
-# Item & Spawner Hooks
+# Item and Spawner Hooks
 
-Hook adapter/source files found in `com.zamin.zaminshop.hook`:
+ZaminShop supports a range of optional integrations for custom items, external item ecosystems, and spawner handling.
 
-```text
-economy/EconomyCoinsEngineProvider.java
-economy/EconomyExpLevelProvider.java
-economy/EconomyExpProvider.java
-economy/EconomyGemsEconomyProvider.java
-economy/EconomyGringottsProvider.java
-economy/EconomyMySqlTokensProvider.java
-economy/EconomyPlayerPointsProvider.java
-economy/EconomyProvider.java
-economy/EconomyTokenEnchantProvider.java
-economy/EconomyTokenManagerProvider.java
-economy/EconomyTransactionResult.java
-economy/EconomyVaultProvider.java
-economy/EconomyVotingPluginProvider.java
-item/BreweryItemProvider.java
-item/CrackShotItemProvider.java
-item/CraftEngineItemProvider.java
-item/CustomItemsItemProvider.java
-item/ExecutableBlocksItemProvider.java
-item/ExecutableItemsItemProvider.java
-item/HeadDatabaseItemProvider.java
-item/ItemProvider.java
-item/ItemsAdderItemProvider.java
-item/MMOItemsItemProvider.java
-item/MythicMobsItemsItemProvider.java
-item/NexoItemProvider.java
-item/OraxenItemProvider.java
-item/QualityArmoryItemProvider.java
-item/SlimefunItemProvider.java
-item/WeaponMechanicsItemProvider.java
-language/LanguageLanguageUtilsProvider.java
-language/LanguageProvider.java
-placeholder/ZaminShopPlaceholderExpansion.java
-spawner/SpawnerManager.java
-spawner/external/ExternalSpawnerHandler.java
-spawner/external/provider/ExternalSpawnerProvider.java
-spawner/internal/InternalSpawnerHandler.java
-spawner/internal/provider/InternalSpawnerProvider.java
-spawner/internal/provider/InternalSpawnerProviderPostV1_8.java
-spawner/internal/provider/InternalSpawnerProviderPreV1_8.java
-```
+## Why hooks matter
 
-The project keeps many optional integrations reflection-backed or adapter-based so servers are not forced to install every supported plugin.
+Hooks let the shop system work with more than plain vanilla materials.
+
+That matters when your server uses:
+
+- custom item plugins
+- external weapon systems
+- head databases
+- custom spawner logic
+
+## Supported item-side integrations in source
+
+Current hook providers include support for ecosystems such as:
+
+- Brewery
+- CrackShot
+- CraftEngine
+- CustomItems
+- ExecutableBlocks
+- ExecutableItems
+- HeadDatabase
+- ItemsAdder
+- MMOItems
+- MythicMobs items
+- Nexo
+- Oraxen
+- QualityArmory
+- Slimefun
+- WeaponMechanics
+
+## Spawner handling
+
+Spawner support is split between:
+
+- internal handling
+- external provider handling
+
+That allows the plugin to work with both built-in spawner logic and supported external spawner providers.
+
+## How optional hooks behave
+
+Optional integrations are designed so that missing plugins do not crash ZaminShop startup.
+
+That means:
+
+- installed plugin present -> hook can activate
+- plugin missing -> hook is skipped
+
+## When to care about this page
+
+You should read this section if:
+
+- items are loading as invalid when they are not vanilla
+- a custom item plugin was installed but shop items still do not resolve
+- you are building a server that mixes several item ecosystems together

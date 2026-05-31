@@ -1,6 +1,8 @@
 # PlaceholderAPI
 
-ZaminShop registers the PlaceholderAPI identifier:
+ZaminShop includes a PlaceholderAPI expansion so your menus, messages, and other plugin text can show live shop-related values.
+
+## Identifier
 
 ```text
 zaminshop
@@ -12,38 +14,48 @@ Format:
 %zaminshop_<placeholder>%
 ```
 
+## What you can use it for
+
+PlaceholderAPI becomes most useful when you want to show:
+
+- player balance
+- favorite counts
+- recent history counts
+- sell-limit progress
+- current item or shop context inside menus
+
 ## Direct placeholders
 
-These are handled explicitly by `ZaminShopPlaceholderExpansion`.
+These placeholders are handled explicitly by the ZaminShop expansion:
 
-| Placeholder | Description | Example |
-|---|---|---|
-| `%zaminshop_balance%` | Current player balance from the default economy provider | `125,000` |
-| `%zaminshop_favorites%` | Favorite item count | `8` |
-| `%zaminshop_favoritescount%` | Favorite item count | `8` |
-| `%zaminshop_favoritelimit%` | Current favorite limit value returned by source | `-` |
-| `%zaminshop_recentcount%` | Total recent entries stored | `12` |
-| `%zaminshop_recentboughtcount%` | Recent buy entries | `7` |
-| `%zaminshop_recentsoldcount%` | Recent sell entries | `5` |
-| `%zaminshop_lasttransactionamount%` | Amount from the latest recent entry | `64` |
-| `%zaminshop_lasttransactionprice%` | Price from the latest recent entry | `320` |
-| `%zaminshop_lasttransactiontype%` | Latest transaction action | `BUY` |
-| `%zaminshop_dailysellmoney%` | Daily earned sell money so far | `1500` |
-| `%zaminshop_dailysellmoneylimit%` | Daily sell money limit | `50000` |
-| `%zaminshop_dailysellmoneyremaining%` | Daily sell money remaining | `48500` |
-| `%zaminshop_weeklysellmoney%` | Weekly earned sell money so far | `9200` |
-| `%zaminshop_weeklysellmoneylimit%` | Weekly sell money limit | `500000` |
-| `%zaminshop_weeklysellmoneyremaining%` | Weekly sell money remaining | `490800` |
-| `%zaminshop_dailyitemssold%` | Daily sold item count | `320` |
-| `%zaminshop_dailyitemssoldlimit%` | Daily item sell limit | `50000` |
-| `%zaminshop_dailyitemssoldremaining%` | Daily items remaining before limit | `49680` |
-| `%zaminshop_weeklyitemssold%` | Weekly sold item count | `2150` |
-| `%zaminshop_weeklyitemssoldlimit%` | Weekly item sell limit | `500000` |
-| `%zaminshop_weeklyitemssoldremaining%` | Weekly items remaining before limit | `497850` |
+| Placeholder | Meaning |
+|---|---|
+| `%zaminshop_balance%` | Current player balance from the default economy provider |
+| `%zaminshop_favorites%` | Favorite item count |
+| `%zaminshop_favoritescount%` | Favorite item count |
+| `%zaminshop_favoritelimit%` | Current favorite limit value returned by source |
+| `%zaminshop_recentcount%` | Total recent entries stored |
+| `%zaminshop_recentboughtcount%` | Recent buy entries |
+| `%zaminshop_recentsoldcount%` | Recent sell entries |
+| `%zaminshop_lasttransactionamount%` | Amount from the latest recent entry |
+| `%zaminshop_lasttransactionprice%` | Price from the latest recent entry |
+| `%zaminshop_lasttransactiontype%` | Latest transaction action |
+| `%zaminshop_dailysellmoney%` | Daily earned sell money so far |
+| `%zaminshop_dailysellmoneylimit%` | Daily sell money limit |
+| `%zaminshop_dailysellmoneyremaining%` | Daily sell money remaining |
+| `%zaminshop_weeklysellmoney%` | Weekly earned sell money so far |
+| `%zaminshop_weeklysellmoneylimit%` | Weekly sell money limit |
+| `%zaminshop_weeklysellmoneyremaining%` | Weekly sell money remaining |
+| `%zaminshop_dailyitemssold%` | Daily sold item count |
+| `%zaminshop_dailyitemssoldlimit%` | Daily item sell limit |
+| `%zaminshop_dailyitemssoldremaining%` | Daily items remaining before limit |
+| `%zaminshop_weeklyitemssold%` | Weekly sold item count |
+| `%zaminshop_weeklyitemssoldlimit%` | Weekly item sell limit |
+| `%zaminshop_weeklyitemssoldremaining%` | Weekly items remaining before limit |
 
 ## Context placeholders
 
-ZaminShop also exposes context-driven placeholders that are filled while menus, searches, validation, risk output, or transactions are active.
+ZaminShop also fills context-driven placeholders while a relevant menu, transaction, validation run, or search flow is active.
 
 Common examples:
 
@@ -58,13 +70,12 @@ Common examples:
 - `%zaminshop_amount%`
 - `%zaminshop_quantity%`
 
-These are most useful inside:
+These are especially useful inside:
 
 - menu titles
 - menu lore
-- language strings
-- validation messages
-- transaction messages
+- language-backed GUI labels
+- validation and transaction messages
 
 ## Language fallback
 
@@ -74,10 +85,15 @@ If a placeholder is not handled directly and matches a language key, ZaminShop f
 zaminshop_<placeholder>
 ```
 
-That means menu text can reuse language keys without writing custom parsing logic in the menu itself.
+This is why some GUI text can stay in the language file while still behaving like a placeholder-backed label.
 
-## Notes
+## Practical advice
 
-- `%zaminshop_balance%` uses the plugin's default configured economy provider
-- context placeholders only return useful values when that context exists
-- external placeholders such as `%vault_eco_balance_commas%` still require the external plugin that owns them
+Use PlaceholderAPI for values that actually help the player make decisions:
+
+- current balance
+- buy and sell values
+- favorite counts
+- search query feedback
+
+Do not overload every lore block just because the placeholders exist.

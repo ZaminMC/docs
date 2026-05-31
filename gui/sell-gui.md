@@ -1,158 +1,85 @@
-# Sell GUI
+# Sell Menu
 
-The sell GUI is opened with:
+The sell GUI is the dedicated menu for selling inventory items through ZaminShop.
+
+## What it does
+
+Players can open a menu, move sellable items into the sell area, and let the plugin resolve prices through the normal shop item logic instead of a disconnected fallback system.
+
+Command:
 
 ```text
 /shop sell
 ```
 
-Default permission in `guis/gui-settings.yml`:
+Permission:
+
+```text
+zaminshop.sellgui
+```
+
+## Why it exists
+
+The sell GUI is useful because command-only selling becomes clumsy once players are dealing with:
+
+- mixed inventories
+- partial stacks
+- large farm output
+- frequent category switching
+
+## Main behavior switches
+
+These are controlled in `guis/gui-settings.yml`:
 
 ```yaml
 sellGui:
+  enabled: true
   permission: "zaminshop.sellgui"
+  sellOnClose: true
+  returnInvalidItemsOnClose: true
+  allowShiftClick: true
+  allowDragIntoSellSlots: true
 ```
 
-Default `sell.yml` uses dynamic item types:
+## What those options mean
+
+- `enabled`: turns the menu on or off
+- `permission`: permission required to open it
+- `sellOnClose`: sells valid items when the menu closes
+- `returnInvalidItemsOnClose`: protects players from losing invalid items
+- `allowShiftClick`: allows fast movement from inventory into the sell area
+- `allowDragIntoSellSlots`: controls drag behavior
+
+## Menu item types used here
+
+The sell menu relies on these dynamic types:
 
 - `SELL_SLOT`
 - `SELL_SUMMARY`
 - `CUSTOM`
 
-Default file:
+## Recommended customization targets
 
-```yaml
-menu_title: "&8Sell Items"
-size: 54
+Most servers should adjust:
 
-items:
-#################################################
-#             SHOP Menu Decoration              #
-#################################################
-  filler:
-    type: CUSTOM
-    material: GRAY_STAINED_GLASS_PANE
-    slots:
-      - 0-8
-      - 10
-      - 28
-      - 37
-      - 45-46
-    display-name: "&r"
+- sell area size
+- filler layout
+- summary item wording
+- info/help item wording
+- the navigation items around the sell flow
 
-  selection:
-    type: CUSTOM
-    material: LIME_STAINED_GLASS_PANE
-    slot: 19
-    display-name: "&r"
+## Common mistakes
 
+### Treating the sell GUI as a second pricing system
 
-#################################################
-#              Sell Menu Items                  #
-#################################################
+It is not supposed to have its own economy logic. It should stay a visual entry point into the existing sell-price resolver.
 
-  sell-area:
-    type: SELL_SLOT
-    slots:
-      - 11-17
-      - 20-26
-      - 29-35
-      - 38-44
+### Removing all guidance text
 
-  summary:
-    type: SELL_SUMMARY
-    slot: 49
-    material: EMERALD
-    display-name: "%zaminshop_sell_summary_name%"
+Players still need to understand:
 
-  info:
-    type: CUSTOM
-    slot: 51
-    material: BOOK
-    display-name: "%zaminshop_sell_info_name%"
-    lore:
-      - "%zaminshop_sell_info_lore_1%"
-      - "%zaminshop_sell_info_lore_2%"
-    left_click_actions:
-      - "[message] &ePlace items into the empty slots."
+- where to place items
+- whether closing the menu sells items
+- what the summary means
 
-  sell_menu_tip:
-    type: CUSTOM
-    material: BLACK_STAINED_GLASS_PANE
-    slots:
-      - 47-48
-      - 50
-      - 52-53
-    display-name: "&8Click items in your inventory"
-    lore:
-    - "&8to add to the list of items to sell"
-
-
-#################################################
-#              SHOP Menu Items                  #
-#################################################
-
-  server_shop:
-    type: CUSTOM
-    material: EMERALD
-    slot: 9
-    display-name: "&b&lServer Shop"
-    lore:
-    - "&r"
-    - "&fBuy blocks, gear, and more"
-    - "&fstock up on useful resources"
-    - "&fall in one convenient shop"
-    - "&r"
-    - "&bFeatures:"
-    - "&b ▪ &fBuilding Blocks"
-    - "&b ▪ &fDecorative blocks"
-    - "&b ▪ &fMob Drops"
-    - "&b ▪ &fMinerals"
-    - "&b ▪ &fSpawners"
-    - "&b ▪ &fCombat items"
-    - "&b ▪ &fAnd much more!"
-    - "&r"
-    - "&e► Click here to open"
-    left_click_actions:
-    - "[open] shop-directory"
-
-  sell_menu:
-    type: CUSTOM
-    material: HOPPER
-    slot: 18
-    display-name: "&a&lSell Menu"
-    lore:
-    - "&r"
-    - "&fSell your items here through"
-    - "&fthe sell menu with just a"
-    - "&ffew clicks"
-
-  favorite_menu:
-    type: CUSTOM
-    material: ENDER_CHEST
-    slot: 27
-    display-name: "&6&lFavorites"
-    lore:
-    - "&r"
-    - "&fView your favorite items or"
-    - "&fadd new ones by &bshift-clicking "
-    - "&rin the shop"
-    - "&r"
-    - "&e► Click here to open"
-    left_click_actions:
-    - "[open] favorites"
-
-  recent_menu:
-    type: CUSTOM
-    material: GOLD_INGOT
-    slot: 36
-    display-name: "&c&lRecently Bought"
-    lore:
-    - "&r"
-    - "&fView items you recently purchased"
-    - "&ffrom the shop all in one place"
-    - "&r"
-    - "&e► Click here to open"
-    left_click_actions:
-    - "[open] recent"
-```
+One good info item usually prevents a lot of confusion.

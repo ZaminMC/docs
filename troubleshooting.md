@@ -1,60 +1,90 @@
-# Troubleshooting
+# Fixing Common Problems
 
-## Shops are not opening
+This page focuses on symptoms, likely causes, and the fastest checks to run first.
 
-Run:
+## `/shop` does not open
+
+Check:
+
+1. the player has `zaminshop.player.shop`
+2. the player's world is not blocked in `disableShopsInWorlds`
+3. the player's gamemode is not blocked in `disableShopsInGamemodes`
+4. `disableMainMenu` is not blocking the flow you expect
+5. at least one enabled pack is registered in `config.yml -> shops`
+
+Then run:
 
 ```text
 /zaminshop validate
 ```
 
-Check:
+## A registered pack is skipped
 
-- YAML syntax
-- invalid material names
-- missing economy plugin
-- denied world/gamemode
-- missing player permission
-- `disableMainMenu`
+The usual causes are:
 
-## Console says startup failed
+- folder missing
+- `main.yml` missing
+- invalid YAML in the pack files
 
-The command handler sends `MSG.STARTUPFAILED` when startup did not complete.
-
-Fix the reported config/shop error in console, then restart or reload.
+Check the console startup warnings first, then validate again after fixing the file.
 
 ## Search returns nothing
 
 Check:
 
-```yaml
-search:
-  enabled: true
-```
+- `config.yml -> search.enabled`
+- whether the current pack actually contains matching shop items
+- whether the player has `zaminshop.player.search`
 
-Also verify shops actually loaded with:
-
-```text
-/zaminshop validate
-```
+Remember that `/shop search <query>` searches the current pack scope, not every possible pack automatically.
 
 ## Sell GUI does not open
 
 Check:
 
-```yaml
-sellGui:
-  enabled: true
-  permission: "zaminshop.sellgui"
-```
+- `zaminshop.sellgui` permission
+- `guis/gui-settings.yml -> sellGui.enabled`
+- the sell GUI file path under `config.yml -> gui_menus.sell.file`
 
-Then give the player:
+## Sell GUI opens but items are rejected
+
+That usually means one of these:
+
+- the item has no valid sell price
+- the item metadata does not match what the shop expects
+- the item is not part of any currently loaded sellable shop item
+
+If the same item sells through one path and fails through another, validate the shop setup and inspect item comparison settings.
+
+## Prices look wrong
+
+Check these layers in order:
+
+1. the base item price in the category file
+2. the active economy type
+3. player or command price modifiers
+4. sell limits or suspicious transaction actions
+5. number formatting and price rounding settings
+
+## Items appear as barriers, air, or invalid placeholders
+
+Most of the time this is caused by:
+
+- invalid material names for the server version
+- unsupported metadata on that server version
+- menu items using bad placeholder-driven materials
+- malformed YAML
+
+Use:
 
 ```text
-zaminshop.sellgui
+/zaminshop validate
+/zaminshop check
 ```
 
-## Risk guard blocks an item
+and read the startup warnings closely.
+
+## Risk guard blocks a shop or item
 
 Run:
 
@@ -62,30 +92,35 @@ Run:
 /zaminshop risk list
 ```
 
-Fix the buy/sell prices, or confirm the risk intentionally.
+Then decide whether to:
 
-## GUI items leaked into player inventory
+- fix the prices
+- confirm the risk intentionally
+- reset the risk state after cleanup
 
-Use:
+## GUI items leaked into a player inventory
+
+Run:
 
 ```text
 /zaminshop sanitize <player>
 ```
 
-Permission:
+This is an admin recovery tool for GUI-owned item cleanup.
 
-```text
-zaminshop.admin.sanitize
-```
+## Reload does not fix the issue
 
-## Reload denied
+Reload is useful, but not everything should be treated as a reload problem.
 
-Reload is denied while active transactions are locked. Wait until transactions finish, then run:
+Use reload when you changed:
 
-```text
-/zaminshop reload
-```
+- config values
+- GUI files
+- shop files
+- language files
 
-## `/sell` still exists after disabling it
+Use a full restart when:
 
-`disableCommands.sell` requires a full server restart.
+- the `/sell` command registration changed
+- you installed or removed a hook dependency
+- startup failed before the runtime finished booting cleanly

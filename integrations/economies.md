@@ -1,6 +1,10 @@
 # Economy Providers
 
-Supported economy types listed by the default config:
+ZaminShop supports multiple economy backends. This lets you use more than plain Vault money when your server design needs it.
+
+## Supported economy types
+
+The default config lists these built-in economy types:
 
 - `EXP`
 - `EXP_LEVELS`
@@ -14,13 +18,27 @@ Supported economy types listed by the default config:
 - `VOTING_PLUGIN`
 - `COINS_ENGINE`
 
-Example:
+## How the default economy is chosen
+
+`config.yml` uses an ordered list:
 
 ```yaml
 economyTypes:
   - VAULT
 ```
 
-The first economy in `economyTypes` becomes the default economy provider.
+The first valid entry becomes the default economy for the plugin.
 
-Individual shops may override economy using the shop `economy` key.
+## When to override per shop
+
+Use a per-shop `economy` override when:
+
+- one category should use points instead of cash
+- one donor or event category uses a separate currency
+- one server mode has a special economy path
+
+## Practical advice
+
+Do not add every possible provider just because it is supported.
+
+Only enable the currencies your server actually intends to use. The simpler your economy routing is, the easier it is to balance and debug.

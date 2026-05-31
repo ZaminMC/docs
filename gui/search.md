@@ -1,6 +1,28 @@
-# Search GUI
+# Search Menu
 
-Search is controlled by:
+The search system exists so players do not have to remember which category contains every item.
+
+## What search does
+
+Search looks through the currently scoped shop pack and opens a result menu with matching items.
+
+Command:
+
+```text
+/shop search <query>
+```
+
+## Why it matters
+
+As your pack grows, search becomes one of the biggest quality-of-life features in the plugin.
+
+It helps with:
+
+- large survival shops
+- donor packs with many categories
+- mixed item naming where players know the item but not the category
+
+## Global search settings
 
 ```yaml
 search:
@@ -10,192 +32,48 @@ search:
   search-on-unknown-shop-command: false
 ```
 
-Command:
+### Key options
 
-```text
-/shop search <query>
-```
+- `enabled`: turns the feature on or off
+- `fuzzy`: allows looser matching
+- `max-results`: caps how many results are shown
+- `search-on-unknown-shop-command`: controls fallback behavior for unknown shop labels
 
-Permission:
+## Permission
 
 ```text
 zaminshop.player.search
 ```
 
-Default search menu supports sorting:
+## Search menu layout
 
-```yaml
-modes:
-  - RELEVANCE
-  - CHEAPEST
-  - MOST_EXPENSIVE
-  - ALPHABETICAL
-```
+The bundled `search.yml` uses:
 
-Default `search.yml`:
+- `SEARCH_ITEM` for dynamic results
+- `SORT_CYCLE` for result ordering
+- `PREVIOUS_PAGE` and `NEXT_PAGE` for result navigation
+- `BACK` or custom back flow for returning to the previous menu
 
-```yaml
-menu_title: "&8ZaminShop ➔ Search: %query%"
-size: 54
+## Typical customizations
 
-pagination:
-  mode: Fancy
-  item-slots:
-    single-page:
-      - 10-16
-      - 19-25
-      - 28-34
-    first-page:
-      - 10-16
-      - 19-25
-      - 28-33
-    middle-page:
-      - 9-17
-      - 18-26
-      - 27-35
-    last-page:
-      - 10-16
-      - 19-25
-      - 28-34
+Most servers change:
 
-items:
-  filler:
-    type: CUSTOM
-    material: GRAY_STAINED_GLASS_PANE
-    display-name: "&r"
-    slots:
-      - 0-8
-      - 36-44
-      - 45-47
-      - 51-53
-    priority: 100
+- the result slot layout
+- sort button wording
+- back button wording
+- result lore
+- profile/info items
 
-  search-item:
-    type: SEARCH_ITEM
-    slots:
-      - 9-17
-      - 18-26
-      - 27-35
-    display-name: "&e%zaminshop_item%"
-    lore:
-      - "&7Shop: &f%zaminshop_shop_name%"
-      - "&7Buy: &a%zaminshop_buyprice%"
-      - "&7Sell: &c%zaminshop_sellprice%"
-      - ""
-      - "&eLeft-click &7Buy"
-      - "&eRight-click &7Sell"
-      - "&bMiddle-click &7Favorite"
-    priority: 50
+## Good practice
 
-  profile:
-    type: CUSTOM
-    material: "head-%player_name%"
-    slot: 4
-    display-name: "&b&lSearch"
-    lore:
-      - "&7Query: &f%query%"
-      - "&7Results: &e%zaminshop_search_count%"
-    priority: 50
+Keep search results readable.
 
-  sort:
-    type: SORT_CYCLE
-    slot: 48
-    priority: 1
-    default: RELEVANCE
-    modes:
-      - RELEVANCE
-      - CHEAPEST
-      - MOST_EXPENSIVE
-      - ALPHABETICAL
-    current:
-      RELEVANCE:
-        material: HOPPER
-        display-name: "&e&lSort"
-        lore:
-          - "&8Best search matches first."
-          - "&r"
-          - "&7Switch between:&r "
-          - "&r &8| &e▪&r &eRelevance ◄"
-          - "&r &8| &7▪&r &fCheapest"
-          - "&r &8| &7▪&r &fMost Expansive"
-          - "&r &8| &7▪&r &fAlphabetica"
-          - "&r"
-          - "&e► &lClick &fto switch mode"
-          - "&8► Right click to go backwards"
-      CHEAPEST:
-        material: HOPPER
-        display-name: "&e&lSort"
-        lore:
-          - "&8Cheapest items first."
-          - "&r"
-          - "&7Switch between:&r "
-          - "&r &8| &7▪&r &fRelevance"
-          - "&r &8| &e▪&r &eCheapest ◄"
-          - "&r &8| &7▪&r &fMost Expansive"
-          - "&r &8| &7▪&r &fAlphabetica"
-          - "&r"
-          - "&e► &lClick &fto switch mode"
-          - "&8► Right click to go backwards"
-      MOST_EXPENSIVE:
-        material: HOPPER
-        display-name: "&e&lSort"
-        lore:
-          - "&8Most expensive items first."
-          - "&r"
-          - "&7Switch between:&r "
-          - "&r &8| &7▪&r &fRelevance"
-          - "&r &8| &7▪&r &fCheapest"
-          - "&r &8| &e▪&r &eMost Expansive ◄"
-          - "&r &8| &7▪&r &fAlphabetica"
-          - "&r"
-          - "&e► &lClick &fto switch mode"
-          - "&8► Right click to go backwards"
-      ALPHABETICAL:
-        material: HOPPER
-        display-name: "&e&lSort"
-        lore:
-          - "&8Sorts results alphabetically."
-          - "&r"
-          - "&7Switch between:&r "
-          - "&r &8| &7▪&r &fRelevance"
-          - "&r &8| &7▪&r &fCheapest"
-          - "&r &8| &7▪&r &fMost Expansive"
-          - "&r &8| &e▪&r &eAlphabetica ◄"
-          - "&r"
-          - "&e► &lClick &fto switch mode"
-          - "&8► Right click to go backwards"
+A good result item usually shows:
 
-  previous:
-    type: PREVIOUS_PAGE
-    material: ARROW
-    slot: 47
-    show-when-unavailable: false
-    display-name: "&ePrevious Page"
-    left_click_actions:
-      - "[previous_page]"
-    priority: 50
+- item name
+- shop/category
+- buy price
+- sell price
+- one-line click hints
 
-  back:
-    type: BACK
-    material: EMERALD
-    slot: 49
-    display-name: "&a&lGo back to Shop"
-    left_click_actions:
-      - "[back]"
-
-  next:
-    type: NEXT_PAGE
-    material: ARROW
-    slot: 51
-    show-when-unavailable: false
-    display-name: "&eNext Page"
-    left_click_actions:
-      - "[next_page]"
-    priority: 50
-
-  information:
-    type: CUSTOM
-    material: SIGN
-    slot: 50
-    display-name: "&e&lWhat is this Menu?"
-```
+If the lore becomes too crowded, the menu loses the speed advantage search is supposed to provide.

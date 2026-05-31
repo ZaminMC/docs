@@ -1,27 +1,31 @@
-# Overview
+# What ZaminShop Does
 
-ZaminShop is built around three core pieces:
+ZaminShop lets players buy from and sell to server-managed shops through configurable menus.
 
-- `config.yml` for global behavior
-- `guis/*.yml` for shared menus
-- `shops/<pack>/` for pack-specific shop menus
+That part is straightforward. What matters is how the plugin handles the details around it.
 
-## How the plugin is structured
+## Core feature areas
 
-### Global configuration
+### Shop packs
 
-`plugins/ZaminShop/config.yml` controls:
+ZaminShop does not treat all shops as one flat folder.
 
-- enabled economies
-- database backend
-- transaction safety
-- search behavior
-- menu file paths
-- registered shop packs
+Instead, you register named shop packs in `config.yml`, and each pack has:
 
-### Shared menus
+- one main menu
+- one categories folder
+- its own command scope and navigation flow
 
-Files under `plugins/ZaminShop/guis/` define menus used across the plugin, including:
+This is useful when you want clean separation between:
+
+- survival shops
+- prison shops
+- donor or premium shops
+- event or seasonal packs
+
+### Shared GUI system
+
+Shared GUI files define the recurring menus used across the plugin:
 
 - amount selector
 - bulk buy
@@ -31,29 +35,60 @@ Files under `plugins/ZaminShop/guis/` define menus used across the plugin, inclu
 - search
 - sell GUI
 
-### Shop packs
+This gives you consistent player UX without repeating the same layout inside every category shop.
 
-Each shop pack is registered manually in `config.yml` and points to a folder under:
+### Buy and sell safety
 
-```text
-plugins/ZaminShop/shops/<folder>/
-```
+ZaminShop is designed to keep economy actions centralized.
 
-Each pack contains:
+That matters because shop systems break when too many places can move money or items independently.
 
-- `main.yml` for the pack entry menu
-- `categories/*.yml` for the actual category shops
+The plugin includes:
 
-## Safety systems
-
-ZaminShop does more than open inventories. It also includes:
-
-- per-player transaction locks
+- transaction locking
 - click cooldown protection
 - currency validation
 - risk guard
-- suspicious transaction detection
+- suspicious transaction checks
 - sell limits
 - GUI-owned item cleanup
 
-Those systems are documented in the configuration section because they affect runtime behavior as much as menu design.
+### Player convenience systems
+
+The player-facing flow includes:
+
+- favorites
+- recent item history
+- scoped search
+- configurable pagination
+- configurable sell GUI
+- bulk buy and bulk sell menus
+
+These systems are there to make repeated shopping faster instead of forcing players through the same clicks every time.
+
+## Typical workflows
+
+### New server setup
+
+You install the plugin, register one pack, point `/shop` at that pack, tune economy and safety settings, then validate the setup before players join.
+
+### Multiple server modes
+
+You can keep separate shop packs for different gameplay modes instead of stuffing everything into one giant menu tree.
+
+### Economy balancing
+
+You can tune prices, add modifiers, use worth checks, and rely on risk guard to catch obviously dangerous configurations before they go live.
+
+### High-volume sell environments
+
+If your server has farms, grinders, or heavy mob drop income, the sell limit and suspicious transaction systems matter as much as the item prices themselves.
+
+## Before you go deeper
+
+If you are deciding whether the plugin fits your use case, focus on these sections next:
+
+- [Install and Launch Your First Shop](setup.md)
+- [Safety, Risk Guard, and Audit](configuration/safety.md)
+- [Build Shop Packs](shops/README.md)
+- [Customize Menus](gui/README.md)

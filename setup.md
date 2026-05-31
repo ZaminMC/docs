@@ -1,66 +1,129 @@
-# Installation & Setup
+# Install and Launch Your First Shop
+
+This page is the fastest path from jar file to a working `/shop`.
 
 ## Requirements
 
 - Java 17 or newer
 - Bukkit, Spigot, or Paper
 - at least one supported economy provider
-- PlaceholderAPI if you want external placeholders in menus and messages
+- PlaceholderAPI if you want external placeholders inside menus or messages
 
-## First install
+## Step 1: install the jar
 
-1. Put the ZaminShop jar into `plugins/`
-2. Start the server once
-3. Stop the server after files are generated
-4. Edit `config.yml`
-5. Register at least one shop pack in `config.yml -> shops`
-6. Start the server again
-7. Run `/zaminshop validate`
+Put the ZaminShop jar into your server's `plugins/` folder and start the server once.
 
-## Minimal global setup
+This first boot generates the plugin folder and bundled files.
 
-The plugin ships with this default pattern in `config.yml`:
+## Step 2: stop the server and open the files
+
+After the first startup, you should have:
+
+```text
+plugins/ZaminShop/
+  config.yml
+  guis/
+  shops/
+  lang/
+```
+
+At this point, do not start editing random files yet. Begin with `config.yml`.
+
+## Step 3: choose your default economy
+
+In `config.yml`, set the main economy list:
 
 ```yaml
 economyTypes:
   - VAULT
+```
 
+The first valid provider becomes the default economy for the plugin unless a shop overrides it.
+
+## Step 4: register a shop pack
+
+ZaminShop uses manual pack registration.
+
+Example:
+
+```yaml
 shops:
-  default:
-    folder: default
+  survival:
+    folder: survival_shop
     enabled: true
     file: main.yml
 ```
 
-If you rename the bundled pack folder, update the `folder` value as well.
+This tells ZaminShop to load:
 
-## Recommended first checks
+```text
+plugins/ZaminShop/shops/survival_shop/main.yml
+plugins/ZaminShop/shops/survival_shop/categories/*.yml
+```
 
-After the second startup, verify:
+If the folder exists but is not registered here, it is ignored.
 
-- the chosen economy provider loaded
-- your registered shop pack folder exists
-- the pack contains `main.yml`
-- the pack contains `categories/*.yml`
-- `/shop` opens the expected pack main menu
+## Step 5: confirm the pack files exist
 
-Then run:
+Your pack should look like this:
+
+```text
+plugins/ZaminShop/shops/survival_shop/
+  main.yml
+  categories/
+    blocks.yml
+    food.yml
+    ores.yml
+```
+
+## Step 6: start the server again
+
+On the second startup, verify:
+
+- the selected economy provider loaded
+- the registered pack was detected
+- no YAML errors were logged
+- `/shop` opens the expected main menu
+
+## Step 7: validate before going public
+
+Run:
 
 ```text
 /zaminshop validate
 /zaminshop risk list
 ```
 
-## Common first-time mistakes
+Why both?
 
-### The pack folder exists but does not load
+- `validate` checks menu and shop configuration issues
+- `risk list` shows pricing setups that may be dangerous even if the YAML syntax is valid
 
-Make sure it is registered under `config.yml -> shops`. ZaminShop does not auto-discover random folders under `plugins/ZaminShop/shops/`.
+## Recommended first edits
 
-### `/shop` opens nothing useful
+After the plugin boots cleanly, most servers will want to review:
 
-Check the pack's `main.yml` and make sure its `open_command` includes `shop`, or use the dynamic pack command defined there.
+- `config.yml -> transaction-safety`
+- `config.yml -> risk-guard`
+- `config.yml -> search`
+- `config.yml -> sell-limits`
+- `guis/sell.yml`
+- your pack `main.yml`
+
+## Common mistakes
+
+### The pack folder exists but the plugin ignores it
+
+It is probably not registered under `config.yml -> shops`.
+
+### `/shop` opens the wrong thing
+
+Check the pack `main.yml` and confirm it is the pack currently tied to the `shop` command scope.
+
+### The plugin loads but menus are broken
+
+Run `/zaminshop validate` immediately. Many menu problems are configuration issues, not startup failures.
 
 ### A menu file was moved
 
-If you move a built-in shared GUI file, update its entry under `config.yml -> gui_menus`.
+If you moved a shared GUI file, update `config.yml -> gui_menus` so the plugin can still find it.
