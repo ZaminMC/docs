@@ -1,0 +1,11 @@
+target/
+build/
+dist/
+*.zip
+*.jar
+*.log
+*.tmp
+.idea/
+.vscode/
+*.iml
+.DS_Store

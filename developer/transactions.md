@@ -1,26 +1,65 @@
-# Transactions
+# Transaction Flow and Safety Rules
 
-Use this file for economy bugs, dupe bugs, rollback safety, or sell/buy behavior.
+This page is for developers and server owners who need to understand how ZaminShop protects buy and sell operations.
 
-## Authority
-- `ShopTransactionService` is the only allowed place for money/item movement.
-- Commands, listeners, menus, and future search/favorite/recent flows must delegate into it.
+## Why this exists
 
-## Current protections
+Shop plugins fail when they let too many systems move money and items independently.
+
+ZaminShop keeps transaction logic centralized so it can enforce:
+
+- lock protection
+- cooldown checks
+- balance validation
+- sell-limit checks
+- suspicious transaction checks
+- rollback on failure
+
+## What the transaction system owns
+
+The transaction layer is responsible for:
+
+- validating whether a buy or sell may happen
+- checking permission and risk state
+- talking to the active economy provider
+- adding or removing items
+- aborting or rolling back when a downstream step fails
+
+## Safety rules for integrations
+
+If you build against ZaminShop:
+
+- do not withdraw money yourself and then call a menu action
+- do not add bought items directly from a listener
+- do not remove sold items directly from a menu handler
+
+If you bypass the transaction boundary, you also bypass the plugin's safety model.
+
+## Protections currently in play
+
 - per-player transaction lock
-- normalized price and balance checks
-- explicit economy response validation
-- rollback on failed item add or failed deposit path
-- transaction state tracking and audit logging
-- risk guard block checks
-- sell limit enforcement
-- suspicious sell blocking
+- click cooldown
+- normalized price checks
+- economy response validation
+- rollback on failed inventory add or failed sell deposit
+- risk guard blocking
+- sell-limit enforcement
+- suspicious transaction monitoring
 
-## Primary files
-- `src/main/java/com/zamin/zaminshop/service/transaction/ShopTransactionService.java`
-- `src/main/java/com/zamin/zaminshop/service/transaction/TransactionContext.java`
-- `src/main/java/com/zamin/zaminshop/service/transaction/TransactionLockService.java`
-- `src/main/java/com/zamin/zaminshop/service/currency/CurrencyService.java`
-- `src/main/java/com/zamin/zaminshop/service/limit/SellLimitService.java`
-- `src/main/java/com/zamin/zaminshop/service/suspicious/SuspiciousTransactionService.java`
-- `src/main/java/com/zamin/zaminshop/service/risk/RiskGuardService.java`
+## Practical admin takeaway
+
+If a player reports:
+
+- duplicated items
+- missing sale money
+- blocked purchases
+- blocked sell-all actions
+
+check:
+
+1. `config.yml -> transaction-safety`
+2. `config.yml -> risk-guard`
+3. `config.yml -> sell-limits`
+4. `config.yml -> suspicious-transactions`
+
+Then use `/zaminshop validate` and `/zaminshop risk list`.
