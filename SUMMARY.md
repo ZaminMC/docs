@@ -1,7 +1,9 @@
 # Summary
 
 * [ZaminShop](README.md)
+  * [Why ZaminShop Exists](why-zaminshop.md)
   * [What ZaminShop Does](overview.md)
+  * [Core Feature Areas](features.md)
   * [Install and Launch Your First Shop](setup.md)
   * [Commands](commands.md)
   * [Permissions](permissions.md)
