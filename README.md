@@ -1,61 +1,86 @@
 # ZaminShop
 
-ZaminShop is a configurable, pack-driven shop plugin for Bukkit, Spigot, and Paper servers.
+ZaminShop is a configurable, pack-driven GUI shop plugin for Bukkit, Spigot, and Paper servers.
 
-It is built for servers that want more than a basic buy and sell menu. The plugin gives you:
+At the most basic level, it lets players:
 
-- manual shop pack control instead of automatic folder guessing
-- shared GUI files for consistent player experience
-- category-based shop menus
-- search, favorites, recent history, and sell GUI flows
-- multiple economy providers
-- transaction locking and rollback-focused safety
-- sell limits, suspicious transaction alerts, and risk guard checks
-- PlaceholderAPI integration
-- a public API for addons
+- browse shop categories
+- buy items
+- sell items
+- search for items
+- revisit recent purchases
+- favorite commonly used items
 
-## Why ZaminShop exists
+That is the visible part.
 
-Running a shop plugin on a live server is rarely just about listing items.
+The reason ZaminShop is built the way it is comes from everything that happens behind those clicks:
 
-You usually also need to solve:
+- multiple shop packs
+- different server modes
+- price balancing
+- safe sell handling
+- player convenience menus
+- economy protection
+- reload-safe configuration workflows
 
-- how to organize several shop packs cleanly
-- how to stop risky or broken price setups
-- how to keep sell systems from becoming exploit machines
-- how to let players move quickly between categories, search, recent items, and favorites
-- how to keep menus editable without turning the config into a mess
+## What the plugin is designed for
 
-ZaminShop is built around those real server-owner problems.
+ZaminShop fits servers that want a shop system to feel like part of the server, not a disconnected utility menu.
 
-## What makes it different
+That includes:
 
-### Pack-based shop system
+- survival servers
+- SMP communities
+- prison-style economies
+- mixed-mode networks
+- custom packs or donor stores that should stay separated from the default survival shop
 
-Shops are grouped into manually registered packs. That gives you predictable control over what loads and what does not.
+## Core strengths
 
-### Shared menu architecture
+### Pack-driven design
 
-Amount selector, bulk buy, bulk sell, favorites, search, recent history, and sell GUI menus are all separate editable files.
+Instead of treating the whole shop as one giant folder, ZaminShop lets you register named packs manually in `config.yml`.
 
-### Centralized transaction safety
+That gives you predictable control over:
 
-Buy and sell behavior is guarded by:
+- what loads
+- what stays disabled
+- which pack owns which command scope
+- how categories are grouped
+
+### Shared GUI system
+
+Search, favorites, recent history, amount selector, bulk buy, bulk sell, and sell GUI flows are all editable in their own shared files.
+
+That means the plugin can feel polished without forcing every category menu to repeat the same layout logic.
+
+### Transaction safety
+
+Buying and selling are not scattered across menus and listeners.
+
+The plugin includes:
 
 - per-player transaction locks
+- click cooldown protection
+- rollback-aware transaction flow
 - economy response validation
-- rollback-aware transaction execution
+- suspicious transaction monitoring
 - sell limits
-- suspicious transaction checks
 - risk guard validation
 
-### Modern placeholder and menu flow
+### Server-owner workflow
 
-The plugin supports dynamic menus, pagination layouts, context placeholders, and shared action handling without forcing every menu to be hardcoded.
+ZaminShop is meant to support the way servers are actually maintained:
+
+- edit files
+- validate changes
+- review price risk
+- reload when safe
+- keep pack structure organized
 
 ## Read this first
 
-If you are starting fresh, go in this order:
+If you are starting fresh:
 
 1. [Install and Launch Your First Shop](setup.md)
 2. [Configure the Plugin](configuration/README.md)
@@ -64,15 +89,36 @@ If you are starting fresh, go in this order:
 5. [Commands](commands.md)
 6. [Fixing Common Problems](troubleshooting.md)
 
+## Recommended reading by goal
+
+### I just want `/shop` working
+
+Read:
+
+- [Install and Launch Your First Shop](setup.md)
+- [Shop Packs](shops/README.md)
+- [First Shop Pack Walkthrough](shops/first-shop-pack.md)
+
+### I want the menus to look better
+
+Read:
+
+- [Customize Menus](gui/README.md)
+- [Built-in Menus](gui/built-in-menus.md)
+- [GUI Settings](gui/gui-settings.md)
+
+### I want to keep the economy safe
+
+Read:
+
+- [Safety, Risk Guard, and Audit](configuration/safety.md)
+- [Sell Limits and Suspicious Transactions](configuration/sell-limits.md)
+- [Price Modifiers](configuration/price-modifiers.md)
+
 ## Documentation scope
 
 This wiki is written from the current ZaminShop source and bundled files.
 
-It does not try to document imaginary features, and it does not treat internal class names as the product structure. The goal is to help:
+It does not document imaginary features, and it does not organize the user-facing documentation around Java implementation names. The goal is simple:
 
-- server owners
-- administrators
-- builders and content pack authors
-- plugin developers
-
-get real work done with the plugin.
+help server owners, admins, and developers make the plugin successful on a real server.

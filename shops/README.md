@@ -1,10 +1,31 @@
-# Shop Packs
+# Build Shop Packs
 
-ZaminShop now uses a pack-based shop layout.
+This section is where ZaminShop becomes your server's shop system instead of just a plugin that loaded successfully.
+
+Shop packs are the heart of the plugin.
+
+## What a pack is
+
+A shop pack is a folder with:
+
+- one main menu
+- one categories folder
+- one internal pack id from `config.yml`
+
+This makes it possible to keep separate shop experiences for different parts of your server.
+
+Examples:
+
+- survival shop
+- donor shop
+- event shop
+- prison shop
 
 ## How packs are loaded
 
-Packs are registered manually in `config.yml`:
+Packs are registered manually in `config.yml`.
+
+Example:
 
 ```yaml
 shops:
@@ -14,13 +35,13 @@ shops:
     file: main.yml
 ```
 
-Only packs listed in `config.yml -> shops` are loaded.
+Only packs listed there are loaded.
 
 ZaminShop does **not** auto-discover every folder under `plugins/ZaminShop/shops/`.
 
 ## Pack folder structure
 
-Each pack folder should look like this:
+Example:
 
 ```text
 plugins/ZaminShop/shops/survival_shop/
@@ -31,10 +52,41 @@ plugins/ZaminShop/shops/survival_shop/
     ores.yml
 ```
 
-## What each file does
+## What each part does
 
-- `main.yml`: the pack entry menu
-- `categories/*.yml`: the actual category shop menus
+### `main.yml`
+
+This is the entry menu for the pack.
+
+It usually contains:
+
+- category buttons
+- sell menu button
+- favorites button
+- recent button
+- profile or balance items
+
+### `categories/*.yml`
+
+These are the actual shop menus where transactional items live.
+
+They control:
+
+- displayed items
+- prices
+- pagination
+- category-specific messages
+- category-specific menu actions
+
+## Best way to learn this section
+
+Read these pages in order:
+
+1. [First Shop Pack Walkthrough](first-shop-pack.md)
+2. [Shop Pack File Format](shop-file-format.md)
+3. [Adding Shop Items](shop-items.md)
+4. [Bundled Starter Pack](default-shops.md)
+5. [Limited Items](limited-items.md)
 
 ## Validation behavior
 
@@ -44,10 +96,10 @@ If a registered pack is broken:
 - missing `main.yml` -> pack is skipped
 - invalid category file -> that category is skipped
 
-Use:
+Always run:
 
 ```text
 /zaminshop validate
 ```
 
-after editing a pack.
+after pack changes.

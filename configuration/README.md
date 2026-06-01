@@ -1,32 +1,53 @@
 # Configure the Plugin
 
-This section is for server owners who want to move from "it loads" to "it runs the way I want".
+This section is about turning a working plugin into a shop system that actually fits your server.
 
-Read these pages in this order if you are setting ZaminShop up for the first time:
+If installation gets ZaminShop online, configuration is what makes it usable, safe, and pleasant to maintain.
 
-1. [config.yml Reference](config-yml.md)
-2. [Files and Folder Layout](files-and-folders.md)
-3. [Language and Messages](language.md)
-4. [Database Setup](database.md)
-5. [Safety, Risk Guard, and Audit](safety.md)
-
-## What belongs here
+## What you configure here
 
 Use this section when you want to:
 
-- pick a database backend
-- choose an economy provider
+- choose a database backend
+- choose a default economy provider
 - register shop packs
-- move shared GUI files safely
-- tune safety and sell limits
-- understand why the plugin blocked a risky shop setup
+- point shared menus to custom file locations
+- tune safety and sell-limits
+- adjust how prices, sounds, and text behave globally
+
+## Read this section in order
+
+For most servers, this is the best sequence:
+
+1. [config.yml Reference](config-yml.md)
+2. [Files and Folder Layout](files-and-folders.md)
+3. [Database Setup](database.md)
+4. [Language and Messages](language.md)
+5. [Safety, Risk Guard, and Audit](safety.md)
+6. [Sell Limits and Suspicious Transactions](sell-limits.md)
 
 ## What does not belong here
 
-If you are trying to:
+If your goal is:
 
-- build category menus
-- add shop items
-- change menu layout
+- building categories
+- adding items
+- changing main menu category buttons
+- changing favorites, search, or sell menu layout
 
-go to the [Build Shop Packs](../shops/README.md) or [Customize Menus](../gui/README.md) sections instead.
+you should move to:
+
+- [Build Shop Packs](../shops/README.md)
+- [Customize Menus](../gui/README.md)
+
+## Good admin mindset
+
+Do not try to edit everything at once.
+
+A stable workflow is:
+
+1. set the economy and pack registrations
+2. confirm the plugin boots cleanly
+3. validate the setup
+4. adjust safety systems
+5. only then start polishing menus and category content
