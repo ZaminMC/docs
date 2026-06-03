@@ -1,170 +1,220 @@
 # config.yml Reference
 
-This page covers the most important runtime sections from the current bundled `config.yml`.
+This page explains the global configuration file.
 
-## `language`
+`config.yml` controls global runtime behavior. It does **not** define individual shop items or category content.
 
-```yaml
+## What belongs here
+
+Use `config.yml` for:
+
+- database selection
+- default economy types
+- startup logging
+- transaction safety
+- risk guard
+- suspicious transaction thresholds
+- sell limits
+- GUI file paths
+- command registration toggles
+- number and currency formatting
+
+## Language
+
+```yml
 language: "en_US"
 ```
 
 Controls the active language file under `plugins/ZaminShop/lang/`.
 
-## `database`
+## Database
 
-```yaml
+```yml
 database:
   type: sqlite
-  mySQLHost: localhost
-  mySQLPort: 3306
-  mySQLDatabase: db
-  mySQLUser: root
-  mySQLPassword: ""
 ```
 
-Used for player data, favorites, recent transactions, and related storage.
+ZaminShop supports SQLite and MySQL-style setups depending on your deployment needs.
 
-## `economyTypes`
+Use SQLite if:
 
-```yaml
+- you run a single server
+- you want the easiest setup
+
+Use MySQL if:
+
+- you manage a larger network
+- you want data outside a local file
+
+## Economy types
+
+```yml
 economyTypes:
   - VAULT
 ```
 
-This list is ordered. The first valid provider becomes the default shop currency unless a shop overrides it.
+The first entry becomes the default economy for shops unless a shop or integration path overrides it.
 
-## `transaction-safety`
+Common use:
 
-Controls the runtime protection layer around buy and sell actions.
+- `VAULT` for normal money economies
+- alternative providers for token or custom currencies
 
-Important keys:
+## Startup logging
 
-- `enabled`
-- `per-player-lock`
-- `lock-timeout-ms`
-- `click-cooldown-ms`
-- `block-while-inventory-open`
-- `debug-failures`
-
-## `transaction-audit`
-
-Optional transaction logging layer.
-
-Use this if you want a structured audit trail for suspicious actions or debugging.
-
-## `currency-safety`
-
-Prevents invalid money values from entering the economy pipeline.
-
-Important keys:
-
-- `decimal-places`
-- `reject-prices-with-too-many-decimals`
-- `minimum-transaction-value`
-- `block-nan-infinity`
-- `max-transaction-value`
-
-## `risk-guard`
-
-Checks dangerous pricing setups such as unsafe sell-to-buy ratios.
-
-Important keys:
-
-- `enabled`
-- `block-critical-shops`
-- `notify-admins`
-- `require-confirmation`
-- `max-sell-buy-ratio`
-- `allow-sell-higher-than-buy`
-
-## `sell-limits`
-
-Optional daily and weekly sell caps.
-
-Works together with the PlaceholderAPI counters documented on the PlaceholderAPI page.
-
-## `suspicious-transactions`
-
-Optional alerting system for abnormal selling behavior.
-
-Includes thresholds such as:
-
-- transactions per 10 seconds
-- money earned per minute
-- items sold per minute
-- repeated sales of the same item
-
-## `search`
-
-```yaml
-search:
-  enabled: true
-  fuzzy: true
-  max-results: 45
-  search-on-unknown-shop-command: false
+```yml
+startup-log:
+  banner: true
+  debug: false
+  show-shop-breakdown: false
 ```
 
-Controls the `/shop search` system.
+Useful while building packs:
 
-## `gui_menus`
+- turn `debug` on temporarily
+- validate changes
+- turn it off after stabilization
 
-Maps built-in shared menu ids to file paths.
+## Transaction safety
 
-Example:
+```yml
+transaction-safety:
+  enabled: true
+  per-player-lock: true
+```
 
-```yaml
+This is one of the most important sections in the plugin.
+
+It protects:
+
+- overlapping clicks
+- duplicated actions
+- invalid concurrent transaction paths
+
+Keep this enabled unless you are doing controlled debugging.
+
+## Currency safety
+
+```yml
+currency-safety:
+  decimal-places: 2
+  reject-prices-with-too-many-decimals: true
+```
+
+Controls price normalization and sanity checks.
+
+Important effects:
+
+- invalid floating-point values are blocked
+- excessive decimal precision can be rejected
+- transaction values can be normalized consistently
+
+## Risk guard
+
+```yml
+risk-guard:
+  enabled: true
+  block-critical-shops: true
+  require-confirmation: true
+```
+
+Risk guard helps catch:
+
+- impossible buy/sell relationships
+- direct arbitrage
+- cross-category arbitrage
+- cross-pack arbitrage
+- compaction and crafting loops
+
+If you care about economy integrity, keep this enabled.
+
+## Sell limits
+
+Sell limits cap how much value or item volume can be sold across a defined period.
+
+Use them when:
+
+- you want to slow farm-heavy monetization
+- you want a daily or weekly economic ceiling
+
+## Suspicious transactions
+
+This system watches player behavior patterns rather than static item definitions.
+
+Use it when:
+
+- players can generate large item volume
+- you want alerts before an exploit fully matures
+
+## Search and recent menu behavior
+
+```yml
+search:
+  enabled: true
+recent-menu:
+  enabled: true
+```
+
+These let you enable or tune the supporting player experience around the core shop.
+
+## GUI menu file locations
+
+```yml
 gui_menus:
   amount-selector:
     file: guis/amount-selector.yml
-  favorites:
-    file: guis/favorites.yml
-  sell:
-    file: guis/sell.yml
 ```
 
-If you move a shared GUI file, update the path here.
+This is where you point ZaminShop to shared menu files.
 
-## `shops`
+If you move a built-in GUI file to a different path, update it here.
 
-Manual shop pack registration lives here.
+## Shop pack registration
 
-Example:
+Modern ZaminShop does not register packs under `config.yml`.
 
-```yaml
-shops:
-  survival:
-    folder: survival_shop
-    enabled: true
-    file: main.yml
-```
+Instead:
 
-Meaning:
+- packs are discovered from `plugins/ZaminShop/shops/<pack>/main.yml`
+- categories are loaded from `plugins/ZaminShop/shops/<pack>/categories/*.yml`
 
-- `survival` is the internal pack id
-- `folder` is the folder inside `plugins/ZaminShop/shops/`
-- `enabled` controls whether the pack loads
-- `file` is the main menu file name inside that folder
+## Sell command behavior
 
-ZaminShop only loads packs listed here.
+`sellHand` and `sellAll` sections control:
 
-## Other important gameplay settings
+- allowed quantities
+- armor slot exclusions
+- off-hand exclusions
+- summary behavior
+- whether free items are included
 
-### `disableMainMenu`
+## Number format
 
-Blocks the default main menu path when enabled.
+Controls:
 
-### `disableShopsInGamemodes`
+- decimal separator
+- grouping separator
+- fraction visibility
+- short-scale numbering
 
-Prevents normal shop access from selected gamemodes.
+This affects how values are shown to players in messages and GUI output.
 
-### `disableShopsInWorlds`
+## Common mistakes
 
-Prevents normal shop access from selected worlds.
+### Treating `config.yml` like the whole plugin
 
-### `sudoAllowAllShopsAccess`
+It is only the global layer. Packs and menus live elsewhere.
 
-Changes how admin-opened shop sessions bypass normal access checks.
+### Turning off safety systems too early
 
-### `disableCommands.sell`
+Leave them on until you have a specific debugging reason.
 
-Prevents the `/sell` command from being registered. This requires a full restart, not just a reload.
+### Editing GUI file paths without moving the actual files
+
+If the path changes here, the file has to exist there.
+
+## Related pages
+
+- [Files and Folder Layout](files-and-folders.md)
+- [Safety, Risk Guard, and Audit](safety.md)
+- [Shop Pack File Format](../shops/shop-file-format.md)

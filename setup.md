@@ -1,129 +1,168 @@
 # Install and Launch Your First Shop
 
-This page is the fastest path from jar file to a working `/shop`.
+This page walks through a clean first installation and the minimum steps required to get a working shop online.
 
 ## Requirements
 
-- Java 17 or newer
-- Bukkit, Spigot, or Paper
-- at least one supported economy provider
-- PlaceholderAPI if you want external placeholders inside menus or messages
+ZaminShop is designed for Bukkit-family servers.
 
-## Step 1: install the jar
+Recommended baseline:
 
-Put the ZaminShop jar into your server's `plugins/` folder and start the server once.
+- Spigot, Paper, or a compatible fork
+- Vault if you want money-based prices
+- PlaceholderAPI if you want PlaceholderAPI values in menus and messages
 
-This first boot generates the plugin folder and bundled files.
+Some integrations are optional and only matter if you are using that plugin on your server.
 
-## Step 2: stop the server and open the files
+## Step 1: install the plugin
 
-After the first startup, you should have:
+1. Stop the server.
+2. Place the ZaminShop jar in `plugins/`.
+3. Start the server once.
 
-```text
-plugins/ZaminShop/
-  config.yml
-  guis/
-  shops/
-  lang/
-```
+On first boot, ZaminShop creates:
 
-At this point, do not start editing random files yet. Begin with `config.yml`.
+- `plugins/ZaminShop/config.yml`
+- `plugins/ZaminShop/lang/`
+- `plugins/ZaminShop/guis/`
+- `plugins/ZaminShop/shops/`
 
-## Step 3: choose your default economy
+If no pack folders exist yet, the plugin seeds a default starter pack.
 
-In `config.yml`, set the main economy list:
+## Step 2: check the startup log
 
-```yaml
-economyTypes:
-  - VAULT
-```
+On a healthy startup, confirm:
 
-The first valid provider becomes the default economy for the plugin unless a shop overrides it.
+- the plugin enabled successfully
+- your selected economy provider was detected
+- no critical validation errors were reported
+- the starter shop pack loaded
 
-## Step 4: register a shop pack
+If the plugin reports YAML problems, the new loader should point to the line and give a readable suggestion instead of a raw parser dump.
 
-ZaminShop uses manual pack registration.
+## Step 3: choose your command entry
 
-Example:
+By default, the starter pack main menu includes:
 
-```yaml
-shops:
-  survival:
-    folder: survival_shop
-    enabled: true
-    file: main.yml
-```
+- `open_command: shop`
 
-This tells ZaminShop to load:
+That means players can use:
 
 ```text
-plugins/ZaminShop/shops/survival_shop/main.yml
-plugins/ZaminShop/shops/survival_shop/categories/*.yml
+/shop
 ```
 
-If the folder exists but is not registered here, it is ignored.
+You can change that in the pack’s `main.yml`.
 
-## Step 5: confirm the pack files exist
+## Step 4: understand the file layout
 
-Your pack should look like this:
+The shop runtime is split intentionally.
 
-```text
-plugins/ZaminShop/shops/survival_shop/
-  main.yml
-  categories/
-    blocks.yml
-    food.yml
-    ores.yml
-```
+### Global config
 
-## Step 6: start the server again
+`plugins/ZaminShop/config.yml`
 
-On the second startup, verify:
+Use this for:
 
-- the selected economy provider loaded
-- the registered pack was detected
-- no YAML errors were logged
-- `/shop` opens the expected main menu
+- database
+- economy defaults
+- startup logging
+- safety systems
+- sell limits
+- suspicious transaction settings
+- GUI file locations
 
-## Step 7: validate before going public
+### Shared menus
 
-Run:
+`plugins/ZaminShop/guis/`
 
-```text
-/zaminshop validate
-/zaminshop risk list
-```
+Use this for:
 
-Why both?
+- amount selector
+- bulk buy
+- bulk sell
+- favorites
+- recent
+- search
+- sell menu
+- GUI settings
 
-- `validate` checks menu and shop configuration issues
-- `risk list` shows pricing setups that may be dangerous even if the YAML syntax is valid
+### Shop packs
 
-## Recommended first edits
+`plugins/ZaminShop/shops/<pack>/`
 
-After the plugin boots cleanly, most servers will want to review:
+Each pack contains:
 
-- `config.yml -> transaction-safety`
-- `config.yml -> risk-guard`
-- `config.yml -> search`
-- `config.yml -> sell-limits`
-- `guis/sell.yml`
-- your pack `main.yml`
+- `main.yml`
+- `categories/*.yml`
 
-## Common mistakes
+## Step 5: test the default pack
 
-### The pack folder exists but the plugin ignores it
+Before editing anything, test the default flow:
 
-It is probably not registered under `config.yml -> shops`.
+1. open `/shop`
+2. open at least one category
+3. buy an item
+4. sell an item
+5. open favorites
+6. run a search
 
-### `/shop` opens the wrong thing
+If all of that works, your base install is good.
 
-Check the pack `main.yml` and confirm it is the pack currently tied to the `shop` command scope.
+## Step 6: replace the starter content
 
-### The plugin loads but menus are broken
+Do not build everything in the default starter categories unless that is your final plan.
 
-Run `/zaminshop validate` immediately. Many menu problems are configuration issues, not startup failures.
+For a real deployment:
 
-### A menu file was moved
+1. decide your pack structure
+2. rename or create pack folders
+3. update each pack `main.yml`
+4. build category files around your actual economy
 
-If you moved a shared GUI file, update `config.yml -> gui_menus` so the plugin can still find it.
+Follow [First Shop Pack Walkthrough](shops/first-shop-pack.md) for the clean path.
+
+## Recommended first configuration changes
+
+### Economy
+
+If you use Vault, confirm it is first in `economyTypes`.
+
+### Risk guard
+
+Leave risk guard enabled unless you are actively debugging a bad setup.
+
+### Search
+
+Keep search enabled unless your shop is intentionally tiny.
+
+### Startup logging
+
+Set `startup-log.debug: true` temporarily while building your first pack, then turn it back off once stable.
+
+## Common early mistakes
+
+### Editing the wrong file
+
+Global behavior belongs in `config.yml`.
+Pack behavior belongs in `shops/<pack>/main.yml`.
+Category items belong in `shops/<pack>/categories/*.yml`.
+
+### Forgetting that packs are self-contained
+
+Newer ZaminShop setups do not register packs under `config.yml -> shops`.
+The pack folder and its `main.yml` are the source of truth.
+
+### Using unsupported item metadata on an older runtime
+
+If the server version cannot represent a material or item feature, ZaminShop warns instead of silently faking support.
+
+### Skipping validation
+
+If you heavily edit YAML files, run validation before letting players use the shop.
+
+## Next steps
+
+- [First Shop Pack Walkthrough](shops/first-shop-pack.md)
+- [config.yml Reference](configuration/config-yml.md)
+- [Built-in Menus](gui/built-in-menus.md)

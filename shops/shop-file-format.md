@@ -1,116 +1,181 @@
-# Shop File Format
+# Shop Pack File Format
 
-Category shop files are menu files with shop-aware item types.
+This page explains how pack `main.yml` files and category shop files are structured.
 
-They are usually stored under:
+## Pack `main.yml`
 
-```text
-plugins/ZaminShop/shops/<pack>/categories/*.yml
+This is the top-level menu for a pack.
+
+Typical example:
+
+```yml
+enabled: true
+shop_name: "Survival Shop"
+menu_title: "&8Survival Shop"
+size: 54
+open_command:
+  - shop
+
+items:
+  category_blocks:
+    type: SHOP_CATEGORY
+    material: GRASS_BLOCK
+    slot: 20
+    display-name: "&eBlocks"
+    shop: blocks
 ```
 
-## Root keys
+## Common top-level keys
 
-Common keys supported by the current loader:
+### `enabled`
 
-| Key | Purpose |
-|---|---|
-| `menu_title` | Shop inventory title |
-| `rows` | Inventory rows |
-| `size` | Inventory size |
-| `economy` | Optional economy override |
-| `pagination` | Paged slot layout for shop items |
-| `items` | Item definitions |
-| `denyDirectAccess` | Blocks direct opening when enabled |
-| `enablePerItemPermissions` | Enables per-item access checks |
-| `enableBuyGUI` | Enables amount selector for buying |
-| `enableSellGUI` | Enables amount selector for selling |
-| `enableBuyMoreGUI` | Enables bulk buy flow |
-| `enableSellMoreGUI` | Enables bulk sell flow |
-| `enableSellGUISellAll` | Enables sell-all behavior in sell GUI |
-| `messageBuy` | Shop-specific buy message |
-| `messageSell` | Shop-specific sell message |
-| `messageSellAll` | Shop-specific sell-all message |
-| `messageCannotAfford` | Shop-specific cannot-afford message |
-| `worldsWhitelist` | Allowed worlds |
-| `worldsBlacklist` | Blocked worlds |
+Enables or disables the pack.
 
-## Minimal example
+### `shop_name`
 
-```yaml
+Friendly pack name used for display context.
+
+### `menu_title`
+
+Inventory title for the pack main menu.
+
+### `rows` or `size`
+
+Controls inventory size.
+
+### `open_command`
+
+Standalone root commands for the pack.
+
+Example:
+
+```yml
+open_command:
+  - shop
+  - survivalshop
+```
+
+### `items`
+
+Defines the rendered items in the pack main menu.
+
+## Category files
+
+Category files live in:
+
+```text
+shops/<pack>/categories/*.yml
+```
+
+These are full shop pages.
+
+Typical example:
+
+```yml
 menu_title: "&8Blocks"
 rows: 6
 
 pagination:
   shop-item-slots:
-    - 10-16
-    - 19-25
-    - 28-34
-
-items:
-  stone:
-    type: SHOP_ITEM
-    material: STONE
-    amount: 64
-    quantity: 64
-    buy-price: 10
-    sell-price: 2
-
-  back:
-    type: BACK
-    material: BARRIER
-    slot: 49
-    display-name: "&cBack"
-    left_click_actions:
-      - "[back]"
-```
-
-## Pagination
-
-For category shops, pagination is driven by:
-
-```yaml
-pagination:
-  shop-item-slots:
-```
-
-You can use:
-
-- a single slot list
-- `single-page`
-- `first-page`
-- `middle-page`
-- `last-page`
-
-Example:
-
-```yaml
-pagination:
-  shop-item-slots:
     single-page:
       - 10-16
       - 19-25
-    first-page:
-      - 10-17
-      - 19-26
-    middle-page:
-      - 9-17
-      - 18-26
-    last-page:
-      - 10-16
-      - 19-25
+      - 28-34
+
+items:
+  next-page:
+    type: NEXT_PAGE
+    material: ARROW
+    slot: 53
+    display-name: "&eNext Page"
+
+  stone:
+    type: SHOP_ITEM
+    material: STONE
+    quantity: 64
+    buy-price: 32
+    sell-price: 8
 ```
 
-## Navigation items
+## Category-specific commands
 
-Category shops support menu navigation items directly inside `items:`
+Category files can define:
 
+- `open_command`
+- `open_sub_command`
+
+Use `open_command` when the category should open directly:
+
+```yml
+open_command:
+  - blocks
+```
+
+Use `open_sub_command` when it belongs under the pack root:
+
+```yml
+open_sub_command:
+  - blocks
+```
+
+That gives:
+
+```text
+/shop blocks
+```
+
+when the pack root is `shop`.
+
+## Item definitions
+
+Items inside these files can be:
+
+- `SHOP_ITEM`
+- `SHOP_CATEGORY`
+- `CUSTOM`
+- `BACK`
 - `PREVIOUS_PAGE`
 - `NEXT_PAGE`
-- `BACK`
 
-These are regular menu items and can use:
+and other supported menu item types depending on the menu context.
 
-- `slot`
-- `display-name`
-- `show-when-unavailable`
-- click actions
+## Page-aware item visibility
+
+Items can be limited to pages using rules such as:
+
+```yml
+display-page: 2
+```
+
+or:
+
+```yml
+only-show-on-page: 1-3
+```
+
+Use this for:
+
+- custom fillers
+- page-specific instructions
+- decorative edge items
+- only-on-last-page navigation or status elements
+
+## Best practice
+
+### Keep main menus simple
+
+The pack main menu should route the player, not contain the whole economy.
+
+### Keep categories focused
+
+Each category should represent one clear gameplay slice.
+
+### Make navigation obvious
+
+Always configure back and page controls intentionally once a category can exceed one page.
+
+## Related pages
+
+- [Adding Shop Items](shop-items.md)
+- [Menu File Format](../gui/menu-file-format.md)
+- [Built-in Menus](../gui/built-in-menus.md)

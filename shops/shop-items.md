@@ -1,93 +1,177 @@
-# Shop Items
+# Adding Shop Items
 
-Category shop files support both transactional items and menu-only items.
+This page covers the actual sellable and buyable entries inside category shop files.
 
-## Transactional shop items
+## Modern shop item example
 
-The current shop loader maps these menu-style types into shop behavior:
-
-- `SHOP_ITEM`
-- `COMMAND`
-- `PERMISSION`
-- `ENCHANTMENT`
-
-## Menu-only items inside category shops
-
-These item types are handled by the menu layer, not the transaction loader:
-
-- `CUSTOM`
-- `SHOP_CATEGORY`
-- `PREVIOUS_PAGE`
-- `NEXT_PAGE`
-- `BACK`
-
-## Common keys
-
-| Key | Purpose |
-|---|---|
-| `type` | Item behavior |
-| `material` | Display or transaction item material |
-| `amount` | GUI display amount |
-| `quantity` | Transaction quantity |
-| `buy-price` | Buy price |
-| `sell-price` | Sell price |
-| `slot` / `slots` | Fixed menu placement for non-paginated items |
-| `display-name` | GUI name override |
-| `lore` | GUI lore override |
-| `display-page` | Optional page restriction for menu rendering |
-
-## Important pricing rule
-
-Negative pricing is not the current model.
-
-- omit `buy-price` to disable buying
-- omit `sell-price` to disable selling
-- do not use `-1` as an old-style magic value
-
-## `SHOP_ITEM` example
-
-```yaml
-carrot:
+```yml
+diamond:
   type: SHOP_ITEM
-  material: CARROT
-  amount: 16
+  material: DIAMOND
   quantity: 16
-  buy-price: 40
-  sell-price: 4
+  buy-price: 250
+  sell-price: 100
+  display-name: "&bDiamond"
+  lore:
+    - "&7A valuable resource."
 ```
 
-## `COMMAND` example
+## Core keys
 
-```yaml
-rank_token:
-  type: COMMAND
-  material: PAPER
-  buy-price: 5000
-  sell-price: 0
-  commands:
-    - "lp user %player% parent add vip"
+### `type`
+
+For real shop entries, use:
+
+```yml
+type: SHOP_ITEM
 ```
 
-## `PERMISSION` example
+### `material`
 
-```yaml
-fly_access:
-  type: PERMISSION
-  material: FEATHER
-  buy-price: 10000
-  sell-price: 0
-  permission: "essentials.fly"
+This is the main item definition path.
+
+It supports:
+
+- normal materials
+- custom directives such as `oraxen-...`
+- heads
+- spawners
+- placeholder-driven materials
+
+Examples:
+
+```yml
+material: DIAMOND
+material: oraxen-my_item
+material: itemsadder-namespace:item
+material: hdb-12345
+material: SPAWNER-ZOMBIE
+material: basehead-<base64>
 ```
 
-## `ENCHANTMENT` example
+### `quantity`
 
-```yaml
-sharpness_1:
-  type: ENCHANTMENT
-  material: ENCHANTED_BOOK
-  buy-price: 1500
-  sell-price: 0
-  enchantment: SHARPNESS
-  enchantmentLevel: 1
-  enchantmentStackSizeLimit: 1
+This is the transaction quantity for the shop item.
+
+If a player buys the item, this is how many they receive.
+
+### `buy-price` and `sell-price`
+
+Missing key means the action is unavailable.
+
+Examples:
+
+```yml
+buy-price: 100
+sell-price: 40
 ```
+
+If only `buy-price` exists:
+
+- players can buy
+- players cannot sell it back through that entry
+
+## Custom display and lore
+
+You can define:
+
+- `display-name`
+- `lore`
+
+Use lore when:
+
+- you want custom player-facing hints
+- you want to explain a gated item
+- the item needs clearer context than its material name
+
+## Comparison and meta behavior
+
+Shop items can compare different aspects of an item depending on your config and the item definition.
+
+Examples include:
+
+- meta
+- model
+- damage
+- NBT
+- repair cost
+
+This matters most for selling and matching.
+
+## Damage and legacy-style variants
+
+ZaminShop supports a clean modern format first, with runtime-aware compatibility underneath.
+
+Example:
+
+```yml
+damage: 5
+```
+
+Use this when the item’s runtime representation depends on durability or data.
+
+The important rule:
+
+- use modern readable material names in config where possible
+- let the plugin resolve older runtime differences internally
+
+## Permission-gated items
+
+You can gate items with custom permissions.
+
+Use this for:
+
+- rank-locked content
+- donor-only items
+- progression unlocks
+
+When combined with access lore, this lets the item stay visible while still being blocked.
+
+## Hooked and custom items
+
+The unified material directive path supports many optional item hooks.
+
+Examples:
+
+- Oraxen
+- Nexo
+- ItemsAdder
+- MMOItems
+- HeadDatabase
+
+This keeps your config format cleaner than scattering plugin-specific keys everywhere.
+
+## Spawners
+
+Spawner items use the same unified material path:
+
+```yml
+material: SPAWNER-ZOMBIE
+```
+
+Spawner handling can still delegate to:
+
+- the built-in spawner path
+- an external hooked spawner provider
+
+The config format stays the same.
+
+## Common mistakes
+
+### Mixing display amount with transaction quantity
+
+The runtime should treat `quantity` as the real purchased or sold amount.
+
+### Using old provider-specific keys in new configs
+
+Prefer the unified `material:` directive path.
+
+### Forgetting sell safety
+
+If a sell path looks safe in one category, check the whole server economy. Risk guard can catch cross-category and cross-pack issues, but your pricing still needs intent.
+
+## Related pages
+
+- [Shop Pack File Format](shop-file-format.md)
+- [Item and Spawner Hooks](../integrations/hooks.md)
+- [Safety, Risk Guard, and Audit](../configuration/safety.md)

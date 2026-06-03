@@ -1,208 +1,186 @@
 # Commands
 
-ZaminShop registers two root commands in `plugin.yml`:
+This page explains the commands that matter in day-to-day operation.
+
+## Main command roots
+
+ZaminShop ships with these plugin command roots:
 
 - `/zaminshop`
-- `/sell`
-
-It also registers aliases for `/zaminshop`:
-
-- `/shop`
+- `/shop` as an alias of `/zaminshop`
 - `/zshop`
 - `/zhop`
+- `/sell`
 
-In practice:
-
-- `/shop` is the normal player-facing entry
-- `/zaminshop` is the admin root
-- `/sell` is the direct selling command root
+In addition, shop packs and category files can register their own open commands.
 
 ## Player commands
 
 ### `/shop`
 
-Opens the main shop entry for the active pack command.
+Opens the main command path for the active pack configuration.
 
-- Permission: `zaminshop.player.shop`
-- Sender: player only
-- Notes: if `disableMainMenu` is enabled, the default main menu path is blocked
+What it does depends on your current setup:
 
-### `/shop help [page]`
-
-Shows player help.
-
-- Permission: none enforced in the command class
-- Sender: any
+- if a pack main menu is bound to `shop`, it opens that pack menu
+- if you use subcommands, `/shop <subcommand>` can open a category or custom menu target
 
 ### `/shop search <query>`
 
-Searches the currently scoped shop pack.
+Searches items in the current pack context.
 
-- Permission: `zaminshop.player.search`
-- Sender: player only
-- Aliases: `find`
-- Notes: search must be enabled in `config.yml -> search.enabled`
+Use this when:
 
-Example:
-
-```text
-/shop search diamond
-```
+- players know the item name
+- your pack has many categories
+- you want a faster path than category browsing
 
 ### `/shop favorites`
 
-Opens the global favorites menu.
-
-- Permission: `zaminshop.player.favorite`
-- Sender: player only
-- Aliases: `fav`, `favorite`
+Opens the favorites menu if it is enabled.
 
 ### `/shop recent`
 
-Opens the global recent transactions menu.
-
-- Permission: `zaminshop.player.recent`
-- Sender: player only
-- Aliases: `history`, `transactions`
+Opens the recent transactions menu if it is enabled.
 
 ### `/shop sell`
 
-Opens the configurable sell GUI.
+Opens the sell GUI if it is enabled.
 
-- Permission: `zaminshop.sellgui`
-- Sender: player only
-- Notes: the GUI can also be disabled by config
+### `/sell`
+
+ZaminShop also registers `/sell` for sell-focused flows.
+
+Exact behavior depends on your configuration and available subcommands such as:
+
+- hand-based selling
+- sell-all behavior
+- GUI-driven selling
+
+If you do not want ZaminShop to own `/sell`, use:
+
+```yml
+disableCommands:
+  sell: true
+```
+
+and restart the server.
 
 ## Admin commands
 
-### `/zaminshop help [page]`
-
-Shows admin help.
-
-- Permission: `zaminshop.admin.help`
-- Sender: any
-
 ### `/zaminshop reload`
 
-Reloads ZaminShop configuration, menus, and registered shop packs.
+Reloads configuration, menus, packs, language files, and runtime references.
 
-- Permission: `zaminshop.admin.reload`
-- Sender: any
+Use it after:
+
+- editing `config.yml`
+- editing GUI menu files
+- editing shop pack files
+- changing language content
 
 ### `/zaminshop validate`
 
-Validates menus, configs, and shop files.
+Runs shop and menu validation.
 
-- Permission: `zaminshop.admin.validate`
-- Sender: any
+This is one of the most important admin commands in the plugin.
 
-### `/zaminshop risk <list|confirm|reset> [riskId]`
+Use it after:
 
-Works with the risk guard system.
+- adding or moving shop packs
+- editing category files
+- changing menu commands
+- changing pagination layouts
+- adding new item directives or hooks
 
-- Permission: `zaminshop.admin.risk`
-- Sender: any
+### `/zaminshop risk list`
 
-### `/zaminshop language [reload|<locale>]`
+Lists current risk guard findings.
 
-Reloads or switches the active language.
+This is where you review:
 
-- Permission: `zaminshop.admin.language`
-- Sender: any
+- pricing problems
+- arbitrage paths
+- blocked items or shops
+- findings that require confirmation
 
-### `/zaminshop sanitize <player>`
+### `/zaminshop language`
 
-Removes leaked GUI-owned items from a player inventory.
+Used for language inspection and switching when supported by your setup.
 
-- Permission: `zaminshop.admin.sanitize`
-- Sender: any
+### `/zaminshop sanitize`
+
+Used to remove leaked GUI-owned items from inventories when cleanup is needed.
 
 ### `/zaminshop check`
 
-Shows the held item material and durability for the executing player.
+Used for item/shop inspection workflows such as held-item checks and worth checks.
 
-- Permission: `zaminshop.admin.check`
-- Sender: player only
+### `/zaminshop modifier`
 
-### `/zaminshop worth`
+Used for price modifier management when modifiers are enabled.
 
-Checks the value of the item in hand.
+## Dynamic pack and category commands
 
-- Permission: `zaminshop.player.worth`
-- Sender: player only
-- Alias: `w`
+ZaminShop can register commands from:
 
-### `/zaminshop search <query>`
+- `shops/<pack>/main.yml` via `open_command`
+- category shop files via `open_command`
+- category shop files via `open_sub_command`
 
-Runs the admin search subcommand.
+Examples:
 
-- Permission: `zaminshop.player.search`
-- Sender: player only
-
-### `/zaminshop recent`
-
-Opens the recent transactions view through the admin root.
-
-- Permission: `zaminshop.player.recent`
-- Sender: player only
-
-### `/zaminshop addmodifier ...`
-
-Adds a price modifier.
-
-- Permission: `zaminshop.admin.modifier`
-- Sender: any
-- Aliases: `setmodifier`, `am`, `sm`
-
-### `/zaminshop resetmodifier ...`
-
-Removes or resets a price modifier.
-
-- Permission: `zaminshop.admin.modifier`
-- Sender: any
-- Aliases: `removemodifier`, `deletemodifier`, `rm`, `dm`
-
-### `/zaminshop checkmodifiers <player>`
-
-Shows active price modifiers for a player.
-
-- Permission: `zaminshop.admin.modifier`
-- Sender: any
-- Aliases: `viewmodifiers`, `viewmodifier`, `checkmodifier`, `vm`, `cm`
-
-## Opening shops for another player
-
-The admin root also supports:
-
-```text
-/zaminshop <player>
-/zaminshop <player> <shopId> [page]
+```yml
+open_command:
+  - shop
 ```
 
-- Permission: `zaminshop.admin.open-others`
-- Sender: any
+```yml
+open_command:
+  - buildingblocks
+```
 
-Behavior:
+```yml
+open_sub_command:
+  - buildingblocks
+```
 
-- with only a player name, ZaminShop opens the main menu for that player
-- with a `shopId`, it opens a specific category shop and optional page
+That allows flows such as:
 
-## Direct sell command
+- `/shop`
+- `/buildingblocks`
+- `/shop buildingblocks`
 
-### `/sell hand`
+depending on how you configure the pack and category.
 
-Sells the item in the player's main hand.
+## Command collisions
 
-- Permission: `zaminshop.sell.hand`
+If two menus or packs try to claim the same command, ZaminShop warns and keeps the existing owner instead of silently overriding it.
 
-### `/sell all`
+You should still design your command layout intentionally.
 
-Sells matching inventory contents using the sell-all pipeline.
+Good practice:
 
-- Permission: `zaminshop.sell.all`
+- one clear main command per pack
+- unique standalone category commands when used
+- subcommands when you want pack-scoped category routing
 
-### `/sell handall`
+## Common mistakes
 
-Uses the hand-all selling path.
+### Treating every category as a root command
 
-- Permission: `zaminshop.sell.hand.all`
+This works, but it can make the command space noisy. Prefer `open_sub_command` where the category belongs under a pack root.
+
+### Forgetting to restart after `disableCommands`
+
+Command registration ownership needs a full restart for some root-command changes.
+
+### Not validating command changes
+
+If you move command structure around, run `/zaminshop validate`.
+
+## Related pages
+
+- [Permissions](permissions.md)
+- [Shop Pack File Format](shops/shop-file-format.md)
+- [Menu File Format](gui/menu-file-format.md)

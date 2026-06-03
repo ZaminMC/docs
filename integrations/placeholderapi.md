@@ -1,99 +1,97 @@
 # PlaceholderAPI
 
-ZaminShop includes a PlaceholderAPI expansion so your menus, messages, and other plugin text can show live shop-related values.
+PlaceholderAPI is one of the most useful integrations in ZaminShop.
 
-## Identifier
+It allows menu titles, lore, messages, and context-driven displays to react to the player and the current shop state.
 
-```text
-zaminshop
+## What PlaceholderAPI is used for
+
+Use PlaceholderAPI when you want:
+
+- balance values
+- player names
+- rank or stat values
+- custom plugin values
+- context-aware menu text
+
+## Basic requirement
+
+Install PlaceholderAPI on the server and start the server with it present.
+
+ZaminShop registers its own expansion when PlaceholderAPI is available.
+
+## Where placeholders work
+
+Placeholders can be used in:
+
+- menu titles where supported
+- custom menu item names
+- custom lore
+- current-context displays
+- language messages
+- pack and category displays
+
+## ZaminShop-specific context placeholders
+
+ZaminShop provides current-context values such as:
+
+- current item
+- current category
+- current shop pack name
+- current shop pack id
+- current page
+- current transaction data
+
+This is especially useful in:
+
+- amount selector menus
+- favorites and recent menus
+- pack menus
+- category menus
+
+## Example
+
+```yml
+display-name: "&fBalance: &a%vault_eco_balance_commas%"
 ```
 
-Format:
+## Good uses
 
-```text
-%zaminshop_<placeholder>%
-```
+### Pack main menu profile item
 
-## What you can use it for
+Show:
 
-PlaceholderAPI becomes most useful when you want to show:
+- player name
+- balance
+- favorite count
 
-- player balance
-- favorite counts
-- recent history counts
-- sell-limit progress
-- current item or shop context inside menus
+### Current category banners
 
-## Direct placeholders
+Show:
 
-These placeholders are handled explicitly by the ZaminShop expansion:
+- current category name
+- current pack name
 
-| Placeholder | Meaning |
-|---|---|
-| `%zaminshop_balance%` | Current player balance from the default economy provider |
-| `%zaminshop_favorites%` | Favorite item count |
-| `%zaminshop_favoritescount%` | Favorite item count |
-| `%zaminshop_favoritelimit%` | Current favorite limit value returned by source |
-| `%zaminshop_recentcount%` | Total recent entries stored |
-| `%zaminshop_recentboughtcount%` | Recent buy entries |
-| `%zaminshop_recentsoldcount%` | Recent sell entries |
-| `%zaminshop_lasttransactionamount%` | Amount from the latest recent entry |
-| `%zaminshop_lasttransactionprice%` | Price from the latest recent entry |
-| `%zaminshop_lasttransactiontype%` | Latest transaction action |
-| `%zaminshop_dailysellmoney%` | Daily earned sell money so far |
-| `%zaminshop_dailysellmoneylimit%` | Daily sell money limit |
-| `%zaminshop_dailysellmoneyremaining%` | Daily sell money remaining |
-| `%zaminshop_weeklysellmoney%` | Weekly earned sell money so far |
-| `%zaminshop_weeklysellmoneylimit%` | Weekly sell money limit |
-| `%zaminshop_weeklysellmoneyremaining%` | Weekly sell money remaining |
-| `%zaminshop_dailyitemssold%` | Daily sold item count |
-| `%zaminshop_dailyitemssoldlimit%` | Daily item sell limit |
-| `%zaminshop_dailyitemssoldremaining%` | Daily items remaining before limit |
-| `%zaminshop_weeklyitemssold%` | Weekly sold item count |
-| `%zaminshop_weeklyitemssoldlimit%` | Weekly item sell limit |
-| `%zaminshop_weeklyitemssoldremaining%` | Weekly items remaining before limit |
+### Amount selector
 
-## Context placeholders
+Show:
 
-ZaminShop also fills context-driven placeholders while a relevant menu, transaction, validation run, or search flow is active.
+- current item name
+- selected quantity
+- current player balance
 
-Common examples:
+## Common mistakes
 
-- `%zaminshop_item%`
-- `%zaminshop_material%`
-- `%zaminshop_buyprice%`
-- `%zaminshop_sellprice%`
-- `%zaminshop_shopname%`
-- `%zaminshop_shopid%`
-- `%zaminshop_page%`
-- `%zaminshop_query%`
-- `%zaminshop_amount%`
-- `%zaminshop_quantity%`
+### Assuming every placeholder works in every context
 
-These are especially useful inside:
+Some placeholders depend on the current menu or shop state.
 
-- menu titles
-- menu lore
-- language-backed GUI labels
-- validation and transaction messages
+### Forgetting PlaceholderAPI is optional
 
-## Language fallback
+If the server does not have PlaceholderAPI, those placeholders will not resolve through PlaceholderAPI.
 
-If a placeholder is not handled directly and matches a language key, ZaminShop falls back to:
+## Related pages
 
-```text
-zaminshop_<placeholder>
-```
-
-This is why some GUI text can stay in the language file while still behaving like a placeholder-backed label.
-
-## Practical advice
-
-Use PlaceholderAPI for values that actually help the player make decisions:
-
-- current balance
-- buy and sell values
-- favorite counts
-- search query feedback
-
-Do not overload every lore block just because the placeholders exist.
+- [Menu File Format](../gui/menu-file-format.md)
+- [Built-in Menus](../gui/built-in-menus.md)
+- [Language and Messages](../configuration/language.md)

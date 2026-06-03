@@ -1,106 +1,173 @@
 # Menu File Format
 
-ZaminShop uses a modern menu format built around:
+This page explains the shared GUI menu format used by ZaminShop.
 
-- `menu_title`
-- `rows` or `size`
-- `items`
-- optional `pagination`
-- optional actions and requirements
+## Where this format is used
 
-## Root keys
+The menu system powers:
 
-| Key | Purpose |
-|---|---|
-| `menu_title` | Inventory title |
-| `rows` | Inventory rows |
-| `size` | Inventory size |
-| `update_interval` / `refresh` | Auto-refresh interval |
-| `open_command` | Commands that open the menu |
-| `open_actions` | Actions run on open |
-| `close_actions` | Actions run on close |
-| `open_requirement` | Requirement block for opening |
-| `pagination` | Dynamic slot families for paged content |
-| `items` | Menu items |
+- pack main menus
+- shared menus in `guis/`
+- category pages
+- utility menus such as search, favorites, and recent
 
-## Item keys
+## Top-level structure
 
-| Key | Purpose |
-|---|---|
-| `type` | Menu item type |
-| `material` | Display material |
-| `slot` | One slot |
-| `slots` | Many slots or slot ranges |
-| `display-name` | Name |
-| `lore` | Lore lines |
-| `priority` | Slot conflict priority |
-| `display-page` | Optional page restriction |
-| `update` | Re-render item during refresh |
-| `show-when-empty` | List-item behavior |
-| `show-when-unavailable` | Navigation behavior |
-| `view_requirement` | Display requirement |
+Typical example:
 
-## Supported click sections
-
-```yaml
-left_click_actions:
-right_click_actions:
-shift_left_click_actions:
-shift_right_click_actions:
-middle_click_actions:
-click_actions:
-```
-
-## Slot ranges
-
-```yaml
-slots:
-  - 10-16
-  - 19-25
-  - 28
-```
-
-## Pagination families
-
-Dynamic menus use named slot families such as:
-
-- `favorite-item-slots`
-- `recent-item-slots`
-- `search-item-slots`
-- `shop-item-slots`
-
-Those families can be written as:
-
-- one shared slot list
-- `single-page`
-- `first-page`
-- `middle-page`
-- `last-page`
-
-## Example
-
-```yaml
+```yml
 menu_title: "&8Favorites"
 rows: 6
 
 pagination:
   favorite-item-slots:
-    - 9-17
-    - 18-26
+    single-page:
+      - 9-17
+      - 18-26
 
 items:
-  favorite-item:
-    type: FAVORITE_ITEM
-
-  previous-page:
-    type: PREVIOUS_PAGE
-    material: ARROW
-    slot: 37
-    show-when-unavailable: false
-
-  next-page:
-    type: NEXT_PAGE
-    material: ARROW
-    slot: 43
-    show-when-unavailable: false
+  back:
+    type: BACK
+    material: BARRIER
+    slot: 49
+    display-name: "&cBack"
 ```
+
+## Title and size
+
+### `menu_title`
+
+Inventory title.
+
+Placeholders can be used where supported by the current menu context.
+
+### `rows` or `size`
+
+Use `rows` for the cleanest format.
+
+`size` is still supported where applicable.
+
+## `items`
+
+This is where menu entries are defined.
+
+Each item has a unique id and can define:
+
+- `type`
+- `material`
+- `slot` or `slots`
+- `display-name`
+- `lore`
+- `priority`
+- `left_click_actions`
+- `right_click_actions`
+- `middle_click_actions`
+- requirements
+
+## Supported slots
+
+You can use:
+
+- single slots
+- ranges
+- slot lists
+
+Examples:
+
+```yml
+slot: 13
+```
+
+```yml
+slots:
+  - 0-8
+  - 12
+  - 14
+```
+
+## Priority
+
+Lower priority values are stronger.
+
+Use priority when multiple definitions could target the same slot and one should intentionally win.
+
+## Pagination
+
+Pagination is now layout-based.
+
+Depending on the menu type, the slot family key changes, for example:
+
+- `shop-item-slots`
+- `favorite-item-slots`
+- `recent-item-slots`
+- `search-item-slots`
+
+Each family can define:
+
+- `single-page`
+- `first-page`
+- `middle-page`
+- `last-page`
+
+or a uniform shorthand list.
+
+## Navigation items
+
+Typical navigation item types:
+
+- `BACK`
+- `PREVIOUS_PAGE`
+- `NEXT_PAGE`
+
+You can also use:
+
+```yml
+show-when-unavailable: false
+shift-click-jump: true
+```
+
+`shift-click-jump` allows:
+
+- `NEXT_PAGE` to jump to the last page
+- `PREVIOUS_PAGE` to jump to the first page
+
+## Page-restricted items
+
+Use:
+
+```yml
+display-page: 2
+```
+
+or:
+
+```yml
+only-show-on-page:
+  - 1
+  - 3
+  - 5-7
+```
+
+This is useful for:
+
+- decorative items
+- status items
+- special-page buttons
+
+## Placeholders
+
+Menus support placeholders, including current context values such as:
+
+- current item
+- current category
+- current shop pack
+- balance
+- page
+
+Exact availability depends on where the menu is opened from.
+
+## Related pages
+
+- [Built-in Menus](built-in-menus.md)
+- [Actions and Requirements](actions-requirements.md)
+- [PlaceholderAPI](../integrations/placeholderapi.md)

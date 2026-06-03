@@ -1,105 +1,108 @@
 # Build Shop Packs
 
-This section is where ZaminShop becomes your server's shop system instead of just a plugin that loaded successfully.
+Shop packs are the top-level content unit in ZaminShop.
 
-Shop packs are the heart of the plugin.
+If you understand packs, categories, and shared menus, you understand the plugin.
 
 ## What a pack is
 
-A shop pack is a folder with:
+A pack is a folder under:
 
-- one main menu
-- one categories folder
-- one internal pack id from `config.yml`
+```text
+plugins/ZaminShop/shops/<pack>/
+```
 
-This makes it possible to keep separate shop experiences for different parts of your server.
+Each pack normally contains:
+
+- `main.yml`
+- `categories/`
+
+The pack is responsible for:
+
+- its display identity
+- its entry commands
+- its pack-level main menu
+- the category set it exposes to players
+
+## Why packs exist
+
+Packs solve a real problem:
+
+servers often need more than one store experience.
 
 Examples:
 
-- survival shop
-- donor shop
-- event shop
-- prison shop
+- a normal survival shop
+- a donor shop
+- a seasonal event shop
+- a rank-only shop
 
-## How packs are loaded
+Trying to manage all of that in one flat menu and one flat list of files gets messy quickly.
 
-Packs are registered manually in `config.yml`.
+## What belongs in `main.yml`
 
-Example:
+Your pack `main.yml` is usually where you define:
 
-```yaml
-shops:
-  survival:
-    folder: survival_shop
-    enabled: true
-    file: main.yml
-```
-
-Only packs listed there are loaded.
-
-ZaminShop does **not** auto-discover every folder under `plugins/ZaminShop/shops/`.
-
-## Pack folder structure
-
-Example:
-
-```text
-plugins/ZaminShop/shops/survival_shop/
-  main.yml
-  categories/
-    blocks.yml
-    food.yml
-    ores.yml
-```
-
-## What each part does
-
-### `main.yml`
-
-This is the entry menu for the pack.
-
-It usually contains:
-
+- whether the pack is enabled
+- the pack display name
+- the pack root commands
+- top-level custom buttons
 - category buttons
-- sell menu button
-- favorites button
-- recent button
-- profile or balance items
+- links to shared menus such as sell, favorites, recent, or search
 
-### `categories/*.yml`
+Think of `main.yml` as the landing page for the pack.
 
-These are the actual shop menus where transactional items live.
+## What belongs in `categories/*.yml`
 
-They control:
+Category files define the actual pages players browse and purchase from.
 
-- displayed items
-- prices
+That includes:
+
+- title
+- rows or size
 - pagination
-- category-specific messages
-- category-specific menu actions
+- previous/next/back buttons
+- shop items
+- custom filler or decorative items
+- category-only commands
 
-## Best way to learn this section
+## Pack design recommendations
 
-Read these pages in order:
+### Keep each pack focused
 
-1. [First Shop Pack Walkthrough](first-shop-pack.md)
-2. [Shop Pack File Format](shop-file-format.md)
-3. [Adding Shop Items](shop-items.md)
-4. [Bundled Starter Pack](default-shops.md)
-5. [Limited Items](limited-items.md)
+A pack should answer one design question clearly.
 
-## Validation behavior
+Good pack themes:
 
-If a registered pack is broken:
+- survival progression
+- donor convenience
+- event rotation
+- skill or profession store
 
-- missing folder -> pack is skipped
-- missing `main.yml` -> pack is skipped
-- invalid category file -> that category is skipped
+### Keep categories readable
 
-Always run:
+Players should understand the category list quickly.
 
-```text
-/zaminshop validate
-```
+Good categories:
 
-after pack changes.
+- blocks
+- ores
+- food
+- farming
+- armor
+- tools
+- drops
+- miscellaneous
+
+### Use category commands deliberately
+
+Category commands are useful, but they should reflect player behavior:
+
+- a frequently used category can justify its own direct command
+- everything does not need a standalone root command
+
+## Related pages
+
+- [First Shop Pack Walkthrough](first-shop-pack.md)
+- [Shop Pack File Format](shop-file-format.md)
+- [Adding Shop Items](shop-items.md)

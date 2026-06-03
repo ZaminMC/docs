@@ -1,18 +1,14 @@
 # Permissions
 
-This page combines:
+This page covers the built-in permission structure and the practical way to use it on a live server.
 
-- permissions declared in `plugin.yml`
-- permissions enforced directly in source
-
-## Declared permission groups
+## Main permission groups
 
 ### `zaminshop.player.*`
 
-- Default: `false`
-- Purpose: grants the normal player feature set
+Grants the normal player-facing shop permissions.
 
-Children:
+Includes:
 
 - `zaminshop.player.shop`
 - `zaminshop.player.search`
@@ -25,10 +21,42 @@ Children:
 
 ### `zaminshop.admin.*`
 
-- Default: `op`
-- Purpose: grants admin tools and includes `zaminshop.player.*`
+Grants the admin toolset.
 
-Children:
+Includes:
+
+- all player permissions
+- reload
+- validate
+- risk tools
+- language tools
+- sanitize
+- inspection tools
+- modifier tools
+- open-others support
+
+## Direct permissions
+
+### Player-facing
+
+- `zaminshop.player.shop`
+  - use the shop
+- `zaminshop.player.search`
+  - use search
+- `zaminshop.player.favorite`
+  - use favorites
+- `zaminshop.player.recent`
+  - use recent history
+- `zaminshop.sellgui`
+  - open the sell GUI
+- `zaminshop.player.worth`
+  - use worth-style inspection tools if exposed by your command setup
+- `zaminshop.player.buy-more`
+  - use buy-more style flows
+- `zaminshop.player.sell-more`
+  - use sell-more style flows
+
+### Admin-facing
 
 - `zaminshop.admin.help`
 - `zaminshop.admin.reload`
@@ -42,112 +70,87 @@ Children:
 
 ## Legacy aliases
 
-### `zaminshop.shop`
+Some older aliases still exist for compatibility:
 
-- Default: `false`
-- Purpose: legacy alias for `zaminshop.player.shop`
+- `zaminshop.shop`
+- `zaminshop.admin`
 
-### `zaminshop.admin`
+Do not build new permission setups around those aliases unless you have a migration reason.
 
-- Default: `op`
-- Purpose: legacy alias for `zaminshop.admin.*`
+## Shop access permissions
 
-## Player permissions
+ZaminShop also supports shop-level access control.
 
-### `zaminshop.player.shop`
+Examples include:
 
-Allows a player to open the normal shop entry command.
+- shop-specific access
+- category button access
+- item-level permission requirements
 
-### `zaminshop.player.search`
+Use this when:
 
-Allows `/shop search <query>`.
+- certain packs are donor-only
+- categories unlock through progression
+- specific items require rank or quest completion permissions
 
-### `zaminshop.player.favorite`
+## Category and item permission gating
 
-Allows opening the favorites menu.
+Shop items and category entries can require custom permissions.
 
-### `zaminshop.player.recent`
+When configured correctly:
 
-Allows opening the recent transactions menu.
+- the item remains visible if that is your menu design
+- the click can be blocked
+- deny lore can be shown
 
-### `zaminshop.sellgui`
+This is useful for:
 
-Allows opening the sell GUI.
+- donor menus
+- level or rank unlocks
+- profession or class shops
 
-### `zaminshop.player.worth`
+## Recommended setups
 
-Allows `/zaminshop worth`.
+### Survival server
 
-### `zaminshop.player.buy-more`
+Give normal players:
 
-Used for bulk buy flows.
+- `zaminshop.player.*`
 
-### `zaminshop.player.sell-more`
+Give staff:
 
-Used for bulk sell flows.
+- `zaminshop.admin.*`
 
-### `zaminshop.player.bypass.gamemode`
+### Donor pack
 
-Bypasses blocked gamemode checks for shop access.
+Keep normal player access for the base shop, then gate the premium category or premium pack with its own custom permission.
 
-### `zaminshop.player.bypass.world`
+### Network or mixed-mode server
 
-Bypasses blocked world checks for shop access.
+Use permissions per pack or per category rather than trying to solve everything with one root command.
 
-## Admin permissions
+## Common mistakes
 
-### `zaminshop.admin.help`
+### Granting only `/shop` command access
 
-Allows admin help output.
+A command being visible is not the same as having permission to the feature behind it.
 
-### `zaminshop.admin.reload`
+### Mixing pack access with item access
 
-Allows `/zaminshop reload`.
+Pack access decides whether players may enter that experience.
+Item access decides whether a specific entry can be used.
 
-### `zaminshop.admin.validate`
+Keep those decisions separate.
 
-Allows `/zaminshop validate`.
+### Hiding permission failures from yourself
 
-### `zaminshop.admin.risk`
+If something “does nothing,” check both:
 
-Allows risk guard administration commands.
+- permission assignment
+- menu/item requirements
 
-### `zaminshop.admin.language`
+## Related pages
 
-Allows language management commands.
-
-### `zaminshop.admin.sanitize`
-
-Allows `/zaminshop sanitize <player>`.
-
-### `zaminshop.admin.check`
-
-Allows `/zaminshop check`.
-
-### `zaminshop.admin.modifier`
-
-Allows price modifier commands.
-
-### `zaminshop.admin.open-others`
-
-Allows opening shop menus for another player.
-
-## Sell command permissions
-
-### `zaminshop.sell.hand`
-
-Allows `/sell hand`.
-
-### `zaminshop.sell.hand.all`
-
-Allows `/sell handall`.
-
-### `zaminshop.sell.all`
-
-Allows `/sell all`.
-
-## Notes
-
-- Some permissions are enforced in code but not declared individually in `plugin.yml`
-- If you want a strict permission plugin setup, grant the exact nodes you use instead of relying only on the wildcard groups
-- Dynamic shop pack commands still rely on the normal shop access checks
+- [Commands](commands.md)
+- [Shop Item Configuration](shops/shop-items.md)
+- [Actions and Requirements](gui/actions-requirements.md)

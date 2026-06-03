@@ -1,45 +1,42 @@
 # First Shop Pack Walkthrough
 
-This page shows the simplest practical path to building your first usable shop pack.
+This walkthrough shows the clean way to build a pack from scratch.
 
-## Step 1: register the pack
+## Goal
 
-In `config.yml`:
+Build a pack called `survival_shop` with:
 
-```yaml
-shops:
-  survival:
-    folder: survival_shop
-    enabled: true
-    file: main.yml
-```
+- one pack main menu
+- a `/shop` command
+- category pages such as blocks and ores
+- links to shared menus such as sell and favorites
 
-## Step 2: create the folder
+## Step 1: create the folder
 
 Create:
 
 ```text
 plugins/ZaminShop/shops/survival_shop/
-  main.yml
-  categories/
 ```
 
-## Step 3: build the main menu
+Inside it, create:
 
-Your `main.yml` is the entry point for the pack.
+```text
+plugins/ZaminShop/shops/survival_shop/main.yml
+plugins/ZaminShop/shops/survival_shop/categories/
+```
 
-It should usually contain:
+## Step 2: create `main.yml`
 
-- one or more category buttons
-- a sell button
-- favorites button
-- recent button
+Example:
 
-Minimal example:
-
-```yaml
+```yml
+enabled: true
+shop_name: "Survival Shop"
 menu_title: "&8Survival Shop"
-rows: 6
+size: 54
+open_command:
+  - shop
 
 items:
   category_blocks:
@@ -48,9 +45,32 @@ items:
     slot: 20
     display-name: "&eBlocks"
     shop: blocks
+
+  category_ores:
+    type: SHOP_CATEGORY
+    material: DIAMOND
+    slot: 24
+    display-name: "&eOres"
+    shop: ores
+
+  sell_menu:
+    type: CUSTOM
+    material: HOPPER
+    slot: 49
+    display-name: "&aSell Items"
+    left_click_actions:
+      - "[open] sell"
 ```
 
-## Step 4: add the first category file
+What this does:
+
+- enables the pack
+- gives it a friendly name
+- opens it with `/shop`
+- renders category buttons
+- links to the shared sell menu
+
+## Step 3: add a category
 
 Create:
 
@@ -58,65 +78,140 @@ Create:
 plugins/ZaminShop/shops/survival_shop/categories/blocks.yml
 ```
 
-Minimal example:
+Example:
 
-```yaml
+```yml
 menu_title: "&8Blocks"
 rows: 6
 
 pagination:
   shop-item-slots:
-    - 10-16
-    - 19-25
-    - 28-34
+    single-page:
+      - 10-16
+      - 19-25
+      - 28-34
+    first-page:
+      - 10-17
+      - 19-26
+      - 28-35
+    middle-page:
+      - 9-17
+      - 18-26
+      - 27-35
+    last-page:
+      - 9-17
+      - 18-26
+      - 27-34
 
 items:
-  stone:
-    type: SHOP_ITEM
-    material: STONE
-    amount: 64
-    quantity: 64
-    buy-price: 10
-    sell-price: 2
+  previous-page:
+    type: PREVIOUS_PAGE
+    material: ARROW
+    slot: 45
+    display-name: "&ePrevious Page"
+    show-when-unavailable: false
 
   back:
     type: BACK
     material: BARRIER
     slot: 49
     display-name: "&cBack"
-    left_click_actions:
-      - "[back]"
+
+  next-page:
+    type: NEXT_PAGE
+    material: ARROW
+    slot: 53
+    display-name: "&eNext Page"
+    show-when-unavailable: false
+
+  stone:
+    type: SHOP_ITEM
+    material: STONE
+    quantity: 64
+    buy-price: 32
+    sell-price: 8
+
+  oak_planks:
+    type: SHOP_ITEM
+    material: OAK_PLANKS
+    quantity: 64
+    buy-price: 48
+    sell-price: 12
 ```
 
-## Step 5: validate
+## Step 4: reload and validate
 
 Run:
 
 ```text
+/zaminshop reload
 /zaminshop validate
 ```
 
-If the plugin reports issues, fix those first before adding more categories.
+This gives you:
 
-## Step 6: expand
+- live pack loading
+- validation diagnostics
+- early warning if commands, menu links, or item formats are wrong
 
-Once one category works, repeat the same pattern for:
+## Step 5: add more categories
 
-- food
+Repeat the category pattern for:
+
 - ores
+- food
+- farming
 - tools
 - armor
 
+## Step 6: decide command strategy
+
+You have three common choices:
+
+### Pack root only
+
+Players use:
+
+```text
+/shop
+```
+
+and browse categories from the main menu.
+
+### Direct category commands
+
+Define `open_command` in a category for something like:
+
+```text
+/blocks
+```
+
+### Pack-scoped subcommands
+
+Define `open_sub_command` for:
+
+```text
+/shop blocks
+```
+
+This is usually the cleanest choice when the category belongs tightly to the pack.
+
 ## Common mistakes
 
-### The category button does nothing
+### Putting shop items in `main.yml`
 
-Check that:
+`main.yml` is usually for pack navigation, not the full store catalog.
 
-- the category file exists
-- the category file name matches the `shop:` target
-- the pack loaded cleanly
+### Forgetting pagination controls
 
-### The pack folder exists but nothing opens
+If the category can exceed one page, configure page slots and navigation items intentionally.
 
-Make sure the folder is registered in `config.yml`. ZaminShop will not load an unregistered folder just because it exists.
+### Overusing root commands
+
+Not every category needs its own standalone command.
+
+## Related pages
+
+- [Shop Pack File Format](shop-file-format.md)
+- [Adding Shop Items](shop-items.md)
+- [Built-in Menus](../gui/built-in-menus.md)

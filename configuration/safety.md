@@ -1,135 +1,118 @@
 # Safety, Risk Guard, and Audit
 
-This is one of the most important parts of ZaminShop.
-
-Many shop plugins can render menus. The harder problem is keeping the economy and item flow safe when players spam clicks, sell huge volumes, or expose a bad price setup.
+This page covers the systems that keep the shop from damaging the economy or duplicating bad behavior under load.
 
 ## Transaction safety
 
-`transaction-safety` protects the execution path for buy and sell actions.
+Transaction safety exists to stop race conditions and broken click flows from turning into inventory or economy inconsistencies.
 
-```yaml
-transaction-safety:
-  enabled: true
-  per-player-lock: true
-  lock-timeout-ms: 5000
-  click-cooldown-ms: 150
-  block-while-inventory-open: false
-  debug-failures: false
-```
+Main controls:
 
-### What it does
+- per-player transaction lock
+- click cooldown
+- invalid amount blocking
+- rollback-aware commit flow
 
-- stops overlapping actions from the same player
-- reduces spam-click race conditions
-- gives the transaction layer one consistent authority path
+Use it to protect:
 
-### When to change it
-
-Most servers should leave this enabled.
-
-Only tune the timings if:
-
-- players feel locked out by cooldowns that are too aggressive
-- you are debugging a transaction timing issue
-
-## Transaction audit
-
-`transaction-audit` controls structured logging for transaction results.
-
-```yaml
-transaction-audit:
-  enabled: false
-  log-success: false
-  log-failures: true
-  include-inventory-summary: false
-```
-
-### When to use it
-
-Turn this on when you need to investigate:
-
-- disappearing items
-- failed deposits
-- rollback behavior
-- suspicious reports from players
-
-For normal production use, failure logging is often enough.
+- rapid clicking
+- overlapping purchase attempts
+- repeated GUI interactions during unstable state
 
 ## Currency safety
 
-`currency-safety` is the money validation layer.
+Currency safety normalizes money values before they are used in a live transaction.
 
-```yaml
-currency-safety:
-  enabled: true
-  decimal-places: 2
-  reject-prices-with-too-many-decimals: true
-  minimum-transaction-value: 0.01
-  normalize-player-balances-for-checks: true
-  block-nan-infinity: true
-  max-transaction-value: 1000000000000
-```
+It helps prevent:
 
-### Why it exists
+- invalid decimal precision
+- NaN or infinite values
+- absurd transaction values
+- mismatched balance comparisons
 
-Economy bugs are not always caused by the economy plugin. Sometimes they come from:
+This is especially important if:
 
-- bad YAML prices
-- impossible decimal precision
-- broken modifiers
-- invalid math results
-
-This section blocks those cases before they hit the transaction pipeline.
+- prices are dynamic
+- modifiers are active
+- placeholders affect pricing
 
 ## Risk guard
 
-Risk guard is the economic sanity checker.
+Risk guard is the main economic protection layer for bad pricing.
 
-```yaml
-risk-guard:
-  enabled: true
-  block-critical-shops: true
-  notify-admins: true
-  require-confirmation: true
-  max-sell-buy-ratio: 0.8
-  allow-sell-higher-than-buy: false
-```
+It can block or flag:
 
-### What it protects against
+- buy and sell relationships that make no sense
+- same-item arbitrage
+- cross-category arbitrage
+- cross-pack arbitrage
+- known compaction and crafting loops
 
-It catches setups like:
+If a finding is critical, the plugin can block the affected item or shop until an admin confirms it.
 
-- sell price too close to buy price
-- sell price higher than buy price
-- other pricing relationships that can damage the economy
+## Suspicious transaction monitoring
 
-### Why this matters
+This system watches player behavior patterns over time.
 
-A YAML file can be valid and still be economically dangerous.
+It is meant to detect:
 
-That is why `validate` and `risk list` are separate tools.
+- extremely high sale frequency
+- very large money generation bursts
+- repeated same-item sale loops
 
-### Admin commands
+Use it when your server has:
 
-```text
-/zaminshop risk list
-/zaminshop risk confirm <riskId>
-/zaminshop risk reset
-```
+- farms
+- grinders
+- token or money-heavy progression
 
-### Recommended default
+## Sell limits
 
-Public servers should keep:
+Sell limits are not exploit detection. They are economy shaping.
 
-- `enabled: true`
-- `block-critical-shops: true`
-- `require-confirmation: true`
+Use them when you want to cap:
 
-## Practical advice
+- daily money generation
+- weekly money generation
+- raw item sale volume
 
-If you are unsure whether a price setup is safe:
+This is useful for:
 
-1. run `/zaminshop validate`
-2. run `/zaminshop risk list`
-3. fix the warning instead of immediately confirming it
+- balancing farms
+- slowing inflation
+- preventing one activity from dominating the economy
+
+## Validation
+
+Validation is your first safety check before players ever touch a broken menu.
+
+It helps catch:
+
+- bad YAML
+- broken menu links
+- invalid category targets
+- command conflicts
+- unsupported metadata
+- pagination issues
+
+Use validation before reloads on important production changes.
+
+## Best practice
+
+### Keep safety enabled by default
+
+Do not disable safety systems unless you are debugging a very specific issue.
+
+### Treat warnings as real signals
+
+If risk guard or validation warns you, assume the issue matters until proven otherwise.
+
+### Re-check the whole economy after item changes
+
+A new item in one category can create a problem in another pack.
+
+## Related pages
+
+- [Sell Limits and Suspicious Transactions](sell-limits.md)
+- [config.yml Reference](config-yml.md)
+- [Commands](../commands.md)

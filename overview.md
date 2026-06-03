@@ -1,97 +1,131 @@
 # What ZaminShop Does
 
-ZaminShop gives your server a complete GUI-driven shop workflow rather than a single menu with items in it.
+ZaminShop is not just a single shop menu. It is a complete shop runtime made of shop packs, category menus, shared utility GUIs, transaction safety, and compatibility services.
 
-At player level, that means:
+## The high-level model
 
-- open the main shop
-- move through categories
-- buy and sell items
-- search the current pack
-- use favorites and recent history
-- use sell-focused convenience menus
+At runtime, the plugin is built around four layers:
 
-At admin level, it means you can structure, protect, and maintain that whole experience without fighting the file layout every time the server grows.
+1. **Shop packs**
+   Each pack lives in its own folder under `plugins/ZaminShop/shops/<pack>/`.
 
-## The player-facing experience
+2. **Category shop files**
+   These define the actual purchasable and sellable items players interact with.
 
-Players interact with ZaminShop as a system, not as isolated commands.
+3. **Shared GUI menus**
+   Sell, search, favorites, recent, amount selector, and bulk flows are configured separately and reused across the plugin.
 
-That system can include:
+4. **Protection systems**
+   Validation, transaction locking, rollback safety, risk guard, suspicious transaction detection, and sell limits protect the economy and the player experience.
 
-- a pack main menu
-- category menus
-- search results
+## What players experience
+
+Players typically see the plugin as:
+
+- a main shop menu
+- category pages
+- search
 - favorites
-- recent item history
-- amount selector
-- bulk transaction menus
-- sell GUI
+- recent transactions
+- amount selectors
+- bulk buy and bulk sell menus
+- a sell GUI
 
-The goal is to let common actions become faster over time instead of forcing players through the same slow path forever.
-
-## The admin-facing experience
-
-Server owners work with:
-
-- manual pack registration
-- pack-specific main menus
-- category files
-- shared GUI files
-- global safety settings
-- economy provider routing
-- validation and risk checking
-
-This makes the plugin easier to reason about when your server needs more than one shop experience.
-
-## Where it fits best
-
-ZaminShop is strongest on servers where the shop is part of the gameplay loop instead of a minor side utility.
+The important part is that these are not isolated features. They are expected to work together.
 
 Examples:
 
-- survival servers with a central economy
-- SMP servers with regular buying and selling
-- prison-style setups where price balance matters
-- mixed-mode networks with multiple shop themes
-- donor or event packs that should stay isolated from the main progression store
+- a player searches inside the current shop pack, not across unrelated packs
+- back buttons return to the correct previous menu context
+- favorites and recent items remember the correct source item and pack context
+- pagination items follow the same behavior rules across menus
 
-## What separates it from a basic shop menu
+## What admins manage
 
-The plugin is built around four practical concerns:
+Admins work with:
 
-### 1. Structure
+- `config.yml` for global behavior
+- `lang/*.yml` for messages
+- `guis/*.yml` for shared menus
+- `shops/<pack>/main.yml` for pack-level presentation and commands
+- `shops/<pack>/categories/*.yml` for actual shop content
+- optional integrations such as PlaceholderAPI, Vault, custom item plugins, and spawner providers
 
-Shop packs keep different store experiences separate.
+That separation is intentional. It stops one giant config file from becoming the whole plugin.
 
-### 2. Speed
+## The design goals
 
-Search, favorites, recent history, amount selector, and bulk menus reduce repeated friction.
+### Pack isolation
 
-### 3. Safety
+Different shop experiences should not collapse into one file tree.
 
-Transactions, pricing, suspicious activity, and sell volume all have explicit controls.
+You should be able to run:
 
-### 4. Maintainability
+- a survival shop pack
+- a donor shop pack
+- an event shop pack
 
-Manual registration, shared menu files, and validation tools make the plugin easier to expand without losing control of it.
+without mixing their commands, categories, and menus into one flat structure.
 
-## Typical server-owner use cases
+### Menu consistency
 
-### One clean survival shop
+Search, recent, favorites, sell flows, and paged category menus should behave consistently:
 
-Register one pack, point `/shop` to that pack, tune the sell flow, and keep the category menus readable.
+- same placeholder rules
+- same page control behavior
+- same action system
+- same disabled-state handling
 
-### Multiple shop packs
+### Economy safety
 
-Use one pack for survival, one for donor content, one for limited-time events, and keep each experience separate.
+The plugin treats shop configuration as part of the economy, not just decoration.
 
-### Strict economy administration
+That is why ZaminShop includes:
 
-Use price modifiers, risk guard, sell limits, and transaction audit tools to keep the economy from drifting quietly into bad territory.
+- validation
+- risk guard
+- suspicious transaction checks
+- transaction locks
+- rollback-aware transaction flow
+- sell limits
 
-## Read next
+### Multi-version support
 
-- [Why ZaminShop Exists](why-zaminshop.md)
+The plugin supports modern item naming and directives while still running on older runtimes where practical. Compatibility is handled through runtime-aware item resolution, not by forcing modern-only features into servers that cannot support them.
+
+## Typical deployment patterns
+
+### One server, one main shop
+
+You register one pack, give it the command `/shop`, and build out categories such as:
+
+- blocks
+- ores
+- food
+- tools
+- armor
+
+### One server, multiple shop experiences
+
+You keep gameplay stores separate:
+
+- `/shop` for survival progression
+- `/donator` for premium conveniences
+- `/eventshop` for seasonal items
+
+### Strict economy control
+
+You rely on:
+
+- sell limits
+- suspicious transaction checks
+- risk guard confirmations
+- validation
+
+to protect the server from config mistakes and player abuse.
+
+## What to read next
+
 - [Core Feature Areas](features.md)
 - [Install and Launch Your First Shop](setup.md)
+- [Files and Folder Layout](configuration/files-and-folders.md)

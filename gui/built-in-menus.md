@@ -1,150 +1,136 @@
 # Built-in Menus
 
-ZaminShop ships with several shared menu files. Each one serves a different stage of the player shopping flow.
+ZaminShop ships with a set of shared menus configured under `plugins/ZaminShop/guis/`.
+
+These menus are part of the core player workflow.
 
 ## Amount selector
 
 File:
 
 ```text
-plugins/ZaminShop/guis/amount-selector.yml
+guis/amount-selector.yml
 ```
 
-### What it does
+Use it when:
 
-Lets the player choose a specific amount before buying or selling.
+- players should choose a quantity before buying or selling
+- you want a controlled amount flow instead of only left-click and right-click
 
-### When players see it
+It supports:
 
-- when a shop item uses the amount selector buy flow
-- when a shop item uses the amount selector sell flow
-
-### Typical customizations
-
-- change filler items
-- move the action buttons
-- rename confirm or cancel buttons
-- add informational custom items
+- custom filler items
+- dynamic control visibility
+- priorities
+- placeholders
+- selected item preview
 
 ## Bulk buy
 
 File:
 
 ```text
-plugins/ZaminShop/guis/bulk-buy.yml
+guis/bulk-buy.yml
 ```
 
-### What it does
+Use it when:
 
-Lets players buy multiple stacks quickly.
-
-### Good use case
-
-Useful for common materials such as:
-
-- blocks
-- ores
-- farm goods
+- you want stack-based quantity shortcuts
+- frequent purchases should take fewer clicks
 
 ## Bulk sell
 
 File:
 
 ```text
-plugins/ZaminShop/guis/bulk-sell.yml
+guis/bulk-sell.yml
 ```
 
-### What it does
+Use it when:
 
-Lets players sell multiple stacks quickly without repeated right-click loops.
+- players commonly sell repeated stack quantities
+- you want a faster sell workflow than manual amount stepping
 
 ## Favorites
 
 File:
 
 ```text
-plugins/ZaminShop/guis/favorites.yml
+guis/favorites.yml
 ```
 
-### What it does
+Use it to give players a curated list of items they actually care about.
 
-Shows the player's saved favorite items across the shop system.
+Good for:
 
-### Why players use it
-
-Favorites reduce travel time through category menus for items bought or sold often.
+- repeat purchases
+- donor utility items
+- everyday economy items
 
 ## Recent
 
 File:
 
 ```text
-plugins/ZaminShop/guis/recent.yml
+guis/recent.yml
 ```
 
-### What it does
-
-Shows recently used items and recent buying or selling history.
-
-### Why it matters
-
-This menu helps players quickly repeat common actions without remembering which category an item came from.
+Use it to surface recently interacted-with items without asking players to remember where everything lives.
 
 ## Search
 
 File:
 
 ```text
-plugins/ZaminShop/guis/search.yml
+guis/search.yml
 ```
 
-### What it does
-
-Renders search results for the current pack command scope.
-
-### Why it matters
-
-Search becomes much more valuable as your category count and item count grow.
+Use it to reduce browsing friction in larger shops.
 
 ## Sell GUI
 
 File:
 
 ```text
-plugins/ZaminShop/guis/sell.yml
+guis/sell.yml
 ```
 
-### What it does
+Use it when you want:
 
-Provides a dedicated menu where players can place sellable items and have them processed through the plugin's normal sell-price logic.
-
-### Why it matters
-
-This is the safer and more user-friendly alternative to forcing players into command-only selling.
+- inventory-driven selling
+- a dedicated selling workflow
+- a cleaner player experience than only command-based selling
 
 ## GUI settings
 
 File:
 
 ```text
-plugins/ZaminShop/guis/gui-settings.yml
+guis/gui-settings.yml
 ```
 
-### What it controls
+This file controls shared GUI behavior and defaults used across the system.
 
-- shared click mappings
-- shared lore formats
-- shared sounds
-- shared navigation button defaults
-- sell GUI behavior toggles
+## Moving built-in menus
 
-## Practical advice
+If you move a built-in menu file, update the path in:
 
-Do not edit every menu at once.
+```text
+config.yml -> gui_menus
+```
 
-Start with:
+## Common mistakes
 
-1. the main pack menu
-2. one category menu
-3. the sell GUI
-4. favorites and search after the main flow feels right
+### Editing the wrong menu
+
+If the problem happens in search, recent, or favorites, fix the matching shared menu, not a category file.
+
+### Forgetting that these menus share the same item system
+
+These menus support the same modern material directives, placeholder rendering, actions, and page controls as the rest of the plugin.
+
+## Related pages
+
+- [Menu File Format](menu-file-format.md)
+- [Actions and Requirements](actions-requirements.md)
+- [Sell Menu](sell-gui.md)
