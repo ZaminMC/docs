@@ -1,186 +1,427 @@
+---
+description: Every built-in, dynamic, player, console, and administrative ZaminShop command.
+---
+
 # Commands
 
-This page explains the commands that matter in day-to-day operation.
+ZaminShop has two declared command roots:
 
-## Main command roots
+| Root | Aliases | Purpose |
+|---|---|---|
+| `/zaminshop` | `/shop`, `/zshop`, `/zhop` | Opens shops and runs player or administrative subcommands. |
+| `/sell` | None | Sells held items or inventory contents. |
 
-ZaminShop ships with these plugin command roots:
+Shop packs, categories, and menu files can also register commands at runtime. Those commands are explained under [Dynamic shop commands](#dynamic-shop-commands).
 
-- `/zaminshop`
-- `/shop` as an alias of `/zaminshop`
-- `/zshop`
-- `/zhop`
-- `/sell`
-
-In addition, shop packs and category files can register their own open commands.
+{% hint style="info" %}
+Arguments shown inside `[square brackets]` are optional. Words inside `<angle brackets>` describe a required value and are not typed literally.
+{% endhint %}
 
 ## Player commands
 
+| Command | Aliases | Permission | Sender |
+|---|---|---|---|
+| `/shop` | `/zaminshop`, `/zshop`, `/zhop` | `zaminshop.player.shop` | Player |
+| `/shop help [page]` | `/shop ? [page]` | None | Player or console |
+| `/shop search <query>` | `/shop find <query>` | `zaminshop.player.search` | Player |
+| `/shop favorite` | `/shop fav`, `/shop favorites` | `zaminshop.player.favorite` | Player |
+| `/shop recent` | `/shop history`, `/shop transactions` | `zaminshop.player.recent` | Player |
+| `/shop sell` | None | The sell GUI checks `zaminshop.player.sell-gui` | Player |
+| `/zaminshop worth` | `/zaminshop w` | `zaminshop.player.worth` | Player |
+
 ### `/shop`
 
-Opens the main command path for the active pack configuration.
+Opens the main shop directory or the main menu owned by the command's shop pack.
 
-What it does depends on your current setup:
+```text
+/shop
+```
 
-- if a pack main menu is bound to `shop`, it opens that pack menu
-- if you use subcommands, `/shop <subcommand>` can open a category or custom menu target
+The command is refused when:
+
+* the player lacks `zaminshop.player.shop`;
+* the player's game mode is listed under `disableShopsInGamemodes` and they lack `zaminshop.player.bypass.gamemode`;
+* the player's world is listed under `disableShopsInWorlds` and they lack `zaminshop.player.bypass.world`;
+* `disableMainMenu` is enabled;
+* shops did not load successfully.
 
 ### `/shop search <query>`
 
-Searches items in the current pack context.
+Searches the current pack when executed from a pack command. The normal `/shop search` path searches without a forced category.
 
-Use this when:
+```text
+/shop search diamond
+/shop find redstone repeater
+```
 
-- players know the item name
-- your pack has many categories
-- you want a faster path than category browsing
+The query is every word after `search` or `find`.
 
-### `/shop favorites`
+The command requires:
 
-Opens the favorites menu if it is enabled.
+* `search.enabled: true`;
+* `zaminshop.player.search`;
+* an allowed world and game mode.
+
+### `/shop favorite`
+
+Opens the player's favorites menu.
+
+```text
+/shop favorite
+```
+
+Accepted aliases:
+
+```text
+/shop fav
+/shop favorites
+```
 
 ### `/shop recent`
 
-Opens the recent transactions menu if it is enabled.
+Opens the player's recorded purchase and sale history.
+
+```text
+/shop recent
+```
+
+Accepted aliases:
+
+```text
+/shop history
+/shop transactions
+```
+
+The command is unavailable when `recent-menu.enabled` is `false`.
 
 ### `/shop sell`
 
-Opens the sell GUI if it is enabled.
+Opens the configured sell GUI.
 
-### `/sell`
+```text
+/shop sell
+```
 
-ZaminShop also registers `/sell` for sell-focused flows.
+This subcommand itself has no subcommand permission field, but the sell GUI refuses access unless its configured permission is granted. The bundled permission is:
 
-Exact behavior depends on your configuration and available subcommands such as:
+```text
+zaminshop.player.sell-gui
+```
 
-- hand-based selling
-- sell-all behavior
-- GUI-driven selling
+### `/zaminshop worth`
 
-If you do not want ZaminShop to own `/sell`, use:
+Inspects the item in the player's main hand and reports:
 
-```yml
+* whether it can be bought;
+* the cheapest matching buy entry;
+* whether it can be sold;
+* the best matching sell entry;
+* the matching shop, page, and slot.
+
+```text
+/zaminshop worth
+```
+
+This command does not accept an item argument. Hold the item in the main hand before running it.
+
+## Sell commands
+
+| Command | Aliases | Permission | Sender |
+|---|---|---|---|
+| `/sell hand [quantity]` | `/sell h [quantity]` | `zaminshop.sell.hand` | Player |
+| `/sell handall` | `/sell ha` | `zaminshop.sell.hand.all` | Player |
+| `/sell all [shop] [player]` | `/sell a ...` | `zaminshop.sell.all` | Player or console |
+
+### `/sell hand [quantity]`
+
+Sells the item in the player's main hand.
+
+```text
+/sell hand
+/sell hand 16
+```
+
+Without a quantity, the command uses the held stack amount. A supplied quantity must be a positive integer no larger than the held stack.
+
+When `sellHand.sellsAllItems` is enabled, `/sell hand` delegates to `/sell handall`.
+
+When `sellHand.allowAllQuantities` is disabled, the requested amount must satisfy the shop item's transaction-quantity rules.
+
+### `/sell handall`
+
+Finds the shop entry matching the held item, then sells matching stacks from the player's inventory.
+
+```text
+/sell handall
+```
+
+Matching uses the shop item's configured comparison settings, including metadata, model, damage, NBT, and repair-cost rules where enabled.
+
+Armor and off-hand handling follows:
+
+```yaml
+sellHand:
+  excludeArmorSlots: true
+  excludeOffHand: false
+```
+
+### `/sell all [shop] [player]`
+
+Sells every sellable stack found in the target inventory.
+
+```text
+/sell all
+/sell all minerals
+/sell all minerals Zamin
+/sell all all Zamin
+```
+
+Behavior:
+
+* `/sell all` searches all loaded shops.
+* `/sell all minerals` limits matching to the shop whose ID is `minerals`.
+* `/sell all all Zamin` sells across all shops for `Zamin`; console must use this form when no shop is selected.
+* Supplying a player requires `zaminshop.sell.all.others`.
+* Console must supply a player.
+* The command requires `zaminshop.sell.all` in every form.
+
+{% hint style="warning" %}
+The parser treats the first argument after `/sell` as both the subcommand and, inside the `all` handler, the optional shop. Use the exact forms shown above.
+{% endhint %}
+
+## Administrative commands
+
+| Command | Aliases | Permission | Sender |
+|---|---|---|---|
+| `/zaminshop help [page]` | `/zaminshop ? [page]` | `zaminshop.admin.help` | Player or console |
+| `/zaminshop reload` | None | `zaminshop.admin.reload` | Player or console |
+| `/zaminshop validate` | None | `zaminshop.admin.validate` | Player or console |
+| `/zaminshop overwatcher <list\|confirm\|reset> [riskId]` | `/zaminshop risk ...` | `zaminshop.admin.overwatcher` | Player or console |
+| `/zaminshop language [list\|reload\|locale]` | `/zaminshop lang ...` | `zaminshop.admin.language` | Player or console |
+| `/zaminshop check` | None | `zaminshop.admin.check` | Player |
+| `/zaminshop addmodifier ...` | `setmodifier`, `am`, `sm` | `zaminshop.admin.modifier` | Player or console |
+| `/zaminshop checkmodifiers <player>` | `viewmodifiers`, `viewmodifier`, `checkmodifier`, `vm`, `cm` | `zaminshop.admin.modifier` | Player or console |
+| `/zaminshop resetmodifier ...` | `removemodifier`, `deletemodifier`, `rm`, `dm` | `zaminshop.admin.modifier` | Player or console |
+| `/zaminshop <player> [shop] [page]` | None | `zaminshop.admin.open-others` | Player or console |
+
+### `/zaminshop reload`
+
+Reloads plugin state, then closes every open ZaminShop GUI when the reload succeeds.
+
+```text
+/zaminshop reload
+```
+
+Reload is denied while any transaction lock is active. This prevents a configuration swap during a purchase or sale.
+
+Root command registration changes, including `disableCommands.sell`, still require a full server restart.
+
+### `/zaminshop validate`
+
+Runs three validation passes:
+
+1. server capability and configuration compatibility;
+2. GUI schema and menu diagnostics;
+3. shop-pack and item loading validation.
+
+```text
+/zaminshop validate
+```
+
+The command reports summaries and up to eight detailed findings from each validation area.
+
+### `/zaminshop overwatcher`
+
+Lists current economy-risk findings:
+
+```text
+/zaminshop overwatcher
+/zaminshop overwatcher list
+/zaminshop risk list
+```
+
+Confirms one finding by its reported risk ID:
+
+```text
+/zaminshop overwatcher confirm A1B2C3D4
+```
+
+Clears confirmations, reruns analysis, and rebuilds the finding list:
+
+```text
+/zaminshop overwatcher reset
+```
+
+### `/zaminshop language`
+
+Lists installed languages:
+
+```text
+/zaminshop language
+/zaminshop language list
+```
+
+Reloads the active language file:
+
+```text
+/zaminshop language reload
+```
+
+Changes the configured locale and saves it to `config.yml`:
+
+```text
+/zaminshop language en_US
+```
+
+The locale must already exist in `plugins/ZaminShop/lang/`.
+
+### `/zaminshop check`
+
+Reports the material and durability/data value of the item in the player's main hand.
+
+```text
+/zaminshop check
+```
+
+Console cannot use this command because it requires a held item.
+
+## Price modifier commands
+
+Modifiers accept these scopes:
+
+```text
+item
+shop
+global
+```
+
+`all` is an alias for `global`.
+
+Action type is optional and defaults to `BOTH`:
+
+```text
+BUY
+SELL
+BOTH
+all
+```
+
+### Add or replace a modifier
+
+```text
+/zaminshop addmodifier item Zamin minerals diamond 0.80 BUY
+/zaminshop addmodifier shop Zamin minerals 1.10 SELL
+/zaminshop addmodifier global Zamin 0.95 BOTH
+```
+
+Syntax:
+
+```text
+/zaminshop addmodifier item <player> <shop> <item> <modifier> [BUY|SELL|BOTH]
+/zaminshop addmodifier shop <player> <shop> <modifier> [BUY|SELL|BOTH]
+/zaminshop addmodifier global <player> <modifier> [BUY|SELL|BOTH]
+```
+
+The modifier must be a positive number. Offline player data is loaded from storage when available.
+
+### View modifiers
+
+```text
+/zaminshop checkmodifiers Zamin
+```
+
+Command modifiers are available for online and stored offline players. Permission modifiers are included only when the target is online because permission checks require a live player.
+
+### Remove modifiers
+
+```text
+/zaminshop resetmodifier item Zamin minerals diamond BUY
+/zaminshop resetmodifier shop Zamin minerals BOTH
+/zaminshop resetmodifier global Zamin BOTH
+```
+
+Syntax:
+
+```text
+/zaminshop resetmodifier item <player> <shop> <item> [BUY|SELL|BOTH]
+/zaminshop resetmodifier shop <player> <shop> [BUY|SELL|BOTH]
+/zaminshop resetmodifier global <player> [BUY|SELL|BOTH]
+```
+
+## Open a shop for another player
+
+The administrative root treats an online player's name as an open request when it does not match a registered subcommand.
+
+```text
+/zaminshop Zamin
+/zaminshop Zamin minerals
+/zaminshop Zamin minerals 2
+```
+
+The first form opens the directory. The second opens a shop by ID. The third requests a positive page number.
+
+The target must be online. Access behavior is controlled by:
+
+```yaml
+sudoAllowAllShopsAccess: false
+disableSudoWorldPermissionCheck: false
+disableSudoShopPermissionCheck: false
+```
+
+## Dynamic shop commands
+
+Shop-pack `main.yml` files and category files can register root commands:
+
+```yaml
+open_command:
+  - shop
+  - market
+```
+
+Category files can also register subcommands:
+
+```yaml
+open_sub_command:
+  - minerals
+  - ores
+```
+
+That configuration can provide:
+
+```text
+/market
+/shop minerals
+/shop ores
+```
+
+Custom menu files can register commands when the menu definition enables command registration. Dynamic roots are created at runtime and are not listed in `plugin.yml`.
+
+When two definitions claim the same command mapping, ZaminShop validates the conflict instead of silently replacing an existing owner.
+
+## Unknown `/shop` arguments
+
+By default, an unknown argument shows command usage. When enabled:
+
+```yaml
+search:
+  search-on-unknown-shop-command: true
+```
+
+an unknown argument becomes a search query:
+
+```text
+/shop diamond
+```
+
+This searches for `diamond` instead of returning the unknown-command response.
+
+## Commands that require a restart
+
+Changing this option requires a full restart:
+
+```yaml
 disableCommands:
   sell: true
 ```
 
-and restart the server.
-
-## Admin commands
-
-### `/zaminshop reload`
-
-Reloads configuration, menus, packs, language files, and runtime references.
-
-Use it after:
-
-- editing `config.yml`
-- editing GUI menu files
-- editing shop pack files
-- changing language content
-
-### `/zaminshop validate`
-
-Runs shop and menu validation.
-
-This is one of the most important admin commands in the plugin.
-
-Use it after:
-
-- adding or moving shop packs
-- editing category files
-- changing menu commands
-- changing pagination layouts
-- adding new item directives or hooks
-
-### `/zaminshop risk list`
-
-Lists current risk guard findings.
-
-This is where you review:
-
-- pricing problems
-- arbitrage paths
-- blocked items or shops
-- findings that require confirmation
-
-### `/zaminshop language`
-
-Used for language inspection and switching when supported by your setup.
-
-### `/zaminshop sanitize`
-
-Used to remove leaked GUI-owned items from inventories when cleanup is needed.
-
-### `/zaminshop check`
-
-Used for item/shop inspection workflows such as held-item checks and worth checks.
-
-### `/zaminshop modifier`
-
-Used for price modifier management when modifiers are enabled.
-
-## Dynamic pack and category commands
-
-ZaminShop can register commands from:
-
-- `shops/<pack>/main.yml` via `open_command`
-- category shop files via `open_command`
-- category shop files via `open_sub_command`
-
-Examples:
-
-```yml
-open_command:
-  - shop
-```
-
-```yml
-open_command:
-  - buildingblocks
-```
-
-```yml
-open_sub_command:
-  - buildingblocks
-```
-
-That allows flows such as:
-
-- `/shop`
-- `/buildingblocks`
-- `/shop buildingblocks`
-
-depending on how you configure the pack and category.
-
-## Command collisions
-
-If two menus or packs try to claim the same command, ZaminShop warns and keeps the existing owner instead of silently overriding it.
-
-You should still design your command layout intentionally.
-
-Good practice:
-
-- one clear main command per pack
-- unique standalone category commands when used
-- subcommands when you want pack-scoped category routing
-
-## Common mistakes
-
-### Treating every category as a root command
-
-This works, but it can make the command space noisy. Prefer `open_sub_command` where the category belongs under a pack root.
-
-### Forgetting to restart after `disableCommands`
-
-Command registration ownership needs a full restart for some root-command changes.
-
-### Not validating command changes
-
-If you move command structure around, run `/zaminshop validate`.
-
-## Related pages
-
-- [Permissions](permissions.md)
-- [Shop Pack File Format](shops/shop-file-format.md)
-- [Menu File Format](gui/menu-file-format.md)
+Normal shop, menu, language, and configuration edits can use `/zaminshop reload` unless their own page says otherwise.

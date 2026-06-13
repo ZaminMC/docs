@@ -1,156 +1,226 @@
+---
+description: Built-in command permissions, dynamic shop permissions, item access, and modifier nodes.
+---
+
 # Permissions
 
-This page covers the built-in permission structure and the practical way to use it on a live server.
+ZaminShop uses Bukkit permissions for commands and access checks. Vault is not required for ordinary command, shop, or item access. A Vault-compatible permission provider is required only when purchasing `PERMISSION` shop items.
 
-## Main permission groups
+## Declared permission groups
 
 ### `zaminshop.player.*`
 
-Grants the normal player-facing shop permissions.
+Default: `false`
 
-Includes:
+Children:
 
-- `zaminshop.player.shop`
-- `zaminshop.player.search`
-- `zaminshop.player.favorite`
-- `zaminshop.player.recent`
-- `zaminshop.sellgui`
-- `zaminshop.player.worth`
-- `zaminshop.player.buy-more`
-- `zaminshop.player.sell-more`
+| Permission | Purpose |
+|---|---|
+| `zaminshop.player.shop` | Open the main shop directory. |
+| `zaminshop.player.search` | Use the search command and search menu. |
+| `zaminshop.player.favorite` | Open and use favorites. |
+| `zaminshop.player.recent` | Open recent transactions. |
+| `zaminshop.player.sell-gui` | Open the configured sell GUI. |
+| `zaminshop.player.worth` | Inspect the held item's best buy and sell entries. |
+| `zaminshop.player.buy-more` | Use extended buy-more flows. |
+| `zaminshop.player.sell-more` | Use extended sell-more flows. |
+| `zaminshop.player.bypass.gamemode` | Ignore `disableShopsInGamemodes` for shop commands and menus. |
+| `zaminshop.player.bypass.world` | Ignore `disableShopsInWorlds` for shop commands and menus. |
 
 ### `zaminshop.admin.*`
 
-Grants the admin toolset.
+Default: server operators
 
-Includes:
+Children:
 
-- all player permissions
-- reload
-- validate
-- risk tools
-- language tools
-- sanitize
-- inspection tools
-- modifier tools
-- open-others support
+| Permission | Purpose |
+|---|---|
+| `zaminshop.player.*` | Grants the declared player permission group. |
+| `zaminshop.admin.help` | View administrative help. |
+| `zaminshop.admin.reload` | Reload ZaminShop. |
+| `zaminshop.admin.validate` | Run configuration, GUI, and shop validation. |
+| `zaminshop.admin.overwatcher` | List, confirm, and reset risk findings. |
+| `zaminshop.admin.language` | List, reload, and change languages. |
+| `zaminshop.admin.check` | Inspect the held material and damage value. |
+| `zaminshop.admin.modifier` | Add, view, and remove command price modifiers. |
+| `zaminshop.admin.open-others` | Open directories or shops for another online player. |
 
-## Direct permissions
+{% hint style="warning" %}
+The `/sell` command permissions are enforced in code but are not children of `zaminshop.player.*` in `plugin.yml`. Grant them separately.
+{% endhint %}
 
-### Player-facing
+## Sell command permissions
 
-- `zaminshop.player.shop`
-  - use the shop
-- `zaminshop.player.search`
-  - use search
-- `zaminshop.player.favorite`
-  - use favorites
-- `zaminshop.player.recent`
-  - use recent history
-- `zaminshop.sellgui`
-  - open the sell GUI
-- `zaminshop.player.worth`
-  - use worth-style inspection tools if exposed by your command setup
-- `zaminshop.player.buy-more`
-  - use buy-more style flows
-- `zaminshop.player.sell-more`
-  - use sell-more style flows
+| Permission | Command |
+|---|---|
+| `zaminshop.sell.hand` | `/sell hand [quantity]` |
+| `zaminshop.sell.hand.all` | `/sell handall` |
+| `zaminshop.sell.all` | `/sell all [shop]` |
+| `zaminshop.sell.all.others` | Add a target player to `/sell all`. |
 
-### Admin-facing
+Complete LuckPerms example:
 
-- `zaminshop.admin.help`
-- `zaminshop.admin.reload`
-- `zaminshop.admin.validate`
-- `zaminshop.admin.risk`
-- `zaminshop.admin.language`
-- `zaminshop.admin.sanitize`
-- `zaminshop.admin.check`
-- `zaminshop.admin.modifier`
-- `zaminshop.admin.open-others`
-
-## Legacy aliases
-
-Some older aliases still exist for compatibility:
-
-- `zaminshop.shop`
-- `zaminshop.admin`
-
-Do not build new permission setups around those aliases unless you have a migration reason.
+```text
+/lp group default permission set zaminshop.player.shop true
+/lp group default permission set zaminshop.player.search true
+/lp group default permission set zaminshop.player.favorite true
+/lp group default permission set zaminshop.player.recent true
+/lp group default permission set zaminshop.player.sell-gui true
+/lp group default permission set zaminshop.player.worth true
+/lp group default permission set zaminshop.player.buy-more true
+/lp group default permission set zaminshop.player.sell-more true
+/lp group default permission set zaminshop.sell.hand true
+/lp group default permission set zaminshop.sell.hand.all true
+/lp group default permission set zaminshop.sell.all true
+```
 
 ## Shop access permissions
 
-ZaminShop also supports shop-level access control.
+Every category shop checks:
 
-Examples include:
+```text
+zaminshop.player.shops.<shop-id>
+```
 
-- shop-specific access
-- category button access
-- item-level permission requirements
+Category IDs are pack-scoped as `<pack-folder>:<category-file>`. For the bundled `minerals` category in `survival_shop`:
 
-Use this when:
+```text
+zaminshop.player.shops.survival_shop:minerals
+```
 
-- certain packs are donor-only
-- categories unlock through progression
-- specific items require rank or quest completion permissions
+Grant it with LuckPerms:
 
-## Category and item permission gating
+```text
+/lp group default permission set zaminshop.player.shops.survival_shop:minerals true
+```
 
-Shop items and category entries can require custom permissions.
+A shop can also define additional required permissions in its YAML. All configured entries must pass in addition to the generated shop node.
 
-When configured correctly:
+## Item access permissions
 
-- the item remains visible if that is your menu design
-- the click can be blocked
-- deny lore can be shown
+Generated item permissions are checked only when the category contains:
 
-This is useful for:
+```yaml
+enable-per-item-permissions: true
+```
 
-- donor menus
-- level or rank unlocks
-- profession or class shops
+When enabled, each transactional shop item checks either:
 
-## Recommended setups
+```text
+zaminshop.player.items.<shop-id>.<item-id>
+```
 
-### Survival server
+or the per-shop wildcard:
 
-Give normal players:
+```text
+zaminshop.player.items.<shop-id>.*
+```
 
-- `zaminshop.player.*`
+For a `diamond` item inside the bundled `survival_shop:minerals` category:
 
-Give staff:
+```text
+zaminshop.player.items.survival_shop:minerals.diamond
+zaminshop.player.items.survival_shop:minerals.*
+```
 
-- `zaminshop.admin.*`
+The wildcard grants access to every item in that one shop. It is not a global wildcard implemented by the item-access check.
 
-### Donor pack
+Example:
 
-Keep normal player access for the base shop, then gate the premium category or premium pack with its own custom permission.
+```text
+/lp group default permission set zaminshop.player.items.survival_shop:minerals.* true
+```
 
-### Network or mixed-mode server
+When `enable-per-item-permissions` is absent or `false`, these generated item nodes are not checked. Item-level `required-permissions` are still checked.
 
-Use permissions per pack or per category rather than trying to solve everything with one root command.
+## Additional item requirements
 
-## Common mistakes
+An item may require arbitrary permissions:
 
-### Granting only `/shop` command access
+```yaml
+items:
+  'ranked_diamond':
+    type: SHOP_ITEM
+    material: DIAMOND
+    buy-price: 500
+    required-permissions:
+      - "server.rank.elite"
+    permission-denied-lore:
+      - "&cElite rank required."
+```
 
-A command being visible is not the same as having permission to the feature behind it.
+`required-permissions` accepts one string or a list. Every listed permission must pass.
 
-### Mixing pack access with item access
+These requirements are additional to the generated node when per-item permissions are enabled, and are still enforced when generated item permissions are disabled.
 
-Pack access decides whether players may enter that experience.
-Item access decides whether a specific entry can be used.
+## Permission-based price modifiers
 
-Keep those decisions separate.
+Entries in `pricemodifiers.yml` are activated with:
 
-### Hiding permission failures from yourself
+```text
+zaminshop.player.price-modifiers.<modifier-id>
+```
 
-If something “does nothing,” check both:
+For a modifier whose YAML ID is `vip_discount`:
 
-- permission assignment
-- menu/item requirements
+```text
+zaminshop.player.price-modifiers.vip_discount
+```
 
-## Related pages
+Grant example:
 
-- [Commands](commands.md)
-- [Shop Item Configuration](shops/shop-items.md)
-- [Actions and Requirements](gui/actions-requirements.md)
+```text
+/lp group vip permission set zaminshop.player.price-modifiers.vip_discount true
+```
+
+The exact modifier ID comes from `pricemodifiers.yml`; ZaminShop does not derive it from a group name.
+
+## Permission shop items
+
+`type: PERMISSION` sells one or more permission nodes to the buyer:
+
+```yaml
+items:
+  'builder_access':
+    type: PERMISSION
+    material: NETHER_STAR
+    buy-price: 25000
+    permission: "server.builder"
+```
+
+This transaction requires:
+
+* Vault;
+* a Vault-compatible permission provider;
+* a provider that supports adding the permission.
+
+World-specific form:
+
+```yaml
+items:
+  'world_builder_access':
+    type: PERMISSION
+    material: NETHER_STAR
+    buy-price: 25000
+    permissions:
+      builder:
+        permission: "server.builder"
+        world: "world"
+```
+
+Use `force: true` only when you intentionally want the transaction to attempt granting permissions even if the player already has them.
+
+## Access checks are separate
+
+These checks answer different questions:
+
+| Layer | Question |
+|---|---|
+| Command permission | May the sender invoke this feature? |
+| Shop permission | May this player enter the category? |
+| Generated item permission | May this player use this shop entry? |
+| `required-permissions` | Does the entry impose additional custom conditions? |
+| Menu requirement | Should a configured GUI item be visible or clickable? |
+| Purchased permission | Which permission does a `PERMISSION` item grant? |
+
+Granting `/shop` access does not automatically grant every category or item node. Design the permission tree deliberately.

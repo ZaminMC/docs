@@ -1,130 +1,74 @@
-# Item and Spawner Hooks
+---
+description: Compatibility index for every optional plugin declared or registered by ZaminShop.
+---
 
-ZaminShop supports optional integrations for custom items and spawner handling.
+# Integration Compatibility Index
 
-The important goal is consistency:
+## Item providers
 
-- the config should stay readable
-- unsupported integrations should fail cleanly
-- missing plugins should not crash startup
+| Plugin | YAML key | Material directive | Notes |
+| --- | --- | --- | --- |
+| HeadDatabase | `headDatabase` | `hdb-<id>` | Waits for the database load event |
+| Oraxen | `oraxen` | `oraxen-<id>` | External item ID |
+| Nexo | `nexo` | `nexo-<id>` | External item ID |
+| ItemsAdder | `itemsAdder` | `itemsadder-<namespace:id>` | Namespace is required by the directive |
+| MMOItems | `mmoItems.type` and `.id` | `mmoitems-<type:id>` | Both values required |
+| MythicMobs | `mythicMobs` | none | Item, egg, and spawner forms |
+| Slimefun | `slimefun` | none | Slimefun item ID |
+| CraftEngine | `craftEngine` | none | ID must contain `:` |
+| CrackShot | `crackShot` | none | Weapon ID |
+| QualityArmory | `qualityArmory` | none | Item ID |
+| WeaponMechanics | `weaponMechanics.weapon` or `.ammo` | none | Weapon or ammo |
+| CustomItems | `customItems` | none | Item ID |
+| Brewery / BreweryX | `brewery.recipe` and `.quality` | none | Recipe and non-zero quality |
+| ExecutableItems | `executableItems` | none | Requires ExecutableItems and SCore |
+| ExecutableBlocks | `executableBlocks` | none | Requires ExecutableBlocks and SCore |
 
-## Unified material directives
+[Configuration examples](custom-items.md)
 
-Modern ZaminShop config prefers the unified `material:` directive path.
+## Economy providers
 
-Examples:
+| Plugin or source | Type |
+| --- | --- |
+| Minecraft experience | `EXP` |
+| Minecraft experience levels | `EXP_LEVELS` |
+| Built-in physical item economy | `ITEM` |
+| Vault | `VAULT` |
+| ExcellentEconomy | `EXCELLENT_ECONOMY` |
+| CoinsEngine | `COINS_ENGINE` |
+| GemsEconomy | `GEMS_ECONOMY` |
+| MySQL-Tokens | `MYSQL_TOKENS` |
+| PlayerPoints | `PLAYER_POINTS` |
+| TokenEnchant | `TOKEN_ENCHANT` |
+| TokenManager | `TOKEN_MANAGER` |
+| VotingPlugin | `VOTING_PLUGIN` |
+| API registration | `CUSTOM` |
 
-```yml
-material: oraxen-my_item
-material: nexo-my_item
-material: itemsadder-namespace:item
-material: mmoitems-SWORD:my_item
-material: hdb-12345
-material: SPAWNER-ZOMBIE
-```
+## Spawner compatibility
 
-This is cleaner than scattering plugin-specific keys across every item.
+Built-in spawner support is used when no external provider is active.
 
-## Supported custom item paths
+MineableSpawners and SilkSpawners require separate bridge plugins:
 
-Depending on your server setup, ZaminShop can work with integrations such as:
+- `ZaminShopMineableSpawnersBridge`;
+- `ZaminShopSilkSpawnersBridge`.
 
-- Oraxen
-- Nexo
-- ItemsAdder
-- MMOItems
-- HeadDatabase
-- other supported item providers in the plugin runtime
+ZaminShop logs a warning with the bridge download location when it detects MineableSpawners or SilkSpawners without the corresponding bridge.
 
-These are optional integrations. If the plugin is not installed, the corresponding item directive cannot be resolved.
+If exactly one external provider registers, it is selected automatically. If multiple providers register, set `spawnerProvider` to one of the names printed in the server log. An empty or invalid selection leaves built-in support active.
 
-## Oraxen example
+## Other soft dependencies
 
-```yml
-my_oraxen_blade:
-  type: SHOP_ITEM
-  material: oraxen-my_blade
-  quantity: 1
-  buy-price: 5000
-```
+| Plugin | Role |
+| --- | --- |
+| PlaceholderAPI | Dynamic text and the `%zaminshop_*%` expansion |
+| Vault | Economy and permission bridge |
+| LangUtils | Language provider |
 
-## ItemsAdder example
+## Not present in the current source
 
-```yml
-custom_crop:
-  type: SHOP_ITEM
-  material: itemsadder-my_pack:custom_crop
-  quantity: 16
-  buy-price: 1200
-```
+`GRINGOTTS` is not a current economy type. Do not copy it from older documentation.
 
-## MMOItems example
+## Restart requirement
 
-```yml
-boss_sword:
-  type: SHOP_ITEM
-  material: mmoitems-SWORD:boss_blade
-  quantity: 1
-  buy-price: 50000
-```
-
-## Heads
-
-ZaminShop supports several head styles, including:
-
-- player heads
-- BaseHead values
-- texture heads
-- HeadDatabase ids
-
-Examples:
-
-```yml
-material: head-Notch
-material: basehead-<base64>
-material: texture-<texture_id>
-material: hdb-12345
-```
-
-## Spawners
-
-Spawner items use:
-
-```yml
-material: SPAWNER-ZOMBIE
-```
-
-The config format stays the same whether the runtime uses:
-
-- built-in spawner support
-- an external spawner provider
-
-## Legacy and version behavior
-
-ZaminShop supports modern config syntax where possible, but it does not fake features on runtimes that fundamentally cannot represent them.
-
-That means:
-
-- modern names can map to legacy runtime equivalents where safe
-- truly unsupported items on old versions produce readable warnings
-- compatibility should not mean pretending every modern feature exists on 1.8
-
-## Common mistakes
-
-### Assuming the hook is loaded because the config looks right
-
-The plugin providing the item still needs to be present and compatible.
-
-### Mixing old provider-specific keys with the new material directive format
-
-Prefer the unified `material:` format for new configs.
-
-### Expecting modern-only items on old runtimes
-
-If a material only exists in newer Minecraft versions, ZaminShop should warn clearly instead of forcing a fake item into existence.
-
-## Related pages
-
-- [Adding Shop Items](../shops/shop-items.md)
-- [PlaceholderAPI](placeholderapi.md)
-- [Version Compatibility](../developer/version-compat.md)
+Install, remove, or upgrade any integration with a full server restart. Reloading ZaminShop does not load a missing Bukkit plugin.

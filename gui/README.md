@@ -24,8 +24,10 @@ ZaminShop uses shared menu files for features such as:
 ## Read these pages in order
 
 1. [Menu File Format](menu-file-format.md)
-2. [Built-in Menus](built-in-menus.md)
-3. [Actions and Requirements](actions-requirements.md)
+2. [Menu Item Types](item-types.md)
+3. [Actions](actions.md)
+4. [Requirements](requirements.md)
+5. [Built-in Menus](built-in-menus.md)
 
 Then move to the specific menu you want to change.
 

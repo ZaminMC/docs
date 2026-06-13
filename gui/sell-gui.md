@@ -15,7 +15,7 @@ Command:
 Permission:
 
 ```text
-zaminshop.sellgui
+zaminshop.player.sell-gui
 ```
 
 ## Why it exists
@@ -34,7 +34,7 @@ These are controlled in `guis/gui-settings.yml`:
 ```yaml
 sellGui:
   enabled: true
-  permission: "zaminshop.sellgui"
+  permission: "zaminshop.player.sell-gui"
   sellOnClose: true
   returnInvalidItemsOnClose: true
   allowShiftClick: true

@@ -31,9 +31,7 @@ Most servers will work with four areas:
 
 ## Does ZaminShop auto-load every folder inside `plugins/ZaminShop/shops/`?
 
-No.
-
-Packs are manual only. A folder must be registered in `config.yml -> shops` or it will be ignored.
+Yes, when the folder contains an enabled `main.yml`. A folder without `main.yml`, a disabled pack, or a pack with invalid YAML is skipped with a validation or startup message.
 
 ## What is the difference between `guis/` and `shops/`?
 
@@ -58,7 +56,7 @@ Usually with:
 /shop sell
 ```
 
-The player also needs the `zaminshop.sellgui` permission and the sell GUI must be enabled in config.
+The player also needs the `zaminshop.player.sell-gui` permission and `sellGui.enabled` must be `true` in `guis/gui-settings.yml`.
 
 ## Are favorites and recent menus per-shop or global?
 
@@ -96,7 +94,7 @@ Start with:
 - `zaminshop.player.search`
 - `zaminshop.player.favorite`
 - `zaminshop.player.recent`
-- `zaminshop.sellgui`
+- `zaminshop.player.sell-gui`
 
 Or grant the full player group:
 

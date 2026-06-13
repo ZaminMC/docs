@@ -1,41 +1,72 @@
-# Bundled Default Pack
+---
+description: Files and categories created by ZaminShop's bundled survival_shop pack.
+---
 
-ZaminShop ships with a bundled starter pack that can be copied into a registered pack folder.
+# Bundled Starter Pack
 
-## Bundled categories
-
-The bundled category set includes:
-
-- `armor.yml`
-- `blocks.yml`
-- `drops.yml`
-- `dyes.yml`
-- `farming.yml`
-- `food.yml`
-- `miscellaneous.yml`
-- `ores.yml`
-- `tools.yml`
-
-## Bundled main menu
-
-The bundled pack also includes:
+When `plugins/ZaminShop/shops/` has no pack folders, ZaminShop creates:
 
 ```text
-default-shop/main.yml
+plugins/ZaminShop/shops/survival_shop/
 ```
 
-At runtime, that file is copied into a registered pack folder as the pack's `main.yml` when needed.
+It copies the bundled main menu and category resources only when no pack folder already exists.
 
-## What the starter pack is for
+## Files
 
-Use the bundled pack as a starting point when:
+```text
+shops/
+└── survival_shop/
+    ├── main.yml
+    └── categories/
+        ├── building_blocks.yml
+        ├── colorful_blocks.yml
+        ├── food.yml
+        ├── minerals.yml
+        ├── miscellaneous.yml
+        ├── mob_drops.yml
+        ├── redstone_items.yml
+        └── spawners.yml
+```
 
-- you want a working first shop quickly
-- you want examples of category buttons
-- you want examples of shared menu links like favorites, recent, and sell GUI
+## Main menu
 
-## Important note
+The bundled `main.yml` contains:
 
-The bundled files are just starter content.
+- `/shop` as its open command;
+- links to all eight categories;
+- buttons for the sell, favorites, and recent menus;
+- a balance display using an external Vault placeholder;
+- decorative filler and selection items.
 
-If you rename the pack folder, update `config.yml -> shops` to match the new folder name. ZaminShop will not keep loading an old `default` folder unless you still register it.
+## Category behavior
+
+The categories use:
+
+- `SHOP_ITEM` entries;
+- automatic shop-item pagination slots;
+- `CUSTOM` filler items;
+- previous, back, and next controls;
+- buy and sell prices where configured.
+
+Some products contain only a buy price in the bundled resources. The current missing-price loader behavior has a documented source contradiction; review [Buying and selling](buying-selling.md) before relying on omission to disable selling.
+
+## Pack discovery
+
+There is no `config.yml -> shops` registration section. Every folder under `plugins/ZaminShop/shops/` is inspected:
+
+- missing `main.yml`: skipped with a warning;
+- `enabled: false`: ignored;
+- valid enabled `main.yml`: loaded as a pack;
+- category YAML under `categories/`: loaded into that pack.
+
+## Editing the starter
+
+The copied files are normal server configuration files. ZaminShop does not overwrite existing copies when starting.
+
+After editing:
+
+```text
+/zaminshop validate
+/zaminshop reload
+```

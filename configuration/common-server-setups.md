@@ -20,7 +20,7 @@ economyTypes:
 
 search:
   enabled: true
-  fuzzy: true
+  mode: SMART
   max-results: 45
 
 transaction-safety:
@@ -28,9 +28,10 @@ transaction-safety:
   per-player-lock: true
   click-cooldown-ms: 150
 
-risk-guard:
+overwatcher:
   enabled: true
   block-critical-shops: true
+  notify-admins: true
   require-confirmation: true
 
 sell-limits:
@@ -80,26 +81,20 @@ Good for:
 - separate themed stores
 - events or seasonal packs
 
-Suggested direction:
+Suggested directory structure:
 
-```yaml
-shops:
-  survival:
-    folder: survival_shop
-    enabled: true
-    file: main.yml
-
-  donor:
-    folder: donor_shop
-    enabled: true
-    file: main.yml
+```text
+plugins/ZaminShop/shops/survival_shop/main.yml
+plugins/ZaminShop/shops/survival_shop/categories/
+plugins/ZaminShop/shops/donor_shop/main.yml
+plugins/ZaminShop/shops/donor_shop/categories/
 ```
 
 Why:
 
 - clear pack ownership
 - easier troubleshooting
-- safer than dropping random folders and hoping the plugin guesses correctly
+- each folder is discovered as a pack when it contains an enabled `main.yml`
 
 ## Strict-economy setup
 
@@ -117,9 +112,10 @@ currency-safety:
   reject-prices-with-too-many-decimals: true
   block-nan-infinity: true
 
-risk-guard:
+overwatcher:
   enabled: true
   block-critical-shops: true
+  notify-admins: true
   require-confirmation: true
   allow-sell-higher-than-buy: false
 

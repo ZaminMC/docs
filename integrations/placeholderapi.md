@@ -1,97 +1,172 @@
+---
+description: Complete reference for ZaminShop's PlaceholderAPI expansion and runtime context values.
+---
+
 # PlaceholderAPI
 
-PlaceholderAPI is one of the most useful integrations in ZaminShop.
+When PlaceholderAPI is installed, ZaminShop registers the persistent `zaminshop` expansion.
 
-It allows menu titles, lore, messages, and context-driven displays to react to the player and the current shop state.
+Use placeholders as:
 
-## What PlaceholderAPI is used for
+```text
+%zaminshop_<identifier>%
+```
 
-Use PlaceholderAPI when you want:
+Identifiers are normalized by removing punctuation and underscores and ignoring case. For readability, this page uses underscores.
 
-- balance values
-- player names
-- rank or stat values
-- custom plugin values
-- context-aware menu text
+## Always available for a player
 
-## Basic requirement
+| Placeholder | Value |
+| --- | --- |
+| `%zaminshop_player%` | Player name |
+| `%zaminshop_player_name%` | Player name |
+| `%zaminshop_player_display_name%` | Bukkit display name |
+| `%zaminshop_player_uuid%` | UUID |
+| `%zaminshop_player_world%` | World name |
+| `%zaminshop_player_world_name%` | World name |
+| `%zaminshop_world%` | World name |
+| `%zaminshop_gamemode%` | Lowercase game mode |
+| `%zaminshop_balance%` | Formatted balance of the default economy |
+| `%zaminshop_prefix%` | Configured ZaminShop language prefix |
 
-Install PlaceholderAPI on the server and start the server with it present.
+## Favorites and recent transactions
 
-ZaminShop registers its own expansion when PlaceholderAPI is available.
+| Placeholder | Value when unavailable |
+| --- | --- |
+| `%zaminshop_favorites%` | `0` |
+| `%zaminshop_favorites_count%` | `0` |
+| `%zaminshop_favorite_limit%` | `-` |
+| `%zaminshop_recent_count%` | `0` |
+| `%zaminshop_recent_bought_count%` | `0` |
+| `%zaminshop_recent_sold_count%` | `0` |
+| `%zaminshop_last_transaction_amount%` | `0` |
+| `%zaminshop_last_transaction_price%` | `0` |
+| `%zaminshop_last_transaction_type%` | empty |
 
-## Where placeholders work
+`last_transaction_type` is the action enum name, such as `BUY` or `SELL`.
 
-Placeholders can be used in:
+## Sell limits
 
-- menu titles where supported
-- custom menu item names
-- custom lore
-- current-context displays
-- language messages
-- pack and category displays
+| Placeholder |
+| --- |
+| `%zaminshop_daily_sell_money%` |
+| `%zaminshop_daily_sell_money_limit%` |
+| `%zaminshop_daily_sell_money_remaining%` |
+| `%zaminshop_weekly_sell_money%` |
+| `%zaminshop_weekly_sell_money_limit%` |
+| `%zaminshop_weekly_sell_money_remaining%` |
+| `%zaminshop_daily_items_sold%` |
+| `%zaminshop_daily_items_sold_limit%` |
+| `%zaminshop_daily_items_sold_remaining%` |
+| `%zaminshop_weekly_items_sold%` |
+| `%zaminshop_weekly_items_sold_limit%` |
+| `%zaminshop_weekly_items_sold_remaining%` |
 
-## ZaminShop-specific context placeholders
+These return `0` when a sell-limit snapshot is unavailable.
 
-ZaminShop provides current-context values such as:
+## Current menu and shop context
 
-- current item
-- current category
-- current shop pack name
-- current shop pack id
-- current page
-- current transaction data
+The following values depend on the menu the player most recently opened or the transaction context most recently recorded:
 
-This is especially useful in:
+| Placeholder | Meaning |
+| --- | --- |
+| `%zaminshop_menu_type%` | Current menu type |
+| `%zaminshop_page%` | Current page |
+| `%zaminshop_query%` | Current search query |
+| `%zaminshop_shop%` | Shop ID |
+| `%zaminshop_shop_id%` | Shop ID |
+| `%zaminshop_shop_name%` | Display name |
+| `%zaminshop_category%` | Formatted category name |
+| `%zaminshop_category_id%` | Local category ID |
+| `%zaminshop_category_name%` | Formatted category name |
+| `%zaminshop_current_category%` | Formatted category name |
+| `%zaminshop_current_category_id%` | Local category ID |
+| `%zaminshop_current_category_name%` | Formatted category name |
+| `%zaminshop_current_shop%` | Shop ID |
+| `%zaminshop_current_shop_id%` | Shop ID |
+| `%zaminshop_current_shop_name%` | Display name |
+| `%zaminshop_current_shop_pack%` | Pack display name |
+| `%zaminshop_current_shop_pack_name%` | Pack display name |
+| `%zaminshop_current_shop_pack_id%` | Pack folder name |
 
-- amount selector menus
-- favorites and recent menus
-- pack menus
-- category menus
+Without current context, these values are empty.
 
-## Example
+## Current item and transaction context
 
-```yml
+| Placeholder | Meaning |
+| --- | --- |
+| `%zaminshop_item%` | Formatted item name |
+| `%zaminshop_item_id%` | Shop item ID |
+| `%zaminshop_current_item%` | Formatted item name |
+| `%zaminshop_current_item_id%` | Shop item ID |
+| `%zaminshop_current_item_name%` | Formatted item name |
+| `%zaminshop_amount%` | Selected or transacted amount |
+| `%zaminshop_quantity%` | Selected or transacted amount |
+| `%zaminshop_price%` | Formatted transaction price |
+| `%zaminshop_buy%` | Formatted unit buy price |
+| `%zaminshop_buy_price%` | Formatted unit buy price |
+| `%zaminshop_sell%` | Formatted unit sell price |
+| `%zaminshop_sell_price%` | Formatted unit sell price |
+| `%zaminshop_material%` | Bukkit material name |
+| `%zaminshop_damage%` | Item durability/damage value exposed by the context service |
+| `%zaminshop_transaction_id%` | Current transaction ID |
+| `%zaminshop_reason%` | Current reason text |
+| `%zaminshop_command%` | Command-product display value |
+| `%zaminshop_permission%` | Permission-product display value |
+| `%zaminshop_owned%` | Permission ownership context; currently stored as an empty value by the item context updater |
+| `%zaminshop_enchantment%` | Enchantment name |
+| `%zaminshop_level%` | Enchantment level |
+
+## Validation context
+
+After validation, these global values can be available for 60 seconds:
+
+| Placeholder |
+| --- |
+| `%zaminshop_shops%` |
+| `%zaminshop_items%` |
+| `%zaminshop_skipped_shops%` |
+| `%zaminshop_skipped_items%` |
+| `%zaminshop_warnings%` |
+| `%zaminshop_errors%` |
+| `%zaminshop_severity%` |
+| `%zaminshop_detail%` |
+
+## Other registered context identifiers
+
+The expansion also accepts these context keys when another ZaminShop flow has populated them:
+
+```text
+buy_page, buy_shop, buy_shop_id, buy_slot,
+detail, errors, global, max, modifier, period,
+purchasable, remaining_items, remaining_money,
+risk_id, sell_all, sell_page, sell_shop, sell_shop_id,
+sell_slot, sellable, severity, skipped_items,
+skipped_shops, type, usage, warnings
+```
+
+Needs verification in code for a particular screen: these identifiers are accepted by the expansion, but their value is only useful after the responsible command or menu flow has populated the context.
+
+## Language-backed placeholders
+
+If an identifier is not one of the direct values above, ZaminShop checks the language manager for:
+
+```text
+zaminshop_<identifier>
+```
+
+The exact available language-backed identifiers therefore follow the active language resources.
+
+## External PlaceholderAPI placeholders
+
+ZaminShop also applies PlaceholderAPI to supported menu and item text. For example, with a compatible Vault expansion installed:
+
+```yaml
 display-name: "&fBalance: &a%vault_eco_balance_commas%"
 ```
 
-## Good uses
+That identifier belongs to the external expansion, not ZaminShop.
 
-### Pack main menu profile item
+## Context warning
 
-Show:
-
-- player name
-- balance
-- favorite count
-
-### Current category banners
-
-Show:
-
-- current category name
-- current pack name
-
-### Amount selector
-
-Show:
-
-- current item name
-- selected quantity
-- current player balance
-
-## Common mistakes
-
-### Assuming every placeholder works in every context
-
-Some placeholders depend on the current menu or shop state.
-
-### Forgetting PlaceholderAPI is optional
-
-If the server does not have PlaceholderAPI, those placeholders will not resolve through PlaceholderAPI.
-
-## Related pages
-
-- [Menu File Format](../gui/menu-file-format.md)
-- [Built-in Menus](../gui/built-in-menus.md)
-- [Language and Messages](../configuration/language.md)
+Context placeholders describe the player's latest ZaminShop menu or transaction state. Do not use them as permanent database fields. Open the relevant menu before testing them.

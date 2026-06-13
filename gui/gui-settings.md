@@ -1,46 +1,34 @@
+---
+description: Complete reference for plugins/ZaminShop/guis/gui-settings.yml.
+---
+
 # GUI Settings
 
-`gui-settings.yml` is the shared behavior file for menu-wide defaults.
+`gui-settings.yml` controls behavior shared by shop menus. It does not define the layout of the amount selector, search, favorites, recent, or sell menus; those have separate files.
 
-It is not a replacement for your actual menu layouts. Instead, it controls the pieces that several menus should share.
+## Global toggles
 
-## File location
+| Option | Default | Effect |
+| --- | --- | --- |
+| `enableBuyGUI` | `true` | Enables the buy amount GUI flow. |
+| `enableSellGUI` | `true` | Enables the sell amount GUI flow. |
+| `enableSellAll` | `true` | Enables sell-all behavior. |
+| `enableSellGUISellAll` | `true` | Enables sell-all from the sell GUI flow. |
+| `returnToShop` | `true` | Returns players to the shop after supported actions. |
+| `quickBuySell` | `false` | Uses quick transaction behavior. |
 
-```text
-plugins/ZaminShop/guis/gui-settings.yml
-```
+## Price visibility
 
-## What this file controls
+| Option | Default |
+| --- | --- |
+| `hideBuyPriceForUnbuyable` | `true` |
+| `buyPriceForUnsellablePlaceholder` | `&cN/A` |
+| `hideSellPriceForUnsellable` | `true` |
+| `sellPriceForUnsellablePlaceholder` | `&cN/A` |
 
-### Global GUI toggles
+Despite its name, `buyPriceForUnsellablePlaceholder` is the loaded key for the unavailable buy-price placeholder in the current settings class.
 
-These settings decide whether certain GUI flows are available at all.
-
-Examples:
-
-- `enableBuyGUI`
-- `enableSellGUI`
-- `enableSellAll`
-- `enableSellGUISellAll`
-- `returnToShop`
-- `quickBuySell`
-
-### Price visibility
-
-These settings control what players see when an item cannot be bought or sold.
-
-Examples:
-
-- `hideBuyPriceForUnbuyable`
-- `buyPriceForUnsellablePlaceholder`
-- `hideSellPriceForUnsellable`
-- `sellPriceForUnsellablePlaceholder`
-
-### Click mappings
-
-The shared click mapping section defines the default action meaning for click types.
-
-Example:
+## Default click actions
 
 ```yaml
 clickActions:
@@ -50,56 +38,173 @@ clickActions:
   MIDDLE: Favorite
 ```
 
-That gives you one place to change expected click behavior across the shop experience.
+These mappings set the normal shop-item action associated with each click. Per-item configured actions can provide more specific behavior.
 
-### Shared lore formats
+## Lore formats
 
-This section controls the default lore lines used for:
+`shopItemLoreFormat` has separate lists for:
 
-- normal items
-- buy GUI items
-- sell GUI items
-- sell-all GUI items
-- permission items
-- enchantment items
-- command items
+| Key | Applied to |
+| --- | --- |
+| `item` | Normal buy/sell shop items |
+| `itemBuyGUI` | Buy GUI item |
+| `itemSellGUI` | Sell GUI item |
+| `itemSellGUISellAll` | Sell-all GUI item |
+| `permission` | Permission products |
+| `enchantment` | Enchantment products |
+| `command` | Command products |
 
-This is where you make the shop feel visually consistent.
+The shipped item format is:
 
-### Shared sounds
+```yaml
+shopItemLoreFormat:
+  item:
+    - "&r"
+    - "&r   &e▪ &fBuy Price: &e%buy%   &r"
+    - "&r   &c▪ &fSell Price: &e%sell%   &r"
+    - "&r"
+```
 
-The sound section lets you keep a unified feedback style for:
+`%buy%` and `%sell%` are replaced with formatted prices.
 
-- opening menus
-- switching pages
-- buying
-- selling
-- inventory full responses
-- insufficient funds responses
+## Stack-size caps
 
-### Shared navigation buttons
+```yaml
+itemStackSizeCappedAt:
+  1:
+    material: ENDER_PEARL
+    size: 16
+```
 
-The button definitions provide default back, previous-page, and next-page items that shop menus can reuse.
+Each numbered entry associates a material with a cap. The shipped file defines:
 
-### Sell GUI behavior
+- `ENDER_PEARL`: `16`;
+- `SNOWBALL`: `16`;
+- `OAK_SIGN`: `16`;
+- `EGG`: `16`;
+- `BUCKET`: `1`.
 
-The `sellGui` section controls:
+## Shared sounds
 
-- whether the sell GUI is enabled
-- which permission it requires
-- whether items sell on close
-- whether invalid items are returned
-- whether shift-click and drag interactions are allowed
-- which sounds and messages the sell GUI uses
+| Key | Default |
+| --- | --- |
+| `MAIN_MENU_OPEN` | `UI_BUTTON_CLICK` |
+| `SHOP_OPEN` | `UI_BUTTON_CLICK` |
+| `SHOP_SELECT_ITEM` | `UI_BUTTON_CLICK` |
+| `SHOP_SWITCH_PAGE` | `UI_BUTTON_CLICK` |
+| `BUY_ITEM` | `ENTITY_EXPERIENCE_ORB_PICKUP` |
+| `SELL_ITEM` | `ENTITY_EXPERIENCE_ORB_PICKUP` |
+| `SELL_ALL_ITEM` | `ENTITY_EXPERIENCE_ORB_PICKUP` |
+| `FULL_INVENTORY` | `UI_BUTTON_CLICK` |
+| `INSUFFICIENT_FUNDS` | `UI_BUTTON_CLICK` |
+| `CANCEL` | `UI_BUTTON_CLICK` |
 
-## When to edit this file
+Sound names are resolved against the running Minecraft/Bukkit version. A name available on one version may not exist on another.
 
-Edit `gui-settings.yml` when you want to change global shop feel.
+## Transaction failure feedback
 
-Do not use it when your goal is only:
+```yaml
+transaction-failure-feedback:
+  enabled: true
+  send-message: false
+  duration-ticks: 40
+```
 
-- moving one button in one menu
-- changing one menu's filler pattern
-- changing one menu title
+Behavior:
 
-Those belong in the specific menu file instead.
+| `enabled` | `send-message` | Result |
+| --- | --- | --- |
+| `true` | `false` | Temporary GUI feedback only |
+| `true` | `true` | GUI feedback and chat message |
+| `false` | `true` | Chat message only |
+
+Configured failure IDs:
+
+- `insufficient-funds`;
+- `insufficient-items`;
+- `inventory-full`.
+
+Each failure supports:
+
+```yaml
+enabled: true
+sound: INSUFFICIENT_FUNDS
+item:
+  material: BARRIER
+  quantity: 1
+  name: "&c&lInsufficient funds"
+  lore:
+    - "&7You cannot afford this purchase."
+    - "&7Required: &f%price%"
+```
+
+The shipped templates use `%price%`, `%amount%`, and `%item%` where relevant.
+
+## Navigation buttons
+
+Shared button definitions:
+
+| Path | Default slot |
+| --- | --- |
+| `buttons.goBack` | `49` |
+| `buttons.previousPage` | `48` |
+| `buttons.nextPage` | `50` |
+
+Each contains an `item` section using the normal item parser:
+
+```yaml
+buttons:
+  nextPage:
+    slot: 50
+    item:
+      material: PAPER
+      quantity: 1
+      name: "&e&lNext page"
+```
+
+## Sell GUI
+
+| Option | Default | Effect |
+| --- | --- | --- |
+| `sellGui.enabled` | `true` | Enables the inventory sell menu. |
+| `sellGui.permission` | `zaminshop.player.sell-gui` | Required permission. |
+| `sellGui.sellOnClose` | `true` | Processes eligible items when the GUI closes. |
+| `sellGui.returnInvalidItemsOnClose` | `true` | Returns items that cannot be sold. |
+| `sellGui.allowShiftClick` | `true` | Allows shift-click insertion. |
+| `sellGui.allowDragIntoSellSlots` | `true` | Allows dragging into sell slots. |
+
+Sell GUI sound blocks:
+
+- `open`;
+- `invalidItem`;
+- `sold`;
+- `noItemsSold`.
+
+Each block accepts:
+
+```yaml
+enabled: true
+sound: "CHEST_OPEN"
+volume: 1.0
+pitch: 1.0
+```
+
+Sell GUI message keys:
+
+| Key | Available shipped placeholders |
+| --- | --- |
+| `disabled` | none |
+| `invalidItem` | none |
+| `sold` | `%amount%`, `%money%` |
+| `noItemsSold` | none |
+| `inventoryFullReturned` | none |
+
+## Reloading
+
+Run:
+
+```text
+/zaminshop reload
+```
+
+Then reopen the menu. Existing open inventories do not become a reliable preview of the newly loaded layout.

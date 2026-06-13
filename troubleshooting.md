@@ -10,7 +10,7 @@ Check:
 2. the player's world is not blocked in `disableShopsInWorlds`
 3. the player's gamemode is not blocked in `disableShopsInGamemodes`
 4. `disableMainMenu` is not blocking the flow you expect
-5. at least one enabled pack is registered in `config.yml -> shops`
+5. at least one folder under `plugins/ZaminShop/shops/` contains an enabled, valid `main.yml`
 
 Then run:
 
@@ -18,7 +18,7 @@ Then run:
 /zaminshop validate
 ```
 
-## A registered pack is skipped
+## A shop pack is skipped
 
 The usual causes are:
 
@@ -42,7 +42,7 @@ Remember that `/shop search <query>` searches the current pack scope, not every 
 
 Check:
 
-- `zaminshop.sellgui` permission
+- `zaminshop.player.sell-gui` permission
 - `guis/gui-settings.yml -> sellGui.enabled`
 - the sell GUI file path under `config.yml -> gui_menus.sell.file`
 
@@ -100,13 +100,9 @@ Then decide whether to:
 
 ## GUI items leaked into a player inventory
 
-Run:
+The current command tree does not expose a manual sanitize command. ZaminShop automatically sanitizes GUI-owned items during managed menu close, player lifecycle, cursor, drag, drop, and reload paths.
 
-```text
-/zaminshop sanitize <player>
-```
-
-This is an admin recovery tool for GUI-owned item cleanup.
+If an item remains after a clean restart, preserve the item and console logs and report the exact menu and click sequence.
 
 ## Reload does not fix the issue
 
