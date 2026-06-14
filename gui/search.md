@@ -23,18 +23,21 @@ The query is every word after `search` or `find`. A search opened through a pack
 
 ```yaml
 search:
+  # Master switch for /shop search and the search menu.
   enabled: true
+
+  # EXACT  = exact normalized item names only
+  # SIMPLE = exact, starts-with, contains, and full-term matching
+  # FUZZY  = SIMPLE plus typo-tolerant token matching
+  # SMART  = fuzzy matching with score-based ranking
   mode: SMART
+
+  # Maximum displayed results. Runtime value is clamped to 1 through 45.
   max-results: 45
+
+  # Treat unknown /shop arguments as search text.
   search-on-unknown-shop-command: false
 ```
-
-| Option | Behavior |
-| --- | --- |
-| `enabled` | Master search switch. |
-| `mode` | `EXACT`, `SIMPLE`, `FUZZY`, or `SMART`. |
-| `max-results` | Result cap, clamped to `1`-`45`. |
-| `search-on-unknown-shop-command` | Treats unknown `/shop ...` arguments as search text. |
 
 When `mode` is blank, the legacy `search.fuzzy` value selects `FUZZY` or `SIMPLE`.
 

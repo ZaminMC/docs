@@ -105,14 +105,20 @@ items:
         world: "world"
 ```
 
-Options:
+The supported permission forms are shown above. To force a grant even when the player already has the permission:
 
-| Key | Behavior |
-|---|---|
-| `permission` | One global permission. |
-| `permissions` as a list | Several global permissions. |
-| `permissions` as sections | Permissions with optional `world` values. |
-| `force` | Attempts the grant even when the permission is already present. Defaults to `false`. |
+```yaml
+items:
+  'builder_access':
+    type: PERMISSION
+    material: NETHER_STAR
+    buy-price: 25000
+    permission: "server.builder"
+
+    # Attempt the grant even when the permission is already present.
+    # Defaults to false.
+    force: false
+```
 
 Vault and a compatible permission provider must be enabled. The entry is skipped when permission support cannot be enabled.
 
@@ -132,20 +138,39 @@ items:
     enchantment-stack-size-limit: 1
 ```
 
-Options:
+The complete option form is:
 
-| Key | Required | Behavior |
-|---|---:|---|
-| `enchantment` | Yes | Enchantment name resolved by ZaminShop's enchantment-name mapper. |
-| `enchantment-level` | Yes | Level to apply. Missing values become `0` and are not useful. |
-| `enchantment-stack-size-limit` | No | Maximum held stack size accepted for this enchantment purchase. Defaults to `0`. |
+```yaml
+items:
+  'sharpness_five':
+    type: ENCHANTMENT
+    material: ENCHANTED_BOOK
+    buy-price: 10000
+
+    # Required enchantment name resolved by ZaminShop's name mapper.
+    enchantment: SHARPNESS
+
+    # Required level to apply. A missing value becomes 0 and is not useful.
+    enchantment-level: 5
+
+    # Maximum held stack size accepted for this purchase.
+    # Defaults to 0.
+    enchantment-stack-size-limit: 1
+```
 
 Global behavior is controlled by:
 
 ```yaml
+# Maximum enchantments players can add to one item. -1 removes the limit.
 maxEnchantments: 3
+
+# Allow buying only one level above the enchantment currently on the item.
 limitEnchantmentLevelDiff: false
+
+# Allow unsafe enchantments, such as Sharpness 25 on a stick.
 disableUnsafeEnchantmentCheck: false
+
+# Allow replacing a lower level of the same enchantment.
 allowEnchantmentLevelIncrease: true
 ```
 
@@ -160,24 +185,24 @@ items:
     material: CHEST
     quantity: 1
     buy-price: 5000
+
+    # Commands to execute. Do not include a leading slash.
     commands:
       - "give %player% iron_pickaxe 1"
       - "give %player% bread 16"
+
+    # false executes as console; true executes as the buyer.
     run-as-buyer: false
+
+    # Execute only one command from the configured list per purchase.
     run-single-command: false
+
+    # Require free inventory space before completing the purchase.
     require-inventory-space: true
+
+    # Maximum command executions. Defaults to the display item amount.
     commands-limit: 1
 ```
-
-Options:
-
-| Key | Default | Behavior |
-|---|---:|---|
-| `commands` | Empty list | Commands to execute. Do not include `/`. |
-| `run-as-buyer` | `false` | `false` runs commands as console; `true` runs them as the buyer. |
-| `run-single-command` | `false` | Runs only one command from the configured list per purchase. |
-| `require-inventory-space` | `false` | Requires free inventory space before completing the purchase. |
-| `commands-limit` | Display item amount | Caps command executions. |
 
 The loader accepts an empty command list, but the purchase would have no useful result. Always configure at least one command.
 

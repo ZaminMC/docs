@@ -110,19 +110,22 @@ recent-menu:
 
 ```yaml
 recent-menu:
+  # Enable recent transaction history.
   enabled: true
+
+  # Maximum stored/displayed records per player.
+  # Runtime value is clamped to 1 through 54.
   max-records-per-player: 20
+
+  # Record and display purchases.
   show-bought: true
+
+  # Record and display sales.
   show-sold: true
+
+  # Keep only the newest entry for the same shop item and transaction type.
   merge-duplicate-items: true
 ```
-
-| Option | Behavior |
-| --- | --- |
-| `max-records-per-player` | Stored/displayed limit, clamped to `1`-`54`. |
-| `show-bought` | Includes `BUY` entries. |
-| `show-sold` | Includes `SELL` entries. |
-| `merge-duplicate-items` | Keeps the newest entry for the same shop item and action. |
 
 Buy and sell records for the same item are distinct identities because the action is part of the merge key.
 

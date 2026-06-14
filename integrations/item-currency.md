@@ -11,17 +11,28 @@ The `ITEM` economy treats configured item stacks as denominations of one physica
 The default configuration uses emeralds:
 
 ```yaml
+# Enable ZaminShop's built-in physical currency.
 economyTypes:
   - ITEM
 
 item-currency:
+  # Name appended to formatted currency values.
+  # Blank values fall back to Coins.
   display-name: Coins
+
+  # Decimal precision represented by the smallest denomination.
+  # Valid range: 0 through 6.
   decimal-places: 0
+
   denominations:
+    # Internal denomination ID. It does not need to match the material.
     emerald:
+      # Positive value of one matching item.
       value: 1
+      # Item definition loaded by ZaminShop's normal item parser.
       item:
         material: EMERALD
+
     emerald-block:
       value: 9
       item:
@@ -29,15 +40,6 @@ item-currency:
 ```
 
 This configuration is directly usable. One emerald is worth one Coin and one emerald block is worth nine Coins.
-
-## Options
-
-| Path | Meaning |
-| --- | --- |
-| `item-currency.display-name` | Currency name appended to formatted values. Defaults to `Coins` when blank. |
-| `item-currency.decimal-places` | Number of decimal places represented by the smallest atomic unit. Valid range: `0` through `6`. |
-| `item-currency.denominations.<id>.value` | Positive value of one denomination item. |
-| `item-currency.denominations.<id>.item` | Item definition loaded through ZaminShop's normal item parser. |
 
 Denomination IDs such as `emerald` are internal configuration identifiers. They do not appear on the physical item and do not need to match a material.
 
@@ -119,13 +121,18 @@ economyTypes:
   - ITEM
 
 item-currency:
+  # Display values as Tokens with two decimal places.
   display-name: Tokens
   decimal-places: 2
+
   denominations:
+    # One atomic unit when decimal-places is 2.
     gold-token:
       value: 0.01
       item:
         material: GOLD_NUGGET
+
+    # One complete Token.
     gold-bar:
       value: 1.00
       item:

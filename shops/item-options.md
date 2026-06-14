@@ -9,7 +9,10 @@ ZaminShop uses the same item loader for shop entries, GUI icons, placeholder ite
 ## Minimal item
 
 ```yaml
+# Bukkit material or a supported material directive.
 material: DIAMOND
+
+# Stack amount. Defaults to 1 and is forced to at least 1.
 quantity: 1
 ```
 
@@ -17,32 +20,33 @@ quantity: 1
 
 ## Common options
 
-| Key | Type | Default | Purpose |
-|---|---|---:|---|
-| `material` | String | Required | Bukkit material or a supported material directive. |
-| `quantity` | Integer | `1` | Stack amount and, for `SHOP_ITEM`, transaction quantity. |
-| `damage` | Integer/string | `0` | Durability or legacy data value. |
-| `name` | String | None | Item display name. |
-| `display-name` | String | None | Alias used by menu and shop files; normalized to `name`. |
-| `lore` | String list | Empty | Item lore. |
-| `glow` | Boolean | `false` | Adds a hidden enchantment when the item has none. |
-| `flags` | String list | Empty | Bukkit `ItemFlag` names. |
-| `item-flags` | String list | Empty | Alias for `flags`. |
-| `unbreakable` | Boolean | `false` | Marks the item unbreakable where supported. |
-| `model` | Integer/string | None | Custom model data. |
-| `custom-model-data` | Integer/string | None | Alias for `model`. |
-
-Complete example:
-
 ```yaml
+# Bukkit material or a supported material directive. Required.
 material: DIAMOND_SWORD
+
+# Stack amount and, for SHOP_ITEM, transaction quantity. Defaults to 1.
 quantity: 1
+
+# Durability or legacy data value. Defaults to 0.
+damage: 0
+
+# Display name. display-name is accepted as an alias for name.
 name: "&bMiner's Blade"
+
+# Lore lines. Defaults to an empty list.
 lore:
   - "&7A display and transaction item."
+
+# Add a hidden enchantment when the item has no enchantments.
 glow: true
+
+# Mark the item unbreakable where supported.
 unbreakable: true
+
+# Custom model data. custom-model-data is accepted as an alias.
 model: 1201
+
+# Bukkit ItemFlag names. item-flags is accepted as an alias.
 flags:
   - HIDE_ATTRIBUTES
   - HIDE_UNBREAKABLE
@@ -326,16 +330,6 @@ On Minecraft 1.20.5 and newer component-style loading prefixes keys with `minecr
 
 These options affect matching when players sell physical items:
 
-| Key | Default | Behavior |
-|---|---:|---|
-| `compare-meta` | Global default, or automatically true when metadata is configured | Compare display metadata. |
-| `compare-model` | `defaultItemSettings.compareModel` | Compare custom model data. |
-| `compare-damage` | Global default, or automatically true for configured/legacy damage | Compare durability/data. |
-| `compare-nbt` | Global default, or automatically true when NBT is configured | Compare NBT/components. |
-| `compare-repair-cost` | `defaultItemSettings.compareRepairCost` | Compare anvil repair cost. |
-| `strip-item-meta` | `defaultItemSettings.stripItemMeta` | Remove metadata from purchased items. |
-| `max-stack-size` | Disabled | Override the shop item's stack cap when positive. |
-
 Example for a named currency token:
 
 ```yaml
@@ -348,11 +342,33 @@ items:
     model: 1201
     buy-price: 100
     sell-price: 25
+
+    # Compare display metadata. When omitted, the global default is used,
+    # except configured metadata can automatically enable comparison.
     compare-meta: true
+
+    # Compare custom model data. Defaults to defaultItemSettings.compareModel.
     compare-model: true
+
+    # Compare durability or legacy data. Configured/legacy damage can
+    # automatically enable comparison.
     compare-damage: false
+
+    # Compare NBT or item components. Configured NBT can automatically
+    # enable comparison.
     compare-nbt: false
+
+    # Compare anvil repair cost.
+    # Defaults to defaultItemSettings.compareRepairCost.
     compare-repair-cost: false
+
+    # Remove metadata from items delivered by purchases.
+    # Defaults to defaultItemSettings.stripItemMeta.
+    strip-item-meta: false
+
+    # Override the shop item's stack cap when set to a positive value.
+    # Omit this key to leave the override disabled.
+    max-stack-size: 64
 ```
 
 Without strict comparison, visually or structurally different items may match the same material. Set comparison options according to the identity rules of the item being traded.

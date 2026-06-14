@@ -1,5 +1,5 @@
 ---
-description: Complete reference for every option shipped in ZaminShop's config.yml.
+description: Complete commented reference for every option shipped in ZaminShop's config.yml.
 ---
 
 # config.yml Reference
@@ -7,59 +7,67 @@ description: Complete reference for every option shipped in ZaminShop's config.y
 `plugins/ZaminShop/config.yml` controls global services and defaults. Shop contents belong in shop-pack files, while menu layouts belong in `guis/`.
 
 {% hint style="info" %}
-Paths and defaults below match the distributed `config.yml`. Run `/zaminshop validate` after editing.
+Every block below uses the hierarchy and defaults shipped with ZaminShop. Copy a complete section into `config.yml`, keep its indentation intact, then run `/zaminshop validate`.
 {% endhint %}
 
-## Core
+## Core settings
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `config-version` | `2` | Internal configuration format version. Do not change it manually. |
-| `language` | `en_US` | Language file ID under `plugins/ZaminShop/lang/`. |
-| `enforceDefaultStackSize` | `true` | Enforces normal item stack-size behavior. |
-| `hideShopLoadingSupportMessage` | `false` | Hides the shop-loading support message. |
+```yaml
+# Internal configuration format version.
+# Do not change this manually.
+config-version: 2
+
+# Language file loaded from plugins/ZaminShop/lang/.
+language: "en_US"
+
+# Enforce normal Minecraft item stack-size behavior.
+enforceDefaultStackSize: true
+
+# Hide the support message printed while shops load.
+hideShopLoadingSupportMessage: false
+```
 
 ## Database
 
 ```yaml
 database:
+  # Database backend. Supported values: sqlite or mysql.
+  # Invalid values fall back to SQLite.
   type: sqlite
+
+  # MySQL connection details. These are ignored when type is sqlite.
   mySQLHost: localhost
   mySQLPort: 3306
   mySQLDatabase: db
   mySQLUser: root
   mySQLPassword: ""
+
+  # MySQL table names.
   tableNames:
     players: "players"
+
+  # Optional JDBC parameters can be added as string key/value pairs.
+  # mySQLParameters:
+  #   useSSL: "false"
 ```
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `database.type` | `sqlite` | `sqlite` or `mysql`. Invalid values fall back to SQLite. |
-| `database.mySQLHost` | `localhost` | MySQL host. |
-| `database.mySQLPort` | `3306` | MySQL port. |
-| `database.mySQLDatabase` | `db` | Database name. |
-| `database.mySQLUser` | `root` | Login user. |
-| `database.mySQLPassword` | empty | Login password. |
-| `database.tableNames.players` | `players` | Player-data table name. |
-| `database.mySQLParameters.<name>` | none | Optional JDBC parameters loaded as string key/value pairs. |
-
-[Database setup](database.md)
+See [Database Setup](database.md) before changing the backend.
 
 ## Economies
 
 ```yaml
+# Economy providers enabled for shops.
+# The first entry is the default economy for every shop that does not
+# declare its own economy.
+#
+# Supported values:
+# CUSTOM, EXP, EXP_LEVELS, EXCELLENT_ECONOMY, COINS_ENGINE,
+# GEMS_ECONOMY, ITEM, MYSQL_TOKENS, PLAYER_POINTS, TOKEN_ENCHANT,
+# TOKEN_MANAGER, VAULT, and VOTING_PLUGIN.
 economyTypes:
   - VAULT
-```
 
-The first enabled provider is the default. Valid types are `CUSTOM`, `EXP`, `EXP_LEVELS`, `EXCELLENT_ECONOMY`, `COINS_ENGINE`, `GEMS_ECONOMY`, `ITEM`, `MYSQL_TOKENS`, `PLAYER_POINTS`, `TOKEN_ENCHANT`, `TOKEN_MANAGER`, `VAULT`, and `VOTING_PLUGIN`.
-
-`economyType` is still read as a legacy single-value alternative when it is a string.
-
-Optional display overrides:
-
-```yaml
+# Optional display text added before or after formatted currency values.
 currencies:
   prefixes:
     VAULT: "$"
@@ -67,55 +75,84 @@ currencies:
     PLAYER_POINTS: " points"
 ```
 
-[Economy providers](../integrations/economies.md)
+`economyType` is still read as a legacy single-value alternative when it contains a string. See [Economy Providers](../integrations/economies.md) for dependencies and provider behavior.
 
 ## Item currency
 
 ```yaml
+# Built-in physical currency. Add ITEM to economyTypes to enable it.
+# Only the 36 normal inventory slots are counted. Armor, off-hand,
+# ender chests, container contents, and cursor items are excluded.
 item-currency:
+  # Name appended to formatted currency values.
   display-name: Coins
+
+  # Decimal precision represented by the smallest denomination.
+  # Valid range: 0 through 6.
   decimal-places: 0
+
   denominations:
     emerald:
+      # Currency value of one matching item.
       value: 1
+      # Item definition loaded by ZaminShop's normal item parser.
       item:
         material: EMERALD
+
     emerald-block:
       value: 9
       item:
         material: EMERALD_BLOCK
 ```
 
-This section is validated when `ITEM` is used. See [Built-in item currency](../integrations/item-currency.md).
+This section is validated when `ITEM` is enabled. See [Built-in Item Currency](../integrations/item-currency.md) for validation, matching, deposits, withdrawals, and change.
 
 ## Spawner provider
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `spawnerProvider` | empty | Preferred external provider when more than one supported spawner provider is installed. |
+```yaml
+# Preferred external spawner provider when more than one supported provider
+# is installed. Leave empty to use the only detected provider or
+# ZaminShop's built-in spawner support.
+spawnerProvider: ""
+```
 
 ## Startup logging
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `startup-log.banner` | `true` | Prints the startup banner. |
-| `startup-log.debug` | `false` | Enables detailed startup diagnostics. |
-| `startup-log.show-shop-breakdown` | `false` | Logs per-shop loading details. |
+```yaml
+startup-log:
+  # Print the ZaminShop banner during startup.
+  banner: true
+
+  # Print detailed startup diagnostics.
+  debug: false
+
+  # Print a separate loading breakdown for each shop.
+  show-shop-breakdown: false
+```
 
 ## Notification throttling
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `notifications.throttling.enabled` | `true` | Limits repeated routine notices. |
-| `notifications.throttling.default-cooldown-ms` | `2500` | Default repeat-notice cooldown in milliseconds; negative values are clamped to zero. |
+```yaml
+# Limit repeated routine notices without delaying purchase, sale,
+# confirmation, rollback, or other important transaction messages.
+notifications:
+  throttling:
+    # Enable routine-notice throttling.
+    enabled: true
 
-Transaction results, confirmations, rollbacks, and other important transaction messages are not described by the default comments as routine throttled notices.
+    # Default cooldown between repeated notices, in milliseconds.
+    # Negative values are clamped to zero.
+    default-cooldown-ms: 2500
+```
 
 ## Inventory click shortcuts
 
 ```yaml
 inventoryClickShortcuts:
+  # Master switch for inventory click shortcuts.
   enabled: true
+
+  # Enable shortcuts in each menu context.
   mainMenu: false
   shopMenu: true
   amountSelector: false
@@ -123,254 +160,480 @@ inventoryClickShortcuts:
   bulkSell: false
 ```
 
-The root toggle controls the feature globally. Each child enables it for one menu context.
-
 ## Transaction safety
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `transaction-safety.enabled` | `true` | Master transaction-safety switch. |
-| `transaction-safety.per-player-lock` | `true` | Prevents overlapping transactions for one player. |
-| `transaction-safety.lock-timeout-ms` | `5000` | Lock timeout. |
-| `transaction-safety.click-cooldown-ms` | `150` | Transaction click cooldown. |
-| `transaction-safety.block-while-inventory-open` | `false` | Blocks the guarded path while an inventory is open. |
-| `transaction-safety.debug-failures` | `false` | Logs additional failure diagnostics. |
-| `transaction-safety.low-tps.enabled` | `false` | Enables the low-TPS circuit breaker. |
-| `transaction-safety.low-tps.minimum-tps` | `17.0` | Blocking threshold, clamped to `1.0`-`20.0`. |
-| `transaction-safety.low-tps.recovery-tps` | `18.5` | Recovery threshold, clamped between the minimum and `20.0`. |
-| `transaction-safety.low-tps.smoothing-factor` | `0.35` | TPS smoothing factor, clamped to `0.05`-`1.0`. |
+```yaml
+transaction-safety:
+  # Master switch for guarded transaction handling.
+  enabled: true
+
+  # Prevent two transactions from running at the same time for one player.
+  per-player-lock: true
+
+  # Maximum time to wait for the player transaction lock, in milliseconds.
+  lock-timeout-ms: 5000
+
+  # Minimum delay between transaction clicks, in milliseconds.
+  click-cooldown-ms: 150
+
+  # Block the guarded transaction path while an inventory is open.
+  block-while-inventory-open: false
+
+  # Print additional transaction-safety failure diagnostics.
+  debug-failures: false
+
+  # Optional circuit breaker for overloaded servers. Recovery uses a higher
+  # threshold to prevent transactions rapidly switching on and off.
+  low-tps:
+    enabled: false
+
+    # Block transactions below this TPS value. Clamped to 1.0 through 20.0.
+    minimum-tps: 17.0
+
+    # Resume transactions at this TPS value. Clamped between minimum-tps
+    # and 20.0.
+    recovery-tps: 18.5
+
+    # Weight used when smoothing TPS readings. Clamped to 0.05 through 1.0.
+    smoothing-factor: 0.35
+```
 
 ## Transaction audit
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `transaction-audit.enabled` | `false` | Enables transaction audit output. |
-| `transaction-audit.log-success` | `false` | Includes successful transactions. |
-| `transaction-audit.log-failures` | `true` | Includes failed transactions. |
-| `transaction-audit.include-inventory-summary` | `false` | Adds inventory summary data. |
+```yaml
+transaction-audit:
+  # Enable transaction audit output.
+  enabled: false
+
+  # Include successful transactions.
+  log-success: false
+
+  # Include failed transactions.
+  log-failures: true
+
+  # Include an inventory summary in audit records.
+  include-inventory-summary: false
+```
 
 ## Currency safety
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `currency-safety.enabled` | `true` | Master currency validation switch. |
-| `currency-safety.decimal-places` | `2` | Global currency precision. |
-| `currency-safety.reject-prices-with-too-many-decimals` | `true` | Rejects prices exceeding configured precision. |
-| `currency-safety.minimum-transaction-value` | `0.01` | Minimum non-zero transaction value. |
-| `currency-safety.normalize-player-balances-for-checks` | `true` | Normalizes balance comparisons. |
-| `currency-safety.block-nan-infinity` | `true` | Blocks non-finite numeric values. |
-| `currency-safety.max-transaction-value` | `1000000000000` | Maximum transaction value. |
+```yaml
+currency-safety:
+  # Master switch for currency validation.
+  enabled: true
+
+  # Global accepted currency precision.
+  decimal-places: 2
+
+  # Reject prices with more decimal places than the configured precision.
+  reject-prices-with-too-many-decimals: true
+
+  # Smallest accepted non-zero transaction value.
+  minimum-transaction-value: 0.01
+
+  # Normalize player balances before affordability checks.
+  normalize-player-balances-for-checks: true
+
+  # Reject NaN and positive or negative infinity.
+  block-nan-infinity: true
+
+  # Largest accepted transaction value.
+  max-transaction-value: 1000000000000
+```
 
 ## Overwatcher
 
 ```yaml
 overwatcher:
+  # Run economy-risk analysis.
   enabled: true
+
+  # Block shops classified as critical.
   block-critical-shops: true
+
+  # Notify administrators about detected risks.
   notify-admins: true
+
+  # Require confirmation for guarded operations.
   require-confirmation: true
+
+  # Highest accepted sell-price to buy-price ratio.
   max-sell-buy-ratio: 0.8
+
+  # Allow an item's sell price to exceed its buy price.
   allow-sell-higher-than-buy: false
 ```
-
-| Path | Purpose |
-| --- | --- |
-| `enabled` | Runs economy-risk analysis. |
-| `block-critical-shops` | Blocks shops classified as critical. |
-| `notify-admins` | Sends administrator warnings. |
-| `require-confirmation` | Requires confirmation for guarded operations. |
-| `max-sell-buy-ratio` | Maximum accepted sell-to-buy ratio. |
-| `allow-sell-higher-than-buy` | Allows a sell price above its buy price when true. |
 
 The current section name is `overwatcher`, not `risk-guard`.
 
 ## Sell limits
 
-| Path | Default |
-| --- | --- |
-| `sell-limits.enabled` | `false` |
-| `sell-limits.reset-timezone` | `server` |
-| `sell-limits.daily.enabled` | `false` |
-| `sell-limits.daily.max-money` | `50000` |
-| `sell-limits.daily.max-items` | `50000` |
-| `sell-limits.weekly.enabled` | `false` |
-| `sell-limits.weekly.max-money` | `500000` |
-| `sell-limits.weekly.max-items` | `500000` |
+```yaml
+sell-limits:
+  # Master switch for per-player sale limits.
+  enabled: false
 
-[Sell limits](sell-limits.md)
+  # Reset timezone. "server" uses the server's timezone.
+  reset-timezone: "server"
+
+  daily:
+    enabled: false
+    # Maximum money a player can earn from sales each day.
+    max-money: 50000
+    # Maximum number of items a player can sell each day.
+    max-items: 50000
+
+  weekly:
+    enabled: false
+    # Maximum money a player can earn from sales each week.
+    max-money: 500000
+    # Maximum number of items a player can sell each week.
+    max-items: 500000
+```
+
+See [Sell Limits](sell-limits.md) for counting and reset behavior.
 
 ## Suspicious transactions
 
-| Path | Default |
-| --- | --- |
-| `suspicious-transactions.enabled` | `false` |
-| `suspicious-transactions.notify-admins` | `true` |
-| `suspicious-transactions.log-console` | `true` |
-| `suspicious-transactions.cooldown-between-alerts-seconds` | `60` |
-| `thresholds.transactions-per-10-seconds` | `20` |
-| `thresholds.money-earned-per-minute` | `1000000` |
-| `thresholds.items-sold-per-minute` | `50000` |
-| `thresholds.same-item-sales-per-10-seconds` | `15` |
-| `actions.warn-admins` | `true` |
-| `actions.temporarily-block-selling` | `false` |
-| `actions.block-duration-seconds` | `30` |
+```yaml
+suspicious-transactions:
+  # Enable suspicious transaction monitoring.
+  enabled: false
 
-Threshold and action paths in the table are children of `suspicious-transactions`.
+  # Notify administrators when a threshold is exceeded.
+  notify-admins: true
+
+  # Write alerts to the console.
+  log-console: true
+
+  # Minimum delay between repeated alerts, in seconds.
+  cooldown-between-alerts-seconds: 60
+
+  thresholds:
+    transactions-per-10-seconds: 20
+    money-earned-per-minute: 1000000
+    items-sold-per-minute: 50000
+    same-item-sales-per-10-seconds: 15
+
+  actions:
+    # Send an administrator warning.
+    warn-admins: true
+
+    # Temporarily block the player's selling activity.
+    temporarily-block-selling: false
+
+    # Selling block duration, in seconds.
+    block-duration-seconds: 30
+```
 
 ## Search
 
-| Path | Default | Notes |
-| --- | --- | --- |
-| `search.enabled` | `true` | Enables search. |
-| `search.mode` | `SMART` | `EXACT`, `SIMPLE`, `FUZZY`, or `SMART`. |
-| `search.max-results` | `45` | Runtime value is clamped to `1`-`45`. |
-| `search.search-on-unknown-shop-command` | `false` | Searches when a shop command target is unknown. |
+```yaml
+search:
+  # Master switch for /shop search and search menus.
+  enabled: true
 
-Legacy `search.fuzzy` is read when `search.mode` is blank.
+  # EXACT  = exact normalized item names only
+  # SIMPLE = exact, starts-with, contains, and full-term matching
+  # FUZZY  = SIMPLE plus typo-tolerant token matching
+  # SMART  = fuzzy matching with score-based ranking
+  mode: SMART
+
+  # Maximum displayed results. Runtime value is clamped to 1 through 45.
+  max-results: 45
+
+  # Treat unknown /shop arguments as search text.
+  search-on-unknown-shop-command: false
+```
+
+When `mode` is blank, the legacy `search.fuzzy` value selects `FUZZY` or `SIMPLE`. See [Search](../gui/search.md).
 
 ## Recent transactions
 
-| Path | Default | Notes |
-| --- | --- | --- |
-| `recent-menu.enabled` | `true` | Enables recent history. |
-| `recent-menu.max-records-per-player` | `20` | Clamped to `1`-`54`. |
-| `recent-menu.show-bought` | `true` | Records/displays purchases. |
-| `recent-menu.show-sold` | `true` | Records/displays sales. |
-| `recent-menu.merge-duplicate-items` | `true` | Keeps the newest matching item/action entry. |
+```yaml
+recent-menu:
+  # Enable recent transaction history.
+  enabled: true
+
+  # Maximum stored/displayed records per player. Clamped to 1 through 54.
+  max-records-per-player: 20
+
+  # Record and display purchases.
+  show-bought: true
+
+  # Record and display sales.
+  show-sold: true
+
+  # Keep only the newest entry for the same shop item and transaction type.
+  merge-duplicate-items: true
+```
 
 ## Player defaults
 
-| Path | Default |
-| --- | --- |
-| `player-settings.defaults.confirm-purchases` | `false` |
-| `player-settings.defaults.return-to-shop` | `true` |
+```yaml
+player-settings:
+  defaults:
+    # Ask for confirmation before purchases by default.
+    confirm-purchases: false
+
+    # Return to the shop after supported actions by default.
+    return-to-shop: true
+```
 
 ## Built-in GUI paths
 
-`gui_menus.<id>.file` points to each fixed menu:
+```yaml
+# Fixed GUI menu file locations.
+# If you move a built-in menu file, update its file path here.
+gui_menus:
+  gui-settings:
+    file: guis/gui-settings.yml
+  amount-selector:
+    file: guis/amount-selector.yml
+  bulk-buy:
+    file: guis/bulk-buy.yml
+  bulk-sell:
+    file: guis/bulk-sell.yml
+  recent:
+    file: guis/recent.yml
+  favorites:
+    file: guis/favorites.yml
+  search:
+    file: guis/search.yml
+  sell:
+    file: guis/sell.yml
+  confirm-purchase:
+    file: guis/confirm-purchase.yml
+  player-settings:
+    file: guis/player-settings.yml
+```
 
-| ID | Default file |
-| --- | --- |
-| `gui-settings` | `guis/gui-settings.yml` |
-| `amount-selector` | `guis/amount-selector.yml` |
-| `bulk-buy` | `guis/bulk-buy.yml` |
-| `bulk-sell` | `guis/bulk-sell.yml` |
-| `recent` | `guis/recent.yml` |
-| `favorites` | `guis/favorites.yml` |
-| `search` | `guis/search.yml` |
-| `sell` | `guis/sell.yml` |
-| `confirm-purchase` | `guis/confirm-purchase.yml` |
-| `player-settings` | `guis/player-settings.yml` |
+## Enchantments and amount selection
 
-## Enchantments and amounts
+```yaml
+# Maximum enchantments players can add to an item.
+# Set to -1 for no limit.
+maxEnchantments: 3
 
-| Path | Default | Purpose |
-| --- | --- | --- |
-| `maxEnchantments` | `3` | Maximum enchantments; `-1` means no limit. |
-| `limitEnchantmentLevelDiff` | `false` | Restricts purchases to one level above the current enchantment. |
-| `disableUnsafeEnchantmentCheck` | `false` | Allows unsafe enchant application when true. |
-| `allowEnchantmentLevelIncrease` | `true` | Allows replacing a lower level of the same enchantment. |
-| `enableAmountSelectionFix` | `true` | Enables the amount-selector double-click fix. |
-| `allowAllSellAllStackSizes` | `false` | Allows sell-all to use arbitrary quantities instead of shop stack multiples. |
+# Restrict purchases to an enchantment one level higher than the enchantment
+# already on the item.
+limitEnchantmentLevelDiff: false
+
+# Enable the amount-selector double-click fix.
+enableAmountSelectionFix: true
+
+# true: sell-all may sell any quantity.
+# false: sell-all uses multiples of the shop item's configured stack size.
+allowAllSellAllStackSizes: false
+
+# Allow ENCHANTMENT products to apply unsafe enchantments, such as
+# Sharpness 25 on a stick.
+disableUnsafeEnchantmentCheck: false
+
+# Allow ENCHANTMENT products to replace a lower level of the same enchantment.
+allowEnchantmentLevelIncrease: true
+```
 
 ## General shop behavior
 
-| Path | Default |
-| --- | --- |
-| `roundPrices` | `none` (`UP`, `DOWN`, `NEAREST`, or `NONE`) |
-| `disableMainMenu` | `false` |
-| `useDifferentMessagesForFreeItems` | `true` |
-| `capitalizeItemNames` | `true` |
-| `priceModifiersType` | `BOTH` (`BOTH`, `COMMAND`, or `PERMISSION`) |
-| `closeGuiAfterSellAll` | `false` |
-| `openBulkGuiImmediately` | `false` |
-| `enableBulkBuyGUI` | `true` |
-| `enableBulkSellGUI` | `true` |
-| `enableBuyMoreGUI` | `true` |
-| `enableSellMoreGUI` | `true` |
-| `sudoAllowAllShopsAccess` | `false` |
-| `displayPriceModifiersInPercents` | `true` |
-| `disableSudoWorldPermissionCheck` | `false` |
-| `disableSudoShopPermissionCheck` | `false` |
+```yaml
+# Price rounding mode: UP, DOWN, NEAREST, or NONE.
+roundPrices: none
 
-`disableShopsInGamemodes` defaults to `ADVENTURE`, `CREATIVE`, and `SPECTATOR`. `disableShopsInWorlds` defaults to an empty list.
+# Disable the shop directory opened by /zaminshop.
+# Direct /zaminshop open <shop> access remains available.
+disableMainMenu: false
+
+# Use the dedicated free-item messages when a buy or sell price is zero.
+useDifferentMessagesForFreeItems: true
+
+# Capitalize generated item names, such as "nether brick" to "Nether Brick".
+capitalizeItemNames: true
+
+# Price modifier source: BOTH, COMMAND, or PERMISSION.
+# With BOTH, permission modifiers have priority over command modifiers.
+priceModifiersType: BOTH
+
+# Close the GUI after Sell All completes.
+closeGuiAfterSellAll: false
+
+# Open bulk buy/sell immediately after clicking a shop item.
+# The matching GUI must be enabled and the player needs its permission.
+openBulkGuiImmediately: false
+
+# Allow the dedicated bulk menus to open.
+enableBulkBuyGUI: true
+enableBulkSellGUI: true
+
+# Allow amount selectors to open their extended buy and sell menus.
+enableBuyMoreGUI: true
+enableSellMoreGUI: true
+
+# Give players access to every shop when the console opens a shop for them.
+sudoAllowAllShopsAccess: false
+
+# Block shops in these game modes.
+disableShopsInGamemodes:
+  - ADVENTURE
+  - CREATIVE
+  - SPECTATOR
+
+# Block shops in these worlds.
+disableShopsInWorlds: []
+
+# Display price modifiers as percentages, such as 10%, instead of decimals.
+# Commands still use decimal values.
+displayPriceModifiersInPercents: true
+
+# Skip the world-specific shop permission when a shop is opened for a player
+# through /zaminshop open [player] [shop name].
+disableSudoWorldPermissionCheck: false
+
+# Skip the shop-specific permission for the same sudo-open path.
+disableSudoShopPermissionCheck: false
+```
 
 ## Default item comparison
 
-| Path | Default |
-| --- | --- |
-| `defaultItemSettings.compareMeta` | `false` |
-| `defaultItemSettings.stripItemMeta` | `false` |
-| `defaultItemSettings.compareModel` | `true` |
-| `defaultItemSettings.compareDamage` | `false` |
-| `defaultItemSettings.compareNbt` | `false` |
-| `defaultItemSettings.compareRepairCost` | `false` |
+```yaml
+defaultItemSettings:
+  # Compare item metadata, including name and lore, during sales.
+  compareMeta: false
+
+  # Remove item metadata from items purchased from shops.
+  stripItemMeta: false
+
+  # Compare custom model data during sales.
+  compareModel: true
+
+  # Compare item damage or durability during sales.
+  compareDamage: false
+
+  # Compare item NBT or components during sales.
+  compareNbt: false
+
+  # Compare anvil repair cost during sales.
+  compareRepairCost: false
+```
 
 Individual shop items can override these defaults.
 
 ## Transaction logging
 
-| Path | Default |
-| --- | --- |
-| `log.toConsole` | `true` |
-| `log.toFile` | `false` |
-| `log.formatDate` | `yyyy/MM/dd HH:mm:ss` |
-| `log.formatBuyCommand` | Shipped command-purchase format |
-| `log.formatBuyEnchantment` | Shipped enchantment-purchase format |
-| `log.formatBuyPermission` | Shipped permission-purchase format |
-| `log.formatBuy` | Shipped item-purchase format |
-| `log.formatSell` | Shipped item-sale format |
-| `log.formatSellAll` | Shipped sell-all format |
+```yaml
+log:
+  # Log transactions to the console and main server log.
+  toConsole: true
 
-Format placeholders include the fields present in each shipped string, such as `%player%`, `%amount%`, `%item%`, `%price%`, `%shop%`, `%command%`, `%enchantment%`, and `%permission%`.
+  # Log transactions to a separate file.
+  toFile: false
+
+  # SimpleDateFormat pattern used for transaction timestamps.
+  formatDate: "yyyy/MM/dd HH:mm:ss"
+
+  # Messages written for each transaction type.
+  formatBuyCommand: "%player% bought %amount% x %command% command for %price% from %shop% shop"
+  formatBuyEnchantment: "%player% bought %enchantment% enchantment for %price% from %shop% shop"
+  formatBuyPermission: "%player% bought %permission% permission for %price% from %shop% shop"
+  formatBuy: "%player% bought %amount% x %item% for %price% from %shop% shop"
+  formatSell: "%player% sold %amount% x %item% for %price% to %shop% shop"
+  formatSellAll: "%player% sold all %amount% x %item% for %price% to %shop% shop"
+```
+
+Use only the placeholders present in the shipped format for that transaction type.
 
 ## `/sell hand`
 
-| Path | Default |
-| --- | --- |
-| `sellHand.allowAllQuantities` | `true` |
-| `sellHand.sellsAllItems` | `false` |
-| `sellHand.excludeFreeItems` | `true` |
-| `sellHand.excludeArmorSlots` | `true` |
-| `sellHand.excludeOffHand` | `false` |
+```yaml
+sellHand:
+  # Allow any quantity and calculate its value from the configured base price.
+  allowAllQuantities: true
+
+  # Make /sell hand behave like /sell handall.
+  sellsAllItems: false
+
+  # Exclude items with a sell price of zero.
+  excludeFreeItems: true
+
+  # Exclude armor slots.
+  excludeArmorSlots: true
+
+  # Exclude the off-hand slot.
+  excludeOffHand: false
+```
 
 ## `/sell all`
 
-| Path | Default |
-| --- | --- |
-| `sellAll.detailedSummary` | `false` |
-| `sellAll.findMaxSellPrice` | `true` |
-| `sellAll.excludeFreeItems` | `true` |
-| `sellAll.excludeArmorSlots` | `true` |
-| `sellAll.excludeOffHand` | `false` |
+```yaml
+sellAll:
+  # Send a stack-by-stack price summary after selling.
+  detailedSummary: false
+
+  # Use the highest sell price found across all shops.
+  # This can affect performance on servers with many shops and items.
+  findMaxSellPrice: true
+
+  # Exclude items with a sell price of zero.
+  excludeFreeItems: true
+
+  # Exclude armor slots.
+  excludeArmorSlots: true
+
+  # Exclude the off-hand slot.
+  excludeOffHand: false
+```
 
 ## Command registration
 
 ```yaml
+# Prevent commands from registering when another plugin should own them.
+# A full server restart is required after changing this section.
 disableCommands:
+  # Prevent /sell from registering.
   sell: false
 ```
 
-Setting `disableCommands.sell: true` prevents `/sell` from registering. This requires a full server restart.
+## Number formatting
 
-## Number format
+```yaml
+numberFormat:
+  # Character separating the whole and fractional portions of a number.
+  decimalSeparator: "."
 
-| Path | Default |
-| --- | --- |
-| `numberFormat.decimalSeparator` | `.` |
-| `numberFormat.groupingSeparator` | `,` |
-| `numberFormat.minimumIntegerDigits` | `1` |
-| `numberFormat.maximumIntegerDigits` | `32` |
-| `numberFormat.minimumFractionDigits` | `0` |
-| `numberFormat.maximumFractionDigits` | `8` |
-| `numberFormat.hideFraction` | `true` |
-| `numberFormat.shortScale.enableShortScaleNumbering` | `false` |
-| `numberFormat.shortScale.shortScaleLimit` | `1000000` |
-| `numberFormat.shortScale.shortHandDecimalLimit` | `2` |
-| `numberFormat.shortScale.shortHandNumberLimit` | `32` |
+  # Character grouping digits in large numbers.
+  groupingSeparator: ","
+
+  # Minimum and maximum displayed integer digits.
+  minimumIntegerDigits: 1
+  maximumIntegerDigits: 32
+
+  # Minimum and maximum displayed fractional digits.
+  minimumFractionDigits: 0
+  maximumFractionDigits: 8
+
+  # Remove unnecessary trailing fractional digits, such as $100.00 to $100.
+  hideFraction: true
+
+  shortScale:
+    # Convert large values to short-scale text, such as 1,000,000 to 1 million.
+    enableShortScaleNumbering: false
+
+    # Value at which short-scale formatting begins.
+    shortScaleLimit: 1000000
+
+    # Maximum decimal places in a short-scale value.
+    shortHandDecimalLimit: 2
+
+    # Maximum digits in a short-scale value.
+    shortHandNumberLimit: 32
+```
 
 ## Reloading
 
-Most values are read again by `/zaminshop reload`. Dependency installation, command registration, and provider changes need a restart.
+Most values are read again by:
 
-[Reload and restart matrix](reloading.md)
+```text
+/zaminshop reload
+```
+
+Dependency installation, command registration, and provider changes require a restart. See the [Reload and Restart Matrix](reloading.md).
