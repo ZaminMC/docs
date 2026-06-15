@@ -117,20 +117,15 @@ Without current context, these values are empty.
 | `%zaminshop_enchantment%` | Enchantment name |
 | `%zaminshop_level%` | Enchantment level |
 
-## Validation context
+## Current currency context
 
-After validation, these global values can be available for 60 seconds:
-
-| Placeholder |
-| --- |
-| `%zaminshop_shops%` |
-| `%zaminshop_items%` |
-| `%zaminshop_skipped_shops%` |
-| `%zaminshop_skipped_items%` |
-| `%zaminshop_warnings%` |
-| `%zaminshop_errors%` |
-| `%zaminshop_severity%` |
-| `%zaminshop_detail%` |
+| Placeholder | Meaning |
+|---|---|
+| `%zaminshop_currency_id%` | Selected provider ID |
+| `%zaminshop_currency_name%` | Provider display name |
+| `%zaminshop_currency_balance%` | Formatted balance for the selected provider |
+| `%zaminshop_currency_icon%` | Configured provider icon material |
+| `%zaminshop_currency_description%` | Provider description joined into one line |
 
 ## Other registered context identifiers
 
@@ -140,12 +135,17 @@ The expansion also accepts these context keys when another ZaminShop flow has po
 buy_page, buy_shop, buy_shop_id, buy_slot,
 detail, errors, global, max, modifier, period,
 purchasable, remaining_items, remaining_money,
-risk_id, sell_all, sell_page, sell_shop, sell_shop_id,
+finding_id, sell_all, sell_page, sell_shop, sell_shop_id,
 sell_slot, sellable, severity, skipped_items,
-skipped_shops, type, usage, warnings
+skipped_shops, shops, items, type, usage, warnings
 ```
 
-Needs verification in code for a particular screen: these identifiers are accepted by the expansion, but their value is only useful after the responsible command or menu flow has populated the context.
+**Needs verification in code for a particular screen:** these identifiers are
+accepted by `ZaminShopPlaceholderExpansion`, but their value is only useful
+after another command or menu flow has populated
+`PlaceholderContextService`. The current automatic startup validation path does
+not expose a documented player placeholder workflow for the validation-related
+keys.
 
 ## Language-backed placeholders
 

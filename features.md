@@ -21,6 +21,9 @@ Use packs when you want to separate:
 - event shops
 - region-specific shops
 
+Each pack can also restrict the currency providers its items may use. See
+[Multi-Currency Shops](shops/multi-currency.md).
+
 ## Category shop menus
 
 Category files are where the actual shop items live.
@@ -112,9 +115,9 @@ This is where ZaminShop separates itself from casual menu plugins.
 - invalid amount blocking
 - inventory consistency checks
 
-### Risk guard
+### Overwatcher
 
-Risk guard is designed to catch pricing mistakes before they turn into server-wide damage.
+Overwatcher audits loaded prices before players can exploit a mistake.
 
 It looks for:
 
@@ -123,6 +126,16 @@ It looks for:
 - cross-category pricing issues
 - cross-pack pricing issues
 - known compaction and crafting loops
+
+Critical findings can block the affected shops until an administrator corrects
+or explicitly confirms the finding.
+
+### Runtime Shield
+
+Runtime Shield signs purchased items with their source price and currency
+provider. When the same item is offered to ZaminShop again, the signature is
+checked before the sale is allowed. This closes profitable resale paths that a
+static price audit cannot prove in advance.
 
 ### Suspicious transaction monitoring
 
@@ -155,7 +168,7 @@ It also distinguishes between:
 
 ## Diagnostics and validation
 
-The plugin validates configuration more aggressively than the average shop plugin.
+The plugin validates configuration automatically during startup and reload.
 
 That includes:
 
@@ -166,8 +179,25 @@ That includes:
 - invalid pagination definitions
 - broken YAML syntax with readable diagnostics
 
+## Multi-currency shops
+
+One installation can expose multiple enabled providers, including Vault,
+PlayerPoints, and item-backed currencies. A shop pack can restrict the
+providers available to its items, while an individual item can pin one provider
+or define a separate price for each provider.
+
+When more than one provider is valid for an item, ZaminShop can open a
+configurable currency selection menu before the amount selector.
+
+## Physical shop blocks
+
+Administrators can link a placed block to a shop pack or category. Players can
+then open that shop by interacting with the block instead of typing a command.
+The linking tool, access permission, left-click information, and block-breaking
+behavior are configurable.
+
 ## Read next
 
 - [Install and Launch Your First Shop](setup.md)
 - [Shop Pack File Format](shops/shop-file-format.md)
-- [Safety, Risk Guard, and Audit](configuration/safety.md)
+- [Transaction Safety and Overwatcher](configuration/safety.md)

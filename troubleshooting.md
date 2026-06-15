@@ -12,10 +12,10 @@ Check:
 4. `disableMainMenu` is not blocking the flow you expect
 5. at least one folder under `plugins/ZaminShop/shops/` contains an enabled, valid `main.yml`
 
-Then run:
+Then reload and read the automatic Validation report:
 
 ```text
-/zaminshop validate
+/zaminshop reload
 ```
 
 ## A shop pack is skipped
@@ -61,7 +61,7 @@ If the same item sells through one path and fails through another, validate the 
 Check these layers in order:
 
 1. the base item price in the category file
-2. the active economy type
+2. the resolved provider ID and provider-specific price
 3. player or command price modifiers
 4. sell limits or suspicious transaction actions
 5. number formatting and price rounding settings
@@ -78,25 +78,25 @@ Most of the time this is caused by:
 Use:
 
 ```text
-/zaminshop validate
+/zaminshop reload
 /zaminshop check
 ```
 
 and read the startup warnings closely.
 
-## Risk guard blocks a shop or item
+## Overwatcher blocks a shop or item
 
 Run:
 
 ```text
-/zaminshop risk list
+/zaminshop overwatcher list
 ```
 
 Then decide whether to:
 
 - fix the prices
-- confirm the risk intentionally
-- reset the risk state after cleanup
+- confirm the finding intentionally
+- reset confirmations after cleanup
 
 ## GUI items leaked into a player inventory
 

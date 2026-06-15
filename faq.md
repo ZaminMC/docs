@@ -39,12 +39,13 @@ Yes, when the folder contains an enabled `main.yml`. A folder without `main.yml`
 
 `shops/` contains the actual pack main menus and category shop menus.
 
-## Why does the plugin have both validation and risk guard?
+## Why does the plugin have both validation and Overwatcher?
 
 Because they solve different problems.
 
 - validation checks whether the files are structurally usable
-- risk guard checks whether the prices are economically dangerous
+- Overwatcher checks whether the prices are economically dangerous
+- Runtime Shield checks whether tracked purchases are being resold unsafely
 
 You want both.
 
@@ -75,13 +76,13 @@ If the path is wrong, the plugin will not guess where you moved the file.
 Run:
 
 ```text
-/zaminshop validate
+/zaminshop reload
 ```
 
-If you changed pricing or opened a new economy path, also check:
+Read the automatic Validation and Overwatcher reports in the console. To inspect individual findings:
 
 ```text
-/zaminshop risk list
+/zaminshop overwatcher list
 ```
 
 ## What if only operators can use the shop?

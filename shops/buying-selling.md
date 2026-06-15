@@ -36,7 +36,8 @@ The transaction service checks, among other things:
 
 * the shop and item are accessible;
 * the player is not already inside a conflicting transaction;
-* the amount and price pass currency-safety rules;
+* a registered provider and positive price resolve for the action;
+* the amount and price pass `currency.yml` safety rules;
 * Overwatcher does not block the shop/item;
 * the economy can withdraw the price;
 * the inventory can accept the result;
@@ -47,6 +48,7 @@ After success:
 
 * the item is added;
 * the economy is charged;
+* Runtime Shield can stamp delivered physical items;
 * recent history can be updated;
 * audit and transaction logs can be written;
 * configured player and console commands can run;
@@ -67,6 +69,22 @@ Selling requires a matching `SHOP_ITEM`. The match uses:
 * repair cost when `compare-repair-cost` is enabled.
 
 Hooked providers compare their own IDs. For example, HeadDatabase compares the HeadDatabase ID on both stacks.
+
+Before a matching physical item is sold, Runtime Shield can verify its ZaminShop purchase fingerprint and block a profitable resale within the same currency provider.
+
+## Currency resolution
+
+The transaction provider is resolved in this order:
+
+1. item `currency-provider`;
+2. pack `currencies`;
+3. provider IDs present in provider-specific item prices;
+4. the category's legacy `economy`;
+5. `currency.yml` `default-provider`.
+
+When several providers have a positive price for the action, the currency selection menu opens.
+
+See [Multi-Currency Shops](multi-currency.md).
 
 ## Per-entry GUI behavior
 
@@ -244,10 +262,9 @@ See [Sell GUI](../gui/sell-gui.md).
 
 ## Transaction safety
 
-Do not disable safety controls solely to work around a bad shop definition. Use:
+Do not disable safety controls solely to work around a bad shop definition. Reload, read the automatic validation report, then use:
 
 ```text
-/zaminshop validate
 /zaminshop overwatcher list
 ```
 

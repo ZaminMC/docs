@@ -7,8 +7,10 @@ description: Complete commented reference for every option shipped in ZaminShop'
 `plugins/ZaminShop/config.yml` controls global services and defaults. Shop contents belong in shop-pack files, while menu layouts belong in `guis/`.
 
 {% hint style="info" %}
-Every block below uses the hierarchy and defaults shipped with ZaminShop. Copy a complete section into `config.yml`, keep its indentation intact, then run `/zaminshop validate`.
+Every block below uses the hierarchy and defaults shipped with ZaminShop `1.20.0`. Copy a complete section into `config.yml`, keep its indentation intact, then run `/zaminshop reload` and read the automatic validation report.
 {% endhint %}
+
+Currency providers and value safety are documented in [currency.yml](currency-yml.md). Static economy auditing and Runtime Shield are documented in [overwatcher.yml](overwatcher-yml.md).
 
 ## Core settings
 
@@ -52,60 +54,6 @@ database:
 ```
 
 See [Database Setup](database.md) before changing the backend.
-
-## Economies
-
-```yaml
-# Economy providers enabled for shops.
-# The first entry is the default economy for every shop that does not
-# declare its own economy.
-#
-# Supported values:
-# CUSTOM, EXP, EXP_LEVELS, EXCELLENT_ECONOMY, COINS_ENGINE,
-# GEMS_ECONOMY, ITEM, MYSQL_TOKENS, PLAYER_POINTS, TOKEN_ENCHANT,
-# TOKEN_MANAGER, VAULT, and VOTING_PLUGIN.
-economyTypes:
-  - VAULT
-
-# Optional display text added before or after formatted currency values.
-currencies:
-  prefixes:
-    VAULT: "$"
-  suffixes:
-    PLAYER_POINTS: " points"
-```
-
-`economyType` is still read as a legacy single-value alternative when it contains a string. See [Economy Providers](../integrations/economies.md) for dependencies and provider behavior.
-
-## Item currency
-
-```yaml
-# Built-in physical currency. Add ITEM to economyTypes to enable it.
-# Only the 36 normal inventory slots are counted. Armor, off-hand,
-# ender chests, container contents, and cursor items are excluded.
-item-currency:
-  # Name appended to formatted currency values.
-  display-name: Coins
-
-  # Decimal precision represented by the smallest denomination.
-  # Valid range: 0 through 6.
-  decimal-places: 0
-
-  denominations:
-    emerald:
-      # Currency value of one matching item.
-      value: 1
-      # Item definition loaded by ZaminShop's normal item parser.
-      item:
-        material: EMERALD
-
-    emerald-block:
-      value: 9
-      item:
-        material: EMERALD_BLOCK
-```
-
-This section is validated when `ITEM` is enabled. See [Built-in Item Currency](../integrations/item-currency.md) for validation, matching, deposits, withdrawals, and change.
 
 ## Spawner provider
 
@@ -214,57 +162,6 @@ transaction-audit:
   # Include an inventory summary in audit records.
   include-inventory-summary: false
 ```
-
-## Currency safety
-
-```yaml
-currency-safety:
-  # Master switch for currency validation.
-  enabled: true
-
-  # Global accepted currency precision.
-  decimal-places: 2
-
-  # Reject prices with more decimal places than the configured precision.
-  reject-prices-with-too-many-decimals: true
-
-  # Smallest accepted non-zero transaction value.
-  minimum-transaction-value: 0.01
-
-  # Normalize player balances before affordability checks.
-  normalize-player-balances-for-checks: true
-
-  # Reject NaN and positive or negative infinity.
-  block-nan-infinity: true
-
-  # Largest accepted transaction value.
-  max-transaction-value: 1000000000000
-```
-
-## Overwatcher
-
-```yaml
-overwatcher:
-  # Run economy-risk analysis.
-  enabled: true
-
-  # Block shops classified as critical.
-  block-critical-shops: true
-
-  # Notify administrators about detected risks.
-  notify-admins: true
-
-  # Require confirmation for guarded operations.
-  require-confirmation: true
-
-  # Highest accepted sell-price to buy-price ratio.
-  max-sell-buy-ratio: 0.8
-
-  # Allow an item's sell price to exceed its buy price.
-  allow-sell-higher-than-buy: false
-```
-
-The current section name is `overwatcher`, not `risk-guard`.
 
 ## Sell limits
 
@@ -627,6 +524,37 @@ numberFormat:
     # Maximum digits in a short-scale value.
     shortHandNumberLimit: 32
 ```
+
+## Physical shop block links
+
+```yaml
+# Physical blocks can open shop packs or category shops without per-click
+# configuration reads.
+block-links:
+  # Master switch.
+  enabled: true
+
+  # Cancel the block's normal right-click behavior when opening a shop.
+  cancel-vanilla-interaction: true
+
+  # Require the configured permission to use linked blocks.
+  require-permission-to-use: false
+  permission: "zaminshop.player.block-links"
+
+  # Show the target when a linked block is left-clicked.
+  allow-left-click-info: true
+
+  # Protect links from players without the remove permission.
+  prevent-breaking-linked-blocks: true
+
+  # Remove a stored link when its block is broken.
+  remove-link-if-block-breaks: false
+
+  # Add/remove click mode timeout, in seconds.
+  link-tool-timeout-seconds: 60
+```
+
+See [Physical Shop Block Links](block-links.md) for commands and interaction behavior.
 
 ## Reloading
 

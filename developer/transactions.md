@@ -42,7 +42,9 @@ If you bypass the transaction boundary, you also bypass the plugin's safety mode
 - normalized price checks
 - economy response validation
 - rollback on failed inventory add or failed sell deposit
-- risk guard blocking
+- provider-specific currency resolution
+- Overwatcher blocking
+- Runtime Shield purchase fingerprints and resale checks
 - sell-limit enforcement
 - suspicious transaction monitoring
 
@@ -58,8 +60,9 @@ If a player reports:
 check:
 
 1. `config.yml -> transaction-safety`
-2. `config.yml -> risk-guard`
-3. `config.yml -> sell-limits`
-4. `config.yml -> suspicious-transactions`
+2. `currency.yml -> safety`
+3. `overwatcher.yml`
+4. `config.yml -> sell-limits`
+5. `config.yml -> suspicious-transactions`
 
-Then use `/zaminshop validate` and `/zaminshop risk list`.
+Then reload, read the automatic validation report, and use `/zaminshop overwatcher list`.

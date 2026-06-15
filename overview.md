@@ -16,7 +16,7 @@ At runtime, the plugin is built around four layers:
    Sell, search, favorites, recent, amount selector, and bulk flows are configured separately and reused across the plugin.
 
 4. **Protection systems**
-   Validation, transaction locking, rollback safety, risk guard, suspicious transaction detection, and sell limits protect the economy and the player experience.
+   Automatic validation, transaction locking, rollback safety, Overwatcher, Runtime Shield, suspicious transaction detection, and sell limits protect the economy and the player experience.
 
 ## What players experience
 
@@ -45,6 +45,8 @@ Examples:
 Admins work with:
 
 - `config.yml` for global behavior
+- `currency.yml` for named economy providers, item currency, and currency selection
+- `overwatcher.yml` for static price auditing and Runtime Shield
 - `lang/*.yml` for messages
 - `guis/*.yml` for shared menus
 - `shops/<pack>/main.yml` for pack-level presentation and commands
@@ -83,7 +85,8 @@ The plugin treats shop configuration as part of the economy, not just decoration
 That is why ZaminShop includes:
 
 - validation
-- risk guard
+- Overwatcher
+- Runtime Shield
 - suspicious transaction checks
 - transaction locks
 - rollback-aware transaction flow
@@ -119,7 +122,7 @@ You rely on:
 
 - sell limits
 - suspicious transaction checks
-- risk guard confirmations
+- Overwatcher confirmations
 - validation
 
 to protect the server from config mistakes and player abuse.

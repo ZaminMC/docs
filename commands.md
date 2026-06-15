@@ -195,8 +195,8 @@ The parser treats the first argument after `/sell` as both the subcommand and, i
 |---|---|---|---|
 | `/zaminshop help [page]` | `/zaminshop ? [page]` | `zaminshop.admin.help` | Player or console |
 | `/zaminshop reload` | None | `zaminshop.admin.reload` | Player or console |
-| `/zaminshop validate` | None | `zaminshop.admin.validate` | Player or console |
-| `/zaminshop overwatcher <list\|confirm\|reset> [riskId]` | `/zaminshop risk ...` | `zaminshop.admin.overwatcher` | Player or console |
+| `/zaminshop overwatcher <list\|confirm\|reset> [findingId]` | None | `zaminshop.admin.overwatcher` | Player or console |
+| `/zaminshop blocklink <add\|remove\|list\|clear\|cancel> [shop]` | None | Action-specific | Player or console, depending on action |
 | `/zaminshop language [list\|reload\|locale]` | `/zaminshop lang ...` | `zaminshop.admin.language` | Player or console |
 | `/zaminshop check` | None | `zaminshop.admin.check` | Player |
 | `/zaminshop addmodifier ...` | `setmodifier`, `am`, `sm` | `zaminshop.admin.modifier` | Player or console |
@@ -216,19 +216,7 @@ Reload is denied while any transaction lock is active. This prevents a configura
 
 Root command registration changes, including `disableCommands.sell`, still require a full server restart.
 
-### `/zaminshop validate`
-
-Runs three validation passes:
-
-1. server capability and configuration compatibility;
-2. GUI schema and menu diagnostics;
-3. shop-pack and item loading validation.
-
-```text
-/zaminshop validate
-```
-
-The command reports summaries and up to eight detailed findings from each validation area.
+Configuration, menu, and shop validation runs automatically during startup and reload. See [Automatic Validation](validation.md).
 
 ### `/zaminshop overwatcher`
 
@@ -237,10 +225,9 @@ Lists current economy-risk findings:
 ```text
 /zaminshop overwatcher
 /zaminshop overwatcher list
-/zaminshop risk list
 ```
 
-Confirms one finding by its reported risk ID:
+Confirms one finding by its reported finding ID:
 
 ```text
 /zaminshop overwatcher confirm A1B2C3D4
@@ -251,6 +238,48 @@ Clears confirmations, reruns analysis, and rebuilds the finding list:
 ```text
 /zaminshop overwatcher reset
 ```
+
+`reset` clears persisted confirmations and immediately rebuilds the current findings.
+
+### `/zaminshop blocklink`
+
+Start add mode, then right-click a block:
+
+```text
+/zaminshop blocklink add survival_shop
+```
+
+Start remove mode, then right-click a linked block:
+
+```text
+/zaminshop blocklink remove
+```
+
+List or clear links for one target:
+
+```text
+/zaminshop blocklink list survival_shop
+/zaminshop blocklink clear survival_shop
+```
+
+Cancel the current player's pending add/remove operation:
+
+```text
+/zaminshop blocklink cancel
+```
+
+Permissions:
+
+```text
+zaminshop.admin.block-links.add
+zaminshop.admin.block-links.remove
+zaminshop.admin.block-links.list
+zaminshop.admin.block-links.clear
+```
+
+`add`, `remove`, and `cancel` require a player because they depend on a block click. `list` and `clear` can be used by console. `cancel` has no separate permission check.
+
+See [Physical Shop Block Links](configuration/block-links.md).
 
 ### `/zaminshop language`
 

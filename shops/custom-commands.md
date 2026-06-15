@@ -97,7 +97,7 @@ Duplicate mappings are diagnosed. A later definition does not become a safe way 
 Use:
 
 ```text
-/zaminshop validate
+/zaminshop reload
 ```
 
 after changing command mappings.

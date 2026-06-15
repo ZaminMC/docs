@@ -27,7 +27,7 @@ ZaminShop uses runtime capability detection and compatibility validation to redu
 Use:
 
 ```text
-/zaminshop validate
+/zaminshop reload
 ```
 
 The validation output reports compatibility warnings such as:

@@ -305,7 +305,7 @@ The expression is resolved after placeholders. JavaScript availability depends o
 An unknown requirement type returns `false`. It does not throw a friendly configuration error at evaluation time, so run:
 
 ```text
-/zaminshop validate
+/zaminshop reload
 ```
 
 after editing menu requirements.

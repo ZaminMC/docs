@@ -1,53 +1,63 @@
 ---
-description: Use exact inventory items as money through ZaminShop's built-in ITEM economy.
+description: Use exact inventory items as a registered physical currency provider.
 ---
 
-# Item Currency
+# Built-in Item Currency
 
-The `ITEM` economy treats configured item stacks as denominations of one physical currency. It is built into ZaminShop and does not require Vault.
+The `ITEM` provider treats configured item stacks as denominations of one physical currency. It does not require Vault.
 
 ## Complete configuration
 
-The default configuration uses emeralds:
+`plugins/ZaminShop/currency.yml`:
 
 ```yaml
-# Enable ZaminShop's built-in physical currency.
-economyTypes:
-  - ITEM
+default-provider: coins
 
-item-currency:
-  # Name appended to formatted currency values.
-  # Blank values fall back to Coins.
-  display-name: Coins
+providers:
+  coins:
+    # Enable the built-in inventory-backed provider.
+    type: ITEM
+    enabled: true
 
-  # Decimal precision represented by the smallest denomination.
-  # Valid range: 0 through 6.
-  decimal-places: 0
+    # Player-facing selection-menu details.
+    display-name: Coins
+    icon:
+      material: EMERALD
+    prefix: ""
+    suffix: " Coins"
 
-  denominations:
-    # Internal denomination ID. It does not need to match the material.
-    emerald:
-      # Positive value of one matching item.
-      value: 1
-      # Item definition loaded by ZaminShop's normal item parser.
-      item:
-        material: EMERALD
+    # Number of decimal places represented by one atomic unit.
+    decimal-places: 0
 
-    emerald-block:
-      value: 9
-      item:
-        material: EMERALD_BLOCK
+    denominations:
+      emerald:
+        value: 1
+        item:
+          material: EMERALD
+
+      emerald-block:
+        value: 9
+        item:
+          material: EMERALD_BLOCK
 ```
 
-This configuration is directly usable. One emerald is worth one Coin and one emerald block is worth nine Coins.
+`plugins/ZaminShop/shops/survival_shop/main.yml`:
 
-Denomination IDs such as `emerald` are internal configuration identifiers. They do not appear on the physical item and do not need to match a material.
+```yaml
+menu_title: "&8Survival Shop"
+open_command:
+  - shop
+currencies:
+  - coins
+size: 54
+```
+
+This directly usable setup values one emerald at one Coin and one emerald block at nine Coins.
 
 ## Validation rules
 
-The loader rejects the item currency when:
+The provider is rejected when:
 
-- `item-currency` is missing;
 - `decimal-places` is below `0` or above `6`;
 - there are no denominations;
 - a denomination has no `value` or `item`;
@@ -56,101 +66,88 @@ The loader rejects the item currency when:
 - two denominations produce identical items;
 - no denomination is worth exactly one atomic unit.
 
-With `decimal-places: 0`, an atomic unit is `1`. With `decimal-places: 2`, an atomic unit is `0.01`.
+With `decimal-places: 0`, one atomic unit is `1`. With `decimal-places: 2`, one atomic unit is `0.01`.
 
 ## Inventory scope
 
-Only slots `0` through `35` of the player's normal inventory are counted.
+Only slots `0` through `35` of the normal player inventory are counted.
 
-ZaminShop deliberately excludes:
+Excluded:
 
-- armor slots;
-- the off-hand;
-- the ender chest;
-- items inside shulker boxes or other containers;
-- the cursor item.
+- armor;
+- off-hand;
+- ender chest;
+- items inside containers;
+- cursor item.
 
 ## Exact item matching
 
-Denominations are matched with Bukkit's `ItemStack#isSimilar` behavior after stack amount is normalized to one. Material and item metadata therefore matter.
+Denominations use Bukkit item similarity after stack amount is normalized to one. Material and metadata therefore matter.
 
-This makes a named, modeled, enchanted, or custom-tagged currency distinct from an ordinary item of the same material.
+A named, modeled, enchanted, or custom-tagged token is distinct from an ordinary item of the same material.
 
 ## Deposits, withdrawals, and change
 
 Before changing a balance, ZaminShop:
 
 1. snapshots the 36 storage slots;
-2. counts all recognized denominations;
+2. counts recognized denominations;
 3. calculates the target value;
-4. removes recognized currency stacks from the planned inventory;
-5. reconstructs the balance using denominations from highest to lowest value;
-6. commits the complete plan.
+4. removes recognized currency from the planned inventory;
+5. rebuilds the balance from highest denomination to lowest;
+6. commits the complete inventory plan.
 
-If the reconstructed balance does not fit, the transaction fails with `Insufficient inventory space for item currency`. If inventory writing fails, ZaminShop attempts to restore the snapshot.
+If the rebuilt balance does not fit, the transaction fails. If writing fails, ZaminShop attempts to restore the snapshot.
 
 {% hint style="warning" %}
-A player may need empty inventory slots to receive change or sale proceeds. Existing non-currency items are preserved, but recognized currency stacks can be recomposed into different denominations.
+Players may need empty inventory slots to receive change or sale proceeds. Recognized currency can be recomposed into different denominations.
 {% endhint %}
 
-## Shop example
-
-`plugins/ZaminShop/shops/survival/categories/item_market.yml`:
+## Shop item example
 
 ```yaml
-shop:
-  menu_title: "&8Item Market"
-  rows: 3
-  economy: ITEM
-
 items:
   diamond:
     type: SHOP_ITEM
     material: DIAMOND
     slot: 13
-    buy-price: 18
-    sell-price: 9
+    coins-buy-price: 18
+    coins-sell-price: 9
 ```
 
-With the default emerald currency, one diamond costs two emerald blocks and sells for one emerald block.
+The price prefix uses the provider ID `coins`, not the type `ITEM`.
 
-## Decimal currency example
+## Decimal example
 
 ```yaml
-economyTypes:
-  - ITEM
+providers:
+  tokens:
+    type: ITEM
+    enabled: true
+    display-name: Tokens
+    icon:
+      material: GOLD_INGOT
+    suffix: " Tokens"
+    decimal-places: 2
 
-item-currency:
-  # Display values as Tokens with two decimal places.
-  display-name: Tokens
-  decimal-places: 2
+    denominations:
+      gold-token:
+        value: 0.01
+        item:
+          material: GOLD_NUGGET
 
-  denominations:
-    # One atomic unit when decimal-places is 2.
-    gold-token:
-      value: 0.01
-      item:
-        material: GOLD_NUGGET
-
-    # One complete Token.
-    gold-bar:
-      value: 1.00
-      item:
-        material: GOLD_INGOT
+      gold-bar:
+        value: 1.00
+        item:
+          material: GOLD_INGOT
 ```
 
 ## Reloading
 
-Run:
+Stop trading activity before changing denomination identity or values, then run:
 
 ```text
 /zaminshop reload
 ```
 
-Then run:
-
-```text
-/zaminshop validate
-```
-
-Do not leave players trading while changing denomination identity or values. Existing physical items are not migrated when the definition changes.
+Existing physical items are not migrated when a denomination changes.

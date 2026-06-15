@@ -9,10 +9,11 @@ If installation gets ZaminShop online, configuration is what makes it usable, sa
 Use this section when you want to:
 
 - choose a database backend
-- choose a default economy provider
-- register shop packs
+- configure one or more currency providers
+- register and order shop packs
 - point shared menus to custom file locations
-- tune safety and sell-limits
+- tune Overwatcher, Runtime Shield, and sell limits
+- configure physical shop block links
 - adjust how prices, sounds, and text behave globally
 
 ## Read this section in order
@@ -20,11 +21,14 @@ Use this section when you want to:
 For most servers, this is the best sequence:
 
 1. [config.yml Reference](config-yml.md)
-2. [Files and Folder Layout](files-and-folders.md)
-3. [Database Setup](database.md)
-4. [Language and Messages](language.md)
-5. [Safety, Risk Guard, and Audit](safety.md)
-6. [Sell Limits and Suspicious Transactions](sell-limits.md)
+2. [currency.yml Reference](currency-yml.md)
+3. [overwatcher.yml Reference](overwatcher-yml.md)
+4. [Files and Folder Layout](files-and-folders.md)
+5. [Database Setup](database.md)
+6. [Language and Messages](language.md)
+7. [Transaction Safety and Overwatcher](safety.md)
+8. [Physical Shop Block Links](block-links.md)
+9. [Sell Limits and Suspicious Transactions](sell-limits.md)
 
 ## What does not belong here
 
@@ -46,8 +50,8 @@ Do not try to edit everything at once.
 
 A stable workflow is:
 
-1. set the economy and pack registrations
+1. configure enabled currency providers and pack registrations
 2. confirm the plugin boots cleanly
-3. validate the setup
+3. read the automatic validation and Overwatcher reports
 4. adjust safety systems
 5. only then start polishing menus and category content

@@ -23,6 +23,8 @@ Some integrations are optional and only matter if you are using that plugin on y
 On first boot, ZaminShop creates:
 
 - `plugins/ZaminShop/config.yml`
+- `plugins/ZaminShop/currency.yml`
+- `plugins/ZaminShop/overwatcher.yml`
 - `plugins/ZaminShop/lang/`
 - `plugins/ZaminShop/guis/`
 - `plugins/ZaminShop/shops/`
@@ -65,12 +67,34 @@ The shop runtime is split intentionally.
 Use this for:
 
 - database
-- economy defaults
 - startup logging
-- safety systems
+- transaction safety
 - sell limits
 - suspicious transaction settings
 - GUI file locations
+
+### Currency providers
+
+`plugins/ZaminShop/currency.yml`
+
+Use this for:
+
+- registered economy providers;
+- provider display names and icons;
+- physical item denominations;
+- currency selection;
+- currency-value safety.
+
+### Overwatcher
+
+`plugins/ZaminShop/overwatcher.yml`
+
+Use this for:
+
+- static price auditing;
+- critical finding blocking;
+- Runtime Shield purchase tracking;
+- unsafe resale protection.
 
 ### Shared menus
 
@@ -126,11 +150,11 @@ Follow [First Shop Pack Walkthrough](shops/first-shop-pack.md) for the clean pat
 
 ### Economy
 
-If you use Vault, confirm it is first in `economyTypes`.
+If you use Vault, keep the shipped `providers.vault` entry enabled in `currency.yml` and make sure a Vault economy is installed.
 
-### Risk guard
+### Overwatcher
 
-Leave risk guard enabled unless you are actively debugging a bad setup.
+Leave Overwatcher and Runtime Shield enabled unless you are diagnosing a specific conflict.
 
 ### Search
 
@@ -157,12 +181,14 @@ The pack folder and its `main.yml` are the source of truth.
 
 If the server version cannot represent a material or item feature, ZaminShop warns instead of silently faking support.
 
-### Skipping validation
+### Ignoring automatic validation
 
-If you heavily edit YAML files, run validation before letting players use the shop.
+Read the Validation and Overwatcher console reports after every startup and reload.
 
 ## Next steps
 
 - [First Shop Pack Walkthrough](shops/first-shop-pack.md)
 - [config.yml Reference](configuration/config-yml.md)
+- [currency.yml Reference](configuration/currency-yml.md)
+- [Automatic Validation](validation.md)
 - [Built-in Menus](gui/built-in-menus.md)

@@ -26,6 +26,7 @@ Children:
 | `zaminshop.player.sell-more` | Use extended sell-more flows. |
 | `zaminshop.player.bypass.gamemode` | Ignore `disableShopsInGamemodes` for shop commands and menus. |
 | `zaminshop.player.bypass.world` | Ignore `disableShopsInWorlds` for shop commands and menus. |
+| `zaminshop.player.block-links` | Open linked shop blocks when use-permission checks are enabled. |
 
 ### `zaminshop.admin.*`
 
@@ -38,12 +39,21 @@ Children:
 | `zaminshop.player.*` | Grants the declared player permission group. |
 | `zaminshop.admin.help` | View administrative help. |
 | `zaminshop.admin.reload` | Reload ZaminShop. |
-| `zaminshop.admin.validate` | Run configuration, GUI, and shop validation. |
-| `zaminshop.admin.overwatcher` | List, confirm, and reset risk findings. |
+| `zaminshop.admin.overwatcher` | List, confirm, and reset Overwatcher findings; receive Runtime Shield notices. |
+| `zaminshop.admin.block-links.*` | Grants every block-link management permission. |
 | `zaminshop.admin.language` | List, reload, and change languages. |
 | `zaminshop.admin.check` | Inspect the held material and damage value. |
 | `zaminshop.admin.modifier` | Add, view, and remove command price modifiers. |
 | `zaminshop.admin.open-others` | Open directories or shops for another online player. |
+
+Block-link management children:
+
+| Permission | Purpose |
+|---|---|
+| `zaminshop.admin.block-links.add` | Start linking a physical block to a shop target. |
+| `zaminshop.admin.block-links.remove` | Remove links and bypass linked-block break protection. |
+| `zaminshop.admin.block-links.list` | List stored positions for a target. |
+| `zaminshop.admin.block-links.clear` | Remove every link for a target. |
 
 {% hint style="warning" %}
 The `/sell` command permissions are enforced in code but are not children of `zaminshop.player.*` in `plugin.yml`. Grant them separately.

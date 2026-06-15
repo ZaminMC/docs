@@ -6,6 +6,7 @@ Start with:
 
 - [Developer API](api.md) for supported entry points and loaded shop access
 - [How the Runtime Fits Together](architecture.md) for bootstrap, menu, pack, and transaction ownership
+- [Source Coverage Map](source-map.md) for the class-by-class documentation audit
 - [Transaction Flow and Safety Rules](transactions.md) before adding code that buys, sells, grants, or removes anything
 - [Version Compatibility](version-compat.md) when working with Bukkit APIs, materials, metadata, or legacy server versions
 

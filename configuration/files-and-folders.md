@@ -13,6 +13,10 @@ plugins/ZaminShop/
 The important sub-areas are:
 
 - `config.yml`
+- `currency.yml`
+- `overwatcher.yml`
+- `pricemodifiers.yml`
+- `block-links.yml`
 - `lang/`
 - `guis/`
 - `shops/`
@@ -24,11 +28,8 @@ This is the global runtime configuration.
 Use it for:
 
 - database settings
-- enabled economy types
 - startup logging
 - transaction safety
-- currency safety
-- risk guard
 - sell limits
 - suspicious transaction checks
 - search and recent behavior
@@ -37,6 +38,39 @@ Use it for:
 - formatting and number settings
 
 Do not use `config.yml` to register packs in newer setups. Shop packs are now self-contained in their own folders.
+
+## `currency.yml`
+
+Registers provider IDs and configures:
+
+- economy implementation types;
+- provider names, icons, prefixes, and suffixes;
+- physical item denominations;
+- currency selection;
+- transaction value safety.
+
+Shop packs expose registered IDs through their `currencies` list.
+
+## `overwatcher.yml`
+
+Controls:
+
+- static price audits;
+- critical finding blocking;
+- administrator notifications;
+- Runtime Shield fingerprints;
+- unsafe resale prevention and temporary locks.
+
+## Generated data files
+
+ZaminShop may create:
+
+```text
+plugins/ZaminShop/block-links.yml
+plugins/ZaminShop/overwatcher-confirmations.yml
+```
+
+These are runtime-managed data files. Configure block-link behavior in `config.yml` and Overwatcher behavior in `overwatcher.yml`.
 
 ## `lang/`
 
@@ -163,5 +197,7 @@ Modern ZaminShop setups do not require `config.yml -> shops:` registration.
 ## Related pages
 
 - [config.yml Reference](config-yml.md)
+- [currency.yml Reference](currency-yml.md)
+- [overwatcher.yml Reference](overwatcher-yml.md)
 - [Shop Pack File Format](../shops/shop-file-format.md)
 - [Menu File Format](../gui/menu-file-format.md)

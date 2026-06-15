@@ -17,7 +17,7 @@ It also includes text used by:
 - menu items
 - help output
 - validation summaries
-- risk guard output
+- Overwatcher output
 - search, favorites, and recent menus
 - sell GUI text
 - number formatting labels

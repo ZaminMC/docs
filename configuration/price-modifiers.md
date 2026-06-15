@@ -96,4 +96,4 @@ If every player needs the same modifier forever, change the base shop price inst
 
 ### Forgetting that sell modifiers affect economy extraction
 
-Higher sell values can become more dangerous than lower buy values. Always re-check risk guard when heavy sell-side modifiers are in play.
+Higher sell values can become more dangerous than lower buy values. Always review Overwatcher when heavy sell-side modifiers are in play.

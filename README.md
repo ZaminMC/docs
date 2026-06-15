@@ -35,8 +35,10 @@ If your server needs a shop that feels deliberate, safe, and maintainable, this 
 - configurable category commands and subcommands
 - transaction locking and rollback protection
 - sell limits and suspicious transaction monitoring
-- cross-shop and cross-pack risk guard checks
-- multi-economy routing
+- per-provider cross-shop and cross-pack Overwatcher checks
+- named multi-currency providers and a player selection menu
+- Runtime Shield purchase fingerprints and unsafe-resale protection
+- persistent physical block links
 - modern item directives with legacy runtime compatibility
 - custom item and spawner hooks
 - readable validation and startup diagnostics
@@ -74,7 +76,7 @@ ZaminShop is a strong fit for:
 
 ### I want to protect the economy first
 
-- [Safety, Risk Guard, and Audit](configuration/safety.md)
+- [Transaction Safety and Overwatcher](configuration/safety.md)
 - [Sell Limits and Suspicious Transactions](configuration/sell-limits.md)
 - [Price Modifiers](configuration/price-modifiers.md)
 

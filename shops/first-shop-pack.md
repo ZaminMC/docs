@@ -13,7 +13,9 @@ This example creates:
 - back and page navigation;
 - buy and sell prices.
 
-It uses only standard Bukkit materials and the default economy.
+It uses only standard Bukkit materials and the shipped `vault` provider.
+
+Before using this pack, install Vault and a Vault-compatible economy, or replace `vault` with another enabled provider ID from `currency.yml`.
 
 ## Folder structure
 
@@ -34,6 +36,8 @@ menu_title: "&8Starter Shop"
 size: 27
 open_command:
   - shop
+currencies:
+  - vault
 
 items:
   filler:
@@ -245,9 +249,10 @@ items:
 Run:
 
 ```text
-/zaminshop validate
 /zaminshop reload
 ```
+
+Read the automatic Validation and Overwatcher reports in the console before testing.
 
 Test:
 

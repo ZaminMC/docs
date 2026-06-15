@@ -15,6 +15,8 @@ menu_title: "&8Survival Shop"
 size: 54
 open_command:
   - shop
+currencies:
+  - vault
 
 items:
   category_blocks:
@@ -54,6 +56,18 @@ open_command:
   - shop
   - survivalshop
 ```
+
+### `currencies`
+
+Lists provider IDs registered in `currency.yml` that the pack exposes:
+
+```yaml
+currencies:
+  - vault
+  - points
+```
+
+Provider IDs are not economy type names. See [Multi-Currency Shops](multi-currency.md).
 
 ### `items`
 
@@ -177,5 +191,6 @@ Always configure back and page controls intentionally once a category can exceed
 ## Related pages
 
 - [Adding Shop Items](shop-items.md)
+- [Multi-Currency Shops](multi-currency.md)
 - [Menu File Format](../gui/menu-file-format.md)
 - [Built-in Menus](../gui/built-in-menus.md)

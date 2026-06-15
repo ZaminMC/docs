@@ -158,12 +158,13 @@ ZaminShop includes real safety systems, not just menus:
 [*]price normalization
 [*]sell limits
 [*]suspicious transaction monitoring
-[*]risk guard with confirmation support
+[*]Overwatcher price auditing with confirmation support
+[*]Runtime Shield purchase tracking and unsafe-resale protection
 [/LIST]
 
-[HEADING=3]Risk guard[/HEADING]
+[HEADING=3]Overwatcher[/HEADING]
 
-Risk guard is designed to catch common economy mistakes before players exploit them.
+Overwatcher is designed to catch common economy mistakes before players exploit them.
 
 It can detect:
 
@@ -264,7 +265,7 @@ Full documentation covers:
 [*]placeholders
 [*]commands and permissions
 [*]hooks and custom items
-[*]risk guard and validation
+[*]automatic validation and Overwatcher auditing
 [/LIST]
 
 [HEADING=2]Summary[/HEADING]

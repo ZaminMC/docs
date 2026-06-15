@@ -1,112 +1,165 @@
 ---
-description: Configure the economy providers used to charge and reward players.
+description: Register economy implementations as named currency providers and expose them to shop packs.
 ---
 
 # Economy Providers
 
-`economyTypes` is an ordered list in `config.yml`. ZaminShop attempts to enable each listed provider, and the first enabled entry becomes the default economy for shops that do not select another provider.
+Economies are registered in:
 
-```yaml
-economyTypes:
-  - VAULT
+```text
+plugins/ZaminShop/currency.yml
 ```
+
+Each provider has:
+
+- a provider ID chosen by the server owner;
+- an implementation `type`;
+- an enabled state;
+- player-facing display settings.
 
 ## Supported types
 
-| Type | Required plugin | Stored value |
-| --- | --- | --- |
+| Type | Required plugin or source | Stored value |
+|---|---|---|
 | `EXP` | None | Total Minecraft experience points |
 | `EXP_LEVELS` | None | Minecraft experience levels |
-| `ITEM` | None | Configured items in the 36 storage slots |
+| `ITEM` | None | Configured physical inventory items |
 | `VAULT` | Vault and a Vault economy | Vault balance |
-| `EXCELLENT_ECONOMY` | ExcellentEconomy | The provider's `coins` currency |
+| `EXCELLENT_ECONOMY` | ExcellentEconomy | Its `coins` currency |
 | `GEMS_ECONOMY` | GemsEconomy | Gems |
-| `MYSQL_TOKENS` | MySQLTokens | Tokens |
+| `MYSQL_TOKENS` | MySQL-Tokens | Tokens |
 | `PLAYER_POINTS` | PlayerPoints | Points |
 | `TOKEN_ENCHANT` | TokenEnchant | Tokens |
 | `TOKEN_MANAGER` | TokenManager | Tokens |
 | `VOTING_PLUGIN` | VotingPlugin | Voting points |
-| `COINS_ENGINE` | CoinsEngine | The provider's `coins` currency |
-| `CUSTOM` | Registered through the ZaminShop API | A provider supplied by another plugin |
+| `COINS_ENGINE` | CoinsEngine | Its `coins` currency |
+| `CUSTOM` | ZaminShop API registration | External custom provider |
 
-`EXP_LEVELS`, MySQLTokens, PlayerPoints, TokenManager, and VotingPlugin operate on whole-number values in their provider implementations. Use integer prices with them. The default `config.yml` also explicitly recommends integer prices for `EXP_LEVELS`.
+Whole-number provider implementations should use integer prices. This applies to `EXP_LEVELS`, MySQL-Tokens, PlayerPoints, TokenManager, and VotingPlugin.
 
-## Enabling more than one economy
+## Single-currency Vault setup
 
-```yaml
-economyTypes:
-  - VAULT
-  - PLAYER_POINTS
-  - ITEM
-```
-
-In this example:
-
-- `VAULT` is the default;
-- shops may select `PLAYER_POINTS` or `ITEM`;
-- all three providers must load successfully before they can be used.
-
-## Selecting an economy in a shop
-
-A shop can select an enabled economy by type:
+`plugins/ZaminShop/currency.yml`:
 
 ```yaml
-shop:
-  economy: PLAYER_POINTS
+default-provider: vault
+
+providers:
+  vault:
+    type: VAULT
+    enabled: true
+    display-name: Money
+    icon:
+      material: EMERALD
+    prefix: "$"
+    suffix: ""
 ```
 
-The exact shop file location depends on the pack:
+`plugins/ZaminShop/shops/survival_shop/main.yml`:
 
-```text
-plugins/ZaminShop/shops/<pack>/categories/<shop>.yml
+```yaml
+menu_title: "&8Survival Shop"
+open_command:
+  - shop
+currencies:
+  - vault
+size: 54
 ```
 
-{% hint style="warning" %}
-An economy named in a shop must also be enabled in `economyTypes`. Installing its dependency alone does not add it to ZaminShop's enabled economy list.
-{% endhint %}
+Vault is an adapter, not an economy. Install Vault and a Vault-compatible economy plugin, then restart the server.
 
-## Vault setup
+## Registering several providers
 
-Vault is an adapter, not an economy by itself. A working Vault setup requires:
+```yaml
+default-provider: vault
 
-1. Vault;
-2. a Vault-compatible economy plugin;
-3. `VAULT` in `economyTypes`;
-4. a full server restart after installing the plugins.
+providers:
+  vault:
+    type: VAULT
+    enabled: true
+    display-name: Money
+    icon:
+      material: EMERALD
+    prefix: "$"
+    suffix: ""
+
+  points:
+    type: PLAYER_POINTS
+    enabled: true
+    display-name: Points
+    icon:
+      material: NETHER_STAR
+    prefix: ""
+    suffix: " points"
+```
+
+Provider IDs are `vault` and `points`. The type names remain `VAULT` and `PLAYER_POINTS`.
+
+## Selecting providers in a pack
+
+```yaml
+currencies:
+  - vault
+  - points
+```
+
+The pack list controls which registered providers its categories inherit.
+
+See [Multi-Currency Shops](../shops/multi-currency.md) for complete price examples.
+
+## Legacy category economy
+
+Category files still accept:
+
+```yaml
+economy: PLAYER_POINTS
+```
+
+This is a compatibility route based on an implementation type. New multi-currency packs should use provider IDs in the pack `currencies` list.
 
 ## Physical item currency
 
-`ITEM` uses exact Bukkit item similarity and rewrites recognized denominations to make change. Its configuration and inventory rules are documented separately:
+The `ITEM` type uses exact configured items from the player's 36 normal inventory slots. See [Built-in Item Currency](item-currency.md).
 
-[Configure item currency](item-currency.md)
+## Reloading
 
-## Currency labels
+Use:
 
-ZaminShop assigns built-in suffixes such as ` points`, ` tokens`, ` gems`, ` exp`, and ` exp levels`. Vault uses the formatting exposed by its economy provider. Item currency uses:
-
-```yaml
-item-currency:
-  display-name: Coins
+```text
+/zaminshop reload
 ```
 
-## Reload requirement
-
-Use a full restart after installing, removing, or replacing an economy plugin. Configuration-only changes can be reloaded, but a restart is safer when changing the set or order of `economyTypes`, because plugin service registration is performed during startup.
+after configuration-only changes. Restart after installing, removing, or replacing an economy plugin.
 
 ## Common mistakes
 
-### Using the old `GRINGOTTS` value
+### Using provider types where IDs are required
 
-`GRINGOTTS` is not present in the current `EconomyType` enum and is not a supported `economyTypes` value.
+Given:
 
-### Naming a provider that is not installed
+```yaml
+providers:
+  points:
+    type: PLAYER_POINTS
+```
 
-The type is only usable when its API loads. Read the startup error and verify the dependency's exact plugin version.
+the pack value is:
 
-### Using decimals with integer providers
+```yaml
+currencies:
+  - points
+```
 
-Use whole-number prices for providers backed by integer or long APIs.
+not `PLAYER_POINTS`.
 
-### Assuming list order is cosmetic
+### Enabling a provider without its dependency
 
-The first available economy is the default. Reordering the list changes shops that do not define their own economy.
+The implementation cannot register when the external API is unavailable. Read the startup hook and validation output.
+
+### Using `GRINGOTTS`
+
+`GRINGOTTS` is not a current `EconomyType` value.
+
+### Copying the removed primary layout
+
+`economyTypes` remains a compatibility fallback, but current installations should use `currency.yml`.

@@ -65,7 +65,8 @@ That is why ZaminShop includes:
 - economy response checks
 - suspicious transaction logging
 - sell limits
-- risk guard validation
+- Overwatcher price auditing
+- Runtime Shield resale protection
 
 These are not optional extras in the design. They are part of what makes the plugin viable on a real server.
 

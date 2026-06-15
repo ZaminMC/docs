@@ -1,131 +1,210 @@
 # Common Server Setups
 
-This page gives you practical starting points instead of forcing you to design everything from scratch.
+These are complete starting profiles using the current `1.20.0` file layout.
 
-These are not the only correct setups. They are sensible starting baselines.
+## Survival with Vault
 
-## Survival setup
-
-Good for:
-
-- SMP servers
-- general survival communities
-- servers where shops are convenience, not the entire game loop
-
-Suggested direction:
+`currency.yml`:
 
 ```yaml
-economyTypes:
-  - VAULT
+default-provider: vault
 
-search:
+providers:
+  vault:
+    type: VAULT
+    enabled: true
+    display-name: Money
+    icon:
+      material: EMERALD
+    prefix: "$"
+    suffix: ""
+
+currency-selection:
   enabled: true
-  mode: SMART
-  max-results: 45
+  open-before-amount-selector: true
+  remember-last-provider: true
+  menu:
+    title: "&8Choose Currency"
+    rows: 3
+    open-sound: UI_BUTTON_CLICK
+    slots:
+      - 13
+    filler:
+      material: GRAY_STAINED_GLASS_PANE
+      display-name: "&r"
 
-transaction-safety:
+safety:
   enabled: true
-  per-player-lock: true
-  click-cooldown-ms: 150
-
-overwatcher:
-  enabled: true
-  block-critical-shops: true
-  notify-admins: true
-  require-confirmation: true
-
-sell-limits:
-  enabled: false
+  decimal-places: 2
+  reject-prices-with-too-many-decimals: true
+  minimum-transaction-value: 0.01
+  normalize-player-balances-for-checks: true
+  block-nan-infinity: true
+  max-transaction-value: 1000000000000
 ```
 
-Why:
+Pack `main.yml`:
 
-- players get the convenience features
-- safety stays strong
-- sell limits stay off unless the economy starts getting abused
+```yaml
+menu_title: "&8Survival Shop"
+open_command:
+  - shop
+currencies:
+  - vault
+size: 54
+```
 
-## Farm-heavy survival setup
+## Money and PlayerPoints
 
-Good for:
+`currency.yml`:
 
-- mob farms
-- large crop systems
-- servers where selling is a major money source
+```yaml
+default-provider: vault
 
-Suggested direction:
+providers:
+  vault:
+    type: VAULT
+    enabled: true
+    display-name: Money
+    icon:
+      material: EMERALD
+    prefix: "$"
+    suffix: ""
+
+  points:
+    type: PLAYER_POINTS
+    enabled: true
+    display-name: Points
+    icon:
+      material: NETHER_STAR
+    prefix: ""
+    suffix: " points"
+
+currency-selection:
+  enabled: true
+  open-before-amount-selector: true
+  remember-last-provider: true
+  menu:
+    title: "&8Choose Currency"
+    rows: 3
+    open-sound: UI_BUTTON_CLICK
+    slots:
+      - 11
+      - 15
+    filler:
+      material: GRAY_STAINED_GLASS_PANE
+      display-name: "&r"
+
+safety:
+  enabled: true
+  decimal-places: 2
+  reject-prices-with-too-many-decimals: true
+  minimum-transaction-value: 0.01
+  normalize-player-balances-for-checks: true
+  block-nan-infinity: true
+  max-transaction-value: 1000000000000
+```
+
+Pack `main.yml`:
+
+```yaml
+menu_title: "&8Survival Shop"
+open_command:
+  - shop
+currencies:
+  - vault
+  - points
+size: 54
+```
+
+Category item:
+
+```yaml
+items:
+  diamond:
+    type: SHOP_ITEM
+    material: DIAMOND
+    slot: 13
+    vault-buy-price: 1000
+    vault-sell-price: 250
+    points-buy-price: 20
+    points-sell-price: 5
+```
+
+## Farm-heavy survival
+
+Add to `config.yml`:
 
 ```yaml
 sell-limits:
   enabled: true
+  reset-timezone: "server"
   daily:
     enabled: true
     max-money: 50000
     max-items: 50000
+  weekly:
+    enabled: false
+    max-money: 500000
+    max-items: 500000
 
 suspicious-transactions:
   enabled: true
   notify-admins: true
   log-console: true
+  cooldown-between-alerts-seconds: 60
+  thresholds:
+    transactions-per-10-seconds: 20
+    money-earned-per-minute: 1000000
+    items-sold-per-minute: 50000
+    same-item-sales-per-10-seconds: 15
+  actions:
+    warn-admins: true
+    temporarily-block-selling: false
+    block-duration-seconds: 30
 ```
 
-Why:
+## Strict economy protection
 
-- caps the worst sell spikes
-- gives admins visibility before the economy drifts too far
-
-## Multi-pack server setup
-
-Good for:
-
-- survival + donor shop separation
-- separate themed stores
-- events or seasonal packs
-
-Suggested directory structure:
-
-```text
-plugins/ZaminShop/shops/survival_shop/main.yml
-plugins/ZaminShop/shops/survival_shop/categories/
-plugins/ZaminShop/shops/donor_shop/main.yml
-plugins/ZaminShop/shops/donor_shop/categories/
-```
-
-Why:
-
-- clear pack ownership
-- easier troubleshooting
-- each folder is discovered as a pack when it contains an enabled `main.yml`
-
-## Strict-economy setup
-
-Good for:
-
-- prison economies
-- tightly balanced servers
-- stores where bad pricing would be catastrophic
-
-Suggested direction:
+Keep the shipped `overwatcher.yml`:
 
 ```yaml
-currency-safety:
-  enabled: true
-  reject-prices-with-too-many-decimals: true
-  block-nan-infinity: true
+enabled: true
+block-critical-shops: true
+notify-admins: true
+require-confirmation: true
+max-sell-buy-ratio: 0.8
+allow-sell-higher-than-buy: false
 
-overwatcher:
+runtime-shield:
   enabled: true
-  block-critical-shops: true
-  notify-admins: true
-  require-confirmation: true
-  allow-sell-higher-than-buy: false
-
-transaction-audit:
-  enabled: true
-  log-failures: true
+  track-purchased-items: true
+  block-unsafe-reselling: true
+  lock-exploitable-items:
+    enabled: true
+    duration: 10m
+  notify:
+    console: true
+    admins: true
+  messages:
+    player-blocked: "This item cannot be sold right now."
 ```
 
-Why:
+Also enable transaction audit in `config.yml`:
 
-- bad pricing is caught earlier
-- failures leave more evidence
-- staff has fewer silent mistakes to chase
+```yaml
+transaction-audit:
+  enabled: true
+  log-success: false
+  log-failures: true
+  include-inventory-summary: false
+```
+
+## Applying a profile
+
+1. Install every external provider required by the profile.
+2. Restart the server.
+3. Apply the YAML sections to their named files.
+4. Run `/zaminshop reload`.
+5. Read the automatic Validation and Overwatcher reports.
+6. Test with a non-op player.

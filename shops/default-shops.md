@@ -67,6 +67,5 @@ The copied files are normal server configuration files. ZaminShop does not overw
 After editing:
 
 ```text
-/zaminshop validate
 /zaminshop reload
 ```
